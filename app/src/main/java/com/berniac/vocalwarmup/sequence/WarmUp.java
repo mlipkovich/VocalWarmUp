@@ -1,19 +1,21 @@
-package com.berniac.vocalwarmup;
+package com.berniac.vocalwarmup.sequence;
+
+import com.berniac.vocalwarmup.music.NoteRegister;
+import com.berniac.vocalwarmup.music.Step;
 
 /**
- * Created by Marina on 13.11.2017.
+ * Created by Marina Gorlova on 13.11.2017.
  */
-
 public class WarmUp {
 
-    private byte lowerNote;
-    private byte upperNote;
-    private byte startingNote;
-    private byte currentNote;
+    private NoteRegister lowerNote;
+    private NoteRegister upperNote;
+    private NoteRegister startingNote;
+    private int currentNote;       // TODO: Replace with NoteRegister?
     private Direction[] directions;
-    private WarmUpVoice melody;
+    private Melody melody;
     private boolean runMelody;
-    private WarmUpVoice[] harmony;
+    private Harmony harmony;
     private boolean runHarmony;
     private Step step;
     private boolean runMetronome;
@@ -21,38 +23,38 @@ public class WarmUp {
     private int pauseSize;
     private boolean patternChanged;
 
-    public byte getLowerNote() {
+    public NoteRegister getLowerNote() {
         return lowerNote;
     }
 
-    public void setLowerNote(byte lowerNote) {
+    public void setLowerNote(NoteRegister lowerNote) {
         this.lowerNote = lowerNote;
         this.patternChanged = true;
     }
 
-    public byte getUpperNote() {
+    public NoteRegister getUpperNote() {
         return upperNote;
     }
 
-    public void setUpperNote(byte upperNote) {
+    public void setUpperNote(NoteRegister upperNote) {
         this.upperNote = upperNote;
         this.patternChanged = true;
     }
 
-    public byte getStartingNote() {
+    public NoteRegister getStartingNote() {
         return startingNote;
     }
 
-    public void setStartingNote(byte startingNote) {
+    public void setStartingNote(NoteRegister startingNote) {
         this.startingNote = startingNote;
         this.patternChanged = true;
     }
 
-    public byte getCurrentNote() {
+    public int getCurrentNote() {
         return currentNote;
     }
 
-    public void setCurrentNote(byte currentNote) {
+    public void setCurrentNote(int currentNote) {
         this.currentNote = currentNote;
     }
 
@@ -65,11 +67,11 @@ public class WarmUp {
         this.patternChanged = true;
     }
 
-    public WarmUpVoice getMelody() {
+    public Melody getMelody() {
         return melody;
     }
 
-    public void setMelody(WarmUpVoice melody) {
+    public void setMelody(Melody melody) {
         this.melody = melody;
         this.patternChanged = true;
     }
@@ -82,11 +84,11 @@ public class WarmUp {
         this.runMelody = runMelody;
     }
 
-    public WarmUpVoice[] getHarmony() {
+    public Harmony getHarmony() {
         return harmony;
     }
 
-    public void setHarmony(WarmUpVoice[] harmony) {
+    public void setHarmony(Harmony harmony) {
         this.harmony = harmony;
         this.patternChanged = true;
     }

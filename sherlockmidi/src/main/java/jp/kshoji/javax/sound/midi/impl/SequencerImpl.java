@@ -501,17 +501,23 @@ public class SequencerImpl implements Sequencer {
     }
 
     @Override
+    public void setReceiver(@NonNull Receiver receiver) {
+        receivers.clear();
+        receivers.add(receiver);
+    }
+
+    @Override
     public void open() throws MidiUnavailableException {
         // open devices
-        synchronized (receivers) {
-            receivers.clear();
-            receivers.addAll(MidiSystemUtils.getReceivers());
-        }
+//        synchronized (receivers) {
+//            receivers.clear();
+//            receivers.addAll(MidiSystemUtils.getReceivers());
+//        }
 
-        synchronized (transmitters) {
-            transmitters.clear();
-            transmitters.addAll(MidiSystemUtils.getTransmitters());
-        }
+//        synchronized (transmitters) {
+//            transmitters.clear();
+//            transmitters.addAll(MidiSystemUtils.getTransmitters());
+//        }
 
         if (sequencerThread == null) {
             sequencerThread = new SequencerThread();
