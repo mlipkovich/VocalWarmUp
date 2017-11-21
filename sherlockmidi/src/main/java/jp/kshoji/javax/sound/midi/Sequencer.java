@@ -139,6 +139,12 @@ public interface Sequencer extends MidiDevice {
     void setSequence(@Nullable Sequence sequence) throws InvalidMidiDataException;
 
     /**
+     * Sets the receiver. Can be used as workaround for non-existing Transmitters
+     * @param receiver the {@link Receiver}
+     */
+    void setReceiver(@NonNull Receiver receiver);
+
+    /**
      * Add {@link EventListener} for {@link ShortMessage#CONTROL_CHANGE}
      * 
      * @param listener event listener
