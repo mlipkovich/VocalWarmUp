@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">VocalWarmUp</string>
+    <string name="preconfigured_warmups">Быстрый старт</string>
+    <string name="constructor">Конструктор распевок</string>
+    <string name="saved_warmups">Сохраненные распевки</string>
+    <string name="warmup_category">Чтобы начать тренировку, выберите тип распевки</string>
+    <string name="configure_training">Настройка тренировки</string>
+    <string name="boundary_notes">Стартовая нота и ваш диапазон</string>
+    <string name="warm_up_step">Шаг распевки</string>
+    <string name="warm_up_step_pause">Пауза между шагами</string>
+    <string name="warm_up_tempo">Темп распевки, bpm</string>
+
+    <string name="menu_bottom_training">Training</string>
+    <string name="menu_bottom_saved">Saved</string>
+    <string name="menu_bottom_settings">Settings</string>
 </resources>
