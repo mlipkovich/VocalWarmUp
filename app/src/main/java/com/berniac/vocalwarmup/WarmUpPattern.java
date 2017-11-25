@@ -1,0 +1,43 @@
+package com.berniac.vocalwarmup;
+
+/**
+ * Created by Mikhail Lipkovich on 11/25/2017.
+ */
+public class WarmUpPattern {
+    private String name;
+    private int imageId;
+    // Not sure if needed
+    private int playButtonId;
+
+    public WarmUpPattern(){}
+
+    public WarmUpPattern(String name, int imageId, int playButtonId) {
+        this.name = name;
+        this.imageId = imageId;
+        this.playButtonId = playButtonId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
+    }
+
+    public int getPlayButtonId() {
+        return playButtonId;
+    }
+
+    public void setPlayButtonId(int playButtonId) {
+        this.playButtonId = playButtonId;
+    }
+}

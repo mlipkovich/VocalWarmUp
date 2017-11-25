@@ -7,11 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,28 +22,28 @@ import java.util.List;
  */
 public class TrainingActivity extends BottomNavigationActivity {
 
-    // TODO: Do something with these hardcoded categories
-    private static final String[] LIBRARY_CATEGORIES = new String[]{
-            "Для новичков_1",
-            "Для новичков_2",
-            "Для новичков_3",
-            "Для продолжающих_1",
-            "Для продолжающих_2",
-            "Для продолжающих_3",
-            "Для любителей_1",
-            "Для любителей_2",
-            "Для любителей_3",
-            "Для профессионалов_1",
-            "Для профессионалов_2",
-            "Для профессионалов_3",
-            "Для Ильи"};
+    // TODO: Move all below urodstvo to Model. Pasha, please don't judge me
+    private static final List<WarmUpCategory> WARM_UP_CATEGORIES = new ArrayList<>();
+    private static final List<WarmUpPattern> WARM_UP_PATTERNS = new ArrayList<>();
 
-    // TODO: Do something with these hardcoded  presets
-    private static final String[] QUICK_START_PRESETS = new String[]{
-            "Сигарета после проливного дождя во Франкфурте",
-            "Круассан с кофе у океана",
-            "В стиле музыки французских улиц"
-    };
+    static {
+        // TODO: Sonya: add drawable image ids here instead of 0
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для новичков_1", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для новичков_2", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для новичков_3", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для продолжающих_1", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для продолжающих_2", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для продолжающих_3", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_1", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_2", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_3", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для Ильи", 0));
+
+        WARM_UP_PATTERNS.add(new WarmUpPattern("Сигарета после проливного дождя во Франкфурте", 0, 0));
+        WARM_UP_PATTERNS.add(new WarmUpPattern("Круассан с кофе у океана", 0, 0));
+        WARM_UP_PATTERNS.add(new WarmUpPattern("В стиле музыки французских улиц", 0, 0));
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +76,14 @@ public class TrainingActivity extends BottomNavigationActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_quick_start, container, false);
-            ListView warmUpList = (ListView) view.findViewById(R.id.listPresets);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-                    android.R.layout.simple_list_item_1, QUICK_START_PRESETS);
-            warmUpList.setAdapter(adapter);
+            RecyclerView warmUpList = (RecyclerView) view.findViewById(R.id.listPresets);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            warmUpList.setLayoutManager(layoutManager);
+            warmUpList.setItemAnimator(new DefaultItemAnimator());
+            warmUpList.setHasFixedSize(true);
+
+            WarmUpPatternAdapter patternAdapter = new WarmUpPatternAdapter(WARM_UP_PATTERNS);
+            warmUpList.setAdapter(patternAdapter);
             return view;
         }
     }
@@ -87,10 +92,13 @@ public class TrainingActivity extends BottomNavigationActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_library, container, false);
-            ListView warmUpList = (ListView) view.findViewById(R.id.listCategories);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-                    android.R.layout.simple_list_item_1, LIBRARY_CATEGORIES);
-            warmUpList.setAdapter(adapter);
+            RecyclerView categoryList = (RecyclerView) view.findViewById(R.id.list_categories);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            categoryList.setLayoutManager(layoutManager);
+            categoryList.setItemAnimator(new DefaultItemAnimator());
+            categoryList.setHasFixedSize(true);
+            WarmUpCategoryAdapter categoryAdapter = new WarmUpCategoryAdapter(WARM_UP_CATEGORIES);
+            categoryList.setAdapter(categoryAdapter);
             return view;
         }
     }
