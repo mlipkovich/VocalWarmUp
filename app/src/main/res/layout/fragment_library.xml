@@ -3,7 +3,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <!-- TODO: Sonya specify styles for these categories items -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_categories"
         android:layout_width="match_parent"

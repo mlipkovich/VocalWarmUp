@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,13 +21,13 @@ public class WarmUpPatternAdapter extends RecyclerView.Adapter<WarmUpPatternAdap
     public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView name;
         private ImageView image;
-        private Button button;
+        private ImageButton button;
 
         public ViewHolder(View view){
             super(view);
             name = (TextView) view.findViewById(R.id.pattern_name);
             image = (ImageView) view.findViewById(R.id.pattern_image);
-            button = (Button)  view.findViewById(R.id.pattern_play_btn);
+            button = (ImageButton) view.findViewById(R.id.pattern_play_btn);
         }
     }
 

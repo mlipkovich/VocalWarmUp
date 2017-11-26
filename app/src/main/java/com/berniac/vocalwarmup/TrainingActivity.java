@@ -1,6 +1,7 @@
 package com.berniac.vocalwarmup;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -8,11 +9,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,27 +30,27 @@ public class TrainingActivity extends BottomNavigationActivity {
     private static final List<WarmUpPattern> WARM_UP_PATTERNS = new ArrayList<>();
 
     static {
-        // TODO: Sonya: add drawable image ids here instead of 0
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для новичков_1", 0));
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для новичков_2", 0));
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для новичков_3", 0));
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для продолжающих_1", 0));
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для продолжающих_2", 0));
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для продолжающих_3", 0));
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_1", 0));
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_2", 0));
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_3", 0));
-        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для Ильи", 0));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для новичков_1", R.drawable.ic_category));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для новичков_2", R.drawable.ic_category));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для новичков_3", R.drawable.ic_category));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для продолжающих_1", R.drawable.ic_category));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для продолжающих_2", R.drawable.ic_category));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для продолжающих_3", R.drawable.ic_category));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_1", R.drawable.ic_category));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_2", R.drawable.ic_category));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_3", R.drawable.ic_category));
+        WARM_UP_CATEGORIES.add(new WarmUpCategory("Для Ильи", R.drawable.ic_category));
 
-        WARM_UP_PATTERNS.add(new WarmUpPattern("Сигарета после проливного дождя во Франкфурте", 0, 0));
-        WARM_UP_PATTERNS.add(new WarmUpPattern("Круассан с кофе у океана", 0, 0));
-        WARM_UP_PATTERNS.add(new WarmUpPattern("В стиле музыки французских улиц", 0, 0));
+        WARM_UP_PATTERNS.add(new WarmUpPattern("Сигарета после проливного дождя во Франкфурте", R.drawable.pattern_visualisation, 0));
+        WARM_UP_PATTERNS.add(new WarmUpPattern("Круассан с кофе у океана", R.drawable.pattern_visualisation, 0));
+        WARM_UP_PATTERNS.add(new WarmUpPattern("В стиле музыки французских улиц", R.drawable.pattern_visualisation, 0));
     }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager_training);
         viewPager.setAdapter(new TrainingPageAdapter(getSupportFragmentManager(), this));
 
@@ -99,6 +102,10 @@ public class TrainingActivity extends BottomNavigationActivity {
             categoryList.setHasFixedSize(true);
             WarmUpCategoryAdapter categoryAdapter = new WarmUpCategoryAdapter(WARM_UP_CATEGORIES);
             categoryList.setAdapter(categoryAdapter);
+
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(categoryList.getContext(), layoutManager.getOrientation());
+            categoryList.addItemDecoration(dividerItemDecoration);
+
             return view;
         }
     }
