@@ -9,6 +9,21 @@ public class Note implements MusicalSymbol {
     private NoteRegister noteRegister;
     private NoteValue noteValue;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Note)) return false;
+
+        Note note = (Note) o;
+
+        if (noteRegister != null ?
+                !noteRegister.equals(note.noteRegister) :
+                note.noteRegister != null) {
+            return false;
+        }
+        return noteValue == note.noteValue;
+    }
+
     public Note(NoteSymbol noteSymbol, int octave, NoteValue noteValue) {
         this.noteRegister = new NoteRegister(noteSymbol, octave);
         this.noteValue = noteValue;

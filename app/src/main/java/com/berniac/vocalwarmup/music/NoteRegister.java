@@ -11,6 +11,17 @@ public class NoteRegister {
     private NoteSymbol noteSymbol;
     private int octave;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NoteRegister)) return false;
+
+        NoteRegister that = (NoteRegister) o;
+
+        if (octave != that.octave) return false;
+        return noteSymbol == that.noteSymbol;
+    }
+
     public NoteRegister(NoteSymbol noteSymbol, int octave) {
         if (octave < LOWER_OCTAVE || octave > UPPER_OCTAVE) {
             throw new IllegalArgumentException("Octave value " + octave +

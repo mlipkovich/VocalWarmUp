@@ -35,4 +35,8 @@ public enum NoteValue {
     NoteValue(String code) {
         this.code = code;
     }
+
+    public static NoteValue getByCode(String code) {
+        return VALUE_BY_CODE.get(code);
+    }
 }

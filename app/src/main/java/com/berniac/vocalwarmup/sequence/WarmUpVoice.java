@@ -1,6 +1,9 @@
 package com.berniac.vocalwarmup.sequence;
 
 import com.berniac.vocalwarmup.music.MusicalSymbol;
+import com.berniac.vocalwarmup.music.MusicalSymbolParser;
+
+import java.util.Arrays;
 
 /**
  * Created by Marina Gorlova on 13.11.2017.
@@ -15,9 +18,30 @@ public class WarmUpVoice {
         this.instrument = instrument;
     }
 
-    public WarmUpVoice valueOf(String s) {
-        // TODO: Marina implement using MusicalSymbolParser
-        return null;
+    public static WarmUpVoice valueOf(String str) {
+        int voiceStart = str.indexOf('(');
+        int voiceEnd = str.indexOf(')');
+
+        if (voiceStart == -1 || voiceEnd == -1||voiceStart > voiceEnd) {
+            throw new IllegalArgumentException("Voice " + str +
+                    " should start with '(' and end with ')'." );
+        }
+
+        if (voiceStart == 0) {
+            throw new IllegalArgumentException("Voice " + str + "should start with an instrument.");
+        }
+
+        Instrument instrument = Instrument.getByCode(str.substring(0, voiceStart));
+
+        String[] notes = str.substring(voiceStart + 1, voiceEnd).split(",");
+        MusicalSymbol[] musicalSymbols = new MusicalSymbol[notes.length];
+        int i = 0;
+        for (String note : notes) {
+            musicalSymbols[i] = MusicalSymbolParser.parse(note);
+            i++;
+        }
+
+        return new WarmUpVoice(musicalSymbols, instrument);
     }
 
     public MusicalSymbol[] getMusicalSymbols() {
@@ -26,5 +50,16 @@ public class WarmUpVoice {
 
     public Instrument getInstrument() {
         return instrument;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof WarmUpVoice)) return false;
+
+        WarmUpVoice that = (WarmUpVoice) o;
+
+        if (!Arrays.equals(musicalSymbols, that.musicalSymbols)) return false;
+        return instrument == that.instrument;
     }
 }

@@ -14,9 +14,8 @@ public class Melody implements Playable {
         this.melody = melody;
     }
 
-    public static Melody valueOf(String s) {
-        // TODO: Marina parse strings using WarmUpVoice methods
-        return null;
+    public static Melody valueOf(String str) {
+        return new Melody(WarmUpVoice.valueOf(str));
     }
 
     @Override
