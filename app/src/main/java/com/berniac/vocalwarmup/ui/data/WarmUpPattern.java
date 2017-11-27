@@ -1,28 +1,27 @@
-package com.berniac.vocalwarmup;
+package com.berniac.vocalwarmup.ui.data;
 
 /**
  * Created by Mikhail Lipkovich on 11/25/2017.
  */
 public class WarmUpPattern {
-    private String name;
+    private String title;
     private int imageId;
-    // Not sure if needed
     private int playButtonId;
 
     public WarmUpPattern(){}
 
-    public WarmUpPattern(String name, int imageId, int playButtonId) {
-        this.name = name;
+    public WarmUpPattern(String title, int imageId, int playButtonId) {
+        this.title = title;
         this.imageId = imageId;
         this.playButtonId = playButtonId;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getImageId() {

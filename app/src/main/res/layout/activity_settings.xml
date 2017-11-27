@@ -9,7 +9,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:dividerPadding="0dp"
-    tools:context="com.berniac.vocalwarmup.SettingsActivity">
+    tools:context="com.berniac.vocalwarmup.ui.settings.SettingsActivity">
 
     <!-- just as a stub -->
     <TextView

@@ -9,7 +9,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:dividerPadding="0dp"
-    tools:context="com.berniac.vocalwarmup.WarmUpConfigurationActivity">
+    tools:context="com.berniac.vocalwarmup.ui.training.ConstructorActivity">
 
     <TextView
         android:id="@+id/textView"
