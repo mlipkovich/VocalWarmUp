@@ -27,7 +27,11 @@ public enum Instrument {
         this.code = code;
     }
 
-    public Instrument getByCode(String code) {
+    public static Instrument getByCode(String code) {
+        Instrument instrument = VALUE_BY_CODE.get(code);
+        if (instrument == null) {
+            throw new IllegalArgumentException("Unknown instrument code " + code);
+        }
         return VALUE_BY_CODE.get(code);
     }
 }

@@ -36,4 +36,15 @@ public class NoteRegister {
     public int getOctave() {
         return octave;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NoteRegister)) return false;
+
+        NoteRegister that = (NoteRegister) o;
+
+        if (octave != that.octave) return false;
+        return noteSymbol == that.noteSymbol;
+    }
 }

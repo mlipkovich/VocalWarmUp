@@ -32,4 +32,19 @@ public class Note implements MusicalSymbol {
     public NoteRegister getNoteRegister() {
         return noteRegister;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Note)) return false;
+
+        Note note = (Note) o;
+
+        if (noteRegister != null ?
+                !noteRegister.equals(note.noteRegister) :
+                note.noteRegister != null) {
+            return false;
+        }
+        return noteValue == note.noteValue;
+    }
 }

@@ -42,7 +42,11 @@ public enum NoteSymbol {
         this.code = code;
     }
 
-    public NoteSymbol getByCode(String code) {
-        return VALUE_BY_CODE.get(code);
+    public static NoteSymbol getByCode(String code) {
+        NoteSymbol noteSymbol = VALUE_BY_CODE.get(code);
+        if (noteSymbol == null) {
+            throw new IllegalArgumentException("Unknown symbol code " + code);
+        }
+        return noteSymbol;
     }
 }

@@ -7,6 +7,7 @@ package com.berniac.vocalwarmup.music;
 public class Rest implements MusicalSymbol {
 
     private NoteValue noteValue;
+    static final String REST_SYMBOL = "N";
 
     public Rest(NoteValue noteValue) {
         this.noteValue = noteValue;
@@ -20,5 +21,15 @@ public class Rest implements MusicalSymbol {
     @Override
     public NoteValue getNoteValue() {
         return noteValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Rest)) return false;
+
+        Rest rest = (Rest) o;
+
+        return noteValue == rest.noteValue;
     }
 }
