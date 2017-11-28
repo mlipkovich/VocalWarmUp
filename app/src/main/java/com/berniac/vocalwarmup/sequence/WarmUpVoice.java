@@ -22,13 +22,14 @@ public class WarmUpVoice {
         int voiceStart = str.indexOf('(');
         int voiceEnd = str.indexOf(')');
 
-        if (voiceStart == -1 || voiceEnd == -1||voiceStart > voiceEnd) {
+        if (voiceStart == -1 || voiceEnd == -1 || voiceStart > voiceEnd) {
             throw new IllegalArgumentException("Voice " + str +
                     " should start with '(' and end with ')'." );
         }
 
         if (voiceStart == 0) {
-            throw new IllegalArgumentException("Voice " + str + "should start with an instrument.");
+            throw new IllegalArgumentException("Voice " + str +
+                    " should start with an instrument.");
         }
 
         Instrument instrument = Instrument.getByCode(str.substring(0, voiceStart));
