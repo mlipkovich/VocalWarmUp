@@ -1,12 +1,14 @@
-package com.berniac.vocalwarmup;
+package com.berniac.vocalwarmup.ui.training;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.berniac.vocalwarmup.R;
+
 // WIP
-public class WarmUpConfigurationActivity extends AppCompatActivity {
+public class ConstructorActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
