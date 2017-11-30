@@ -55,7 +55,7 @@ public abstract class BottomNavigationActivity extends AppCompatActivity {
             }
         });
 
-        topBar = getSupportActionBar();
+        initActionBar();
         presenter.onViewCreated();
     }
 
@@ -69,6 +69,10 @@ public abstract class BottomNavigationActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         presenter.onPause();
+    }
+
+    protected void initActionBar() {
+        topBar = getSupportActionBar();
     }
 
     public void setScreenTitle(String title) {
