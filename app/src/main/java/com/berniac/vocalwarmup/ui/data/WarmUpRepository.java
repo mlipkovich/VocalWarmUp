@@ -26,9 +26,11 @@ public class WarmUpRepository implements IWarmUpRepository {
         WARM_UP_CATEGORIES.add(new WarmUpCategory("Для профессионалов_3", R.drawable.ic_category));
         WARM_UP_CATEGORIES.add(new WarmUpCategory("Для Ильи", R.drawable.ic_category));
 
-        WARM_UP_PATTERNS.add(new WarmUpPattern("Сигарета после проливного дождя во Франкфурте", R.drawable.pattern_visualisation, 0));
-        WARM_UP_PATTERNS.add(new WarmUpPattern("Круассан с кофе у океана", R.drawable.pattern_visualisation, 0));
-        WARM_UP_PATTERNS.add(new WarmUpPattern("В стиле музыки французских улиц", R.drawable.pattern_visualisation, 0));
+        // TODO: For what you need 'playButtonId'? They all have the same icon, no?
+        // Now the icon doesn't show and I don't understand why.
+        WARM_UP_PATTERNS.add(new WarmUpPattern("Сигарета после проливного дождя во Франкфурте", R.drawable.pattern_visualisation, R.drawable.listen_pattern_button));
+        WARM_UP_PATTERNS.add(new WarmUpPattern("Круассан с кофе у океана", R.drawable.pattern_visualisation, R.drawable.listen_pattern_button));
+        WARM_UP_PATTERNS.add(new WarmUpPattern("В стиле музыки французских улиц", R.drawable.pattern_visualisation, R.drawable.listen_pattern_button));
     }
 
     public int getCategoriesCount() {
