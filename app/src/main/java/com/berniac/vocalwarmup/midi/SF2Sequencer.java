@@ -3,6 +3,7 @@ package com.berniac.vocalwarmup.midi;
 import android.content.res.AssetManager;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import cn.sherlock.com.sun.media.sound.SF2Soundbank;
 import cn.sherlock.com.sun.media.sound.SoftSynthesizer;
@@ -22,9 +23,9 @@ public class SF2Sequencer {
 
     private SF2Sequencer(){}
 
-    public static void configure(AssetManager manager, String fileName) {
+    public static void configure(InputStream stream) {
         try {
-            SF2Soundbank sf = new SF2Soundbank(manager.open(fileName));
+            SF2Soundbank sf = new SF2Soundbank(stream);
 
             SoftSynthesizer synthesizer = new SoftSynthesizer();
             synthesizer.open();

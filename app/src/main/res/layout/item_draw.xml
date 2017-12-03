@@ -15,7 +15,7 @@
         android:padding="@dimen/card_padding">
 
         <TextView
-            android:id="@+id/pattern_name"
+            android:id="@+id/draw_name"
             style="@style/CardText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -25,16 +25,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/pattern_image"
+            android:id="@+id/draw_image"
             android:layout_width="0dp"
             android:layout_height="@dimen/card_image_size"
             android:src="@drawable/pattern_visualisation"
             android:scaleType="fitStart"
             android:layout_marginTop="@dimen/card_margin"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/pattern_name"
-            app:layout_constraintStart_toStartOf="@+id/pattern_name"
-            app:layout_constraintTop_toBottomOf="@+id/pattern_name" />
+            app:layout_constraintEnd_toEndOf="@+id/draw_name"
+            app:layout_constraintStart_toStartOf="@+id/draw_name"
+            app:layout_constraintTop_toBottomOf="@+id/draw_name" />
 
         <ImageButton
             android:id="@+id/pattern_play_btn"
@@ -44,7 +44,7 @@
             android:layout_marginLeft="@dimen/card_padding"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/pattern_name"
+            app:layout_constraintStart_toEndOf="@+id/draw_name"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_listen_pattern"
             android:background="@drawable/listen_pattern_button"/>

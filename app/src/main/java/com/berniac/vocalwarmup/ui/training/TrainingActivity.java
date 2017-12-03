@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 
 import com.berniac.vocalwarmup.R;
 import com.berniac.vocalwarmup.ui.BottomNavigationActivity;
+import com.berniac.vocalwarmup.ui.training.library.LibraryFragment;
+import com.berniac.vocalwarmup.ui.training.presets.PresetsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +22,18 @@ import java.util.List;
  */
 public class TrainingActivity extends BottomNavigationActivity {
 
+    private TrainingPageAdapter pageAdapter;
+    private TabLayout tabLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager_training);
-        viewPager.setAdapter(new TrainingPageAdapter(getSupportFragmentManager(), this));
+        pageAdapter = new TrainingPageAdapter(getSupportFragmentManager(), this);
+        viewPager.setAdapter(pageAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs_training);
+        tabLayout = (TabLayout) findViewById(R.id.tabs_training);
         tabLayout.setupWithViewPager(viewPager);
     }
 
@@ -54,24 +60,35 @@ public class TrainingActivity extends BottomNavigationActivity {
         presenter = new TrainingPresenter();
     }
 
+    @Override
+    public void onBackPressed() {
+        // TODO: Probably this logic should be somehow moved to presenter
+        TrainingFragment libraryFragment =
+                pageAdapter.fragments.get(TrainingPageAdapter.LIBRARY_INDEX);
+        if (tabLayout.getSelectedTabPosition() == TrainingPageAdapter.LIBRARY_INDEX) {
+            libraryFragment.onBackButtonClicked();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private class TrainingPageAdapter extends FragmentStatePagerAdapter {
 
+        private static final int PRESETS_INDEX = 0;
+        private static final int LIBRARY_INDEX = 1;
         private String tabTitles[] = new String[] {"БЫСТРЫЙ СТАРТ", "БИБЛИОТЕКА"};
-        private List<Fragment> fragments;
+        private List<TrainingFragment> fragments;
 
-        // TODO: Ugly. Think about better architecture
         TrainingPageAdapter(FragmentManager fm, Context context) {
             super(fm);
-            QuickStartFragment quickStartFragment =
-                    (QuickStartFragment) Fragment.instantiate(context, QuickStartFragment.class.getName());
-            quickStartFragment.setPresenter(new QuickStartPresenter());
+            PresetsFragment presetsFragment =
+                    (PresetsFragment) Fragment.instantiate(context, PresetsFragment.class.getName());
             LibraryFragment libraryFragment =
                     (LibraryFragment) Fragment.instantiate(context, LibraryFragment.class.getName());
-            libraryFragment.setPresenter(new LibraryPresenter());
 
             fragments = new ArrayList<>();
-            fragments.add(quickStartFragment);
-            fragments.add(libraryFragment);
+            fragments.add(PRESETS_INDEX, presetsFragment);
+            fragments.add(LIBRARY_INDEX, libraryFragment);
         }
 
         @Override
