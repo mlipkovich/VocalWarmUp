@@ -47,7 +47,7 @@ public class LibraryFragment extends TrainingFragment {
     }
 
     @Override
-    public void onBackButtonClicked() {
-        listView.onBackButtonClicked();
+    public boolean onBackButtonClicked() {
+        return listView.onBackButtonClicked();
     }
 }

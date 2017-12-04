@@ -94,7 +94,7 @@ public class LibraryListAdapter extends LibraryListView<LibraryListAdapter.ViewH
     }
 
     @Override
-    public void onBackButtonClicked() {
-        presenter.onBackButtonClicked();
+    public boolean onBackButtonClicked() {
+        return presenter.onBackButtonClicked();
     }
 }

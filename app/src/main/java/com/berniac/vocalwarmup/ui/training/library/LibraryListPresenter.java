@@ -60,7 +60,11 @@ public class LibraryListPresenter {
         return view.getDrawsViewType();
     }
 
-    public void onBackButtonClicked() {
+    public boolean onBackButtonClicked() {
+        if (categoryIds.isEmpty()) {
+            return false;
+        }
         goUpByHierarchy();
+        return true;
     }
 }

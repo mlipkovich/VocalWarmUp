@@ -10,7 +10,7 @@ public abstract class LibraryListView<T extends RecyclerView.ViewHolder> extends
     private static final int CATEGORIES_VIEW_TYPE = 1;
     private static final int DRAWS_VIEW_TYPE = 2;
 
-    public abstract void onBackButtonClicked();
+    public abstract boolean onBackButtonClicked();
 
     public void reloadListItems() {
         notifyDataSetChanged();

@@ -40,7 +40,7 @@ public class PresetsFragment extends TrainingFragment {
     }
 
     @Override
-    public void onBackButtonClicked() {
-        // do nothing
+    public boolean onBackButtonClicked() {
+        return false;
     }
 }

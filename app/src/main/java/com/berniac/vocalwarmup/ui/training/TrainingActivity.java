@@ -63,19 +63,17 @@ public class TrainingActivity extends BottomNavigationActivity {
     @Override
     public void onBackPressed() {
         // TODO: Probably this logic should be somehow moved to presenter
-        TrainingFragment libraryFragment =
-                pageAdapter.fragments.get(TrainingPageAdapter.LIBRARY_INDEX);
-        if (tabLayout.getSelectedTabPosition() == TrainingPageAdapter.LIBRARY_INDEX) {
-            libraryFragment.onBackButtonClicked();
-        } else {
+        TrainingFragment fragment = pageAdapter.fragments.get(tabLayout.getSelectedTabPosition());
+        boolean backButtonApplied = fragment.onBackButtonClicked();
+
+        // exit from application
+        if (!backButtonApplied) {
             super.onBackPressed();
         }
     }
 
     private class TrainingPageAdapter extends FragmentStatePagerAdapter {
 
-        private static final int PRESETS_INDEX = 0;
-        private static final int LIBRARY_INDEX = 1;
         private String tabTitles[] = new String[] {"БЫСТРЫЙ СТАРТ", "БИБЛИОТЕКА"};
         private List<TrainingFragment> fragments;
 
@@ -87,8 +85,8 @@ public class TrainingActivity extends BottomNavigationActivity {
                     (LibraryFragment) Fragment.instantiate(context, LibraryFragment.class.getName());
 
             fragments = new ArrayList<>();
-            fragments.add(PRESETS_INDEX, presetsFragment);
-            fragments.add(LIBRARY_INDEX, libraryFragment);
+            fragments.add(presetsFragment);
+            fragments.add(libraryFragment);
         }
 
         @Override
