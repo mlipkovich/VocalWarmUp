@@ -1,4 +1,4 @@
-package com.berniac.vocalwarmup.ui.data;
+package com.berniac.vocalwarmup.ui.model;
 
 /**
  * Created by Mikhail Lipkovich on 11/25/2017.

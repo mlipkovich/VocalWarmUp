@@ -1,0 +1,340 @@
+[
+  {
+    "type":"category",
+    "name":"Гаммы",
+    "image":"ic_category",
+    "child": [
+      {
+        "type": "category",
+        "name": "А-ля мажор",
+        "image":"ic_category",
+        "child": [
+          {
+            "type": "draw",
+            "name": "Сигарета после проливного дождя во Франкфурте",
+            "image": "pattern_visualisation",
+            "voice": "25C+12D-3",
+            "sample": "09ffaf",
+            "harmony": []
+          },
+          {
+            "type": "draw",
+            "name": "Круассан с кофе у океана",
+            "image": "pattern_visualisation",
+            "voice": "25C+12D-3",
+            "sample": "01bfaf"
+          },
+          {
+            "type": "draw",
+            "name": "В стиле музыки французских улиц",
+            "image": "pattern_visualisation",
+            "voice": "25C+12D-3",
+            "sample": "12afaf"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "name": "А-ля минор",
+        "image":"ic_category",
+        "child": [
+          {
+            "type": "draw",
+            "name": "draw4",
+            "image": "01bbff12",
+            "voice": "25C+12D-3",
+            "sample": "09ffaf"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "name": "Хроматические",
+        "image":"ic_category",
+        "child": [
+          {
+            "type": "draw",
+            "name": "draw4",
+            "image": "01bbff12",
+            "voice": "25C+12D-3",
+            "sample": "09ffaf"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "name": "Разное",
+        "image":"ic_category",
+        "child": [
+          {
+            "type": "draw",
+            "name": "draw4",
+            "image": "01bbff12",
+            "voice": "25C+12D-3",
+            "sample": "09ffaf"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type":"category",
+    "name":"Арпеджио",
+    "image":"ic_category",
+    "child": [
+      {
+        "type": "category",
+        "name": "Мажорные",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Минорные",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Септаккорды",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Разное",
+        "image":"ic_category",
+        "child": []
+      }
+    ]
+  },
+  {
+    "type":"category",
+    "name":"Мелодические мотивы",
+    "image":"ic_category",
+    "child": [
+      {
+        "type": "category",
+        "name": "Подкатегория 1",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 2",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 3",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 4",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 5",
+        "image":"ic_category",
+        "child": []
+      }
+    ]
+  },
+  {
+    "type":"category",
+    "name":"Скачки",
+    "image":"ic_category",
+    "child": [
+      {
+        "type": "category",
+        "name": "Подкатегория 1",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 2",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 3",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 4",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 5",
+        "image":"ic_category",
+        "child": []
+      }
+    ]
+  },
+  {
+    "type":"category",
+    "name":"Специальные упражнения",
+    "image":"ic_category",
+    "child": [
+      {
+        "type": "category",
+        "name": "Подкатегория 1",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 2",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 3",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 4",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Подкатегория 5",
+        "image":"ic_category",
+        "child": []
+      }
+    ]
+  },
+  {
+    "type":"category",
+    "name":"Секвенции",
+    "image":"ic_category",
+    "child": [
+      {
+        "type":"category",
+        "name":"Мажорные",
+        "image":"ic_category",
+        "child": [
+          {
+            "type": "category",
+            "name": "Два звука в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Три звука в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Четыре звука в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Шесть звуков в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Восемь звуков в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Разное",
+            "image":"ic_category",
+            "child": []
+          }
+        ]
+      },
+      {
+        "type":"category",
+        "name":"Минорные",
+        "image":"ic_category",
+        "child": [
+          {
+            "type": "category",
+            "name": "Два звука в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Три звука в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Четыре звука в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Шесть звуков в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Восемь звуков в шаге",
+            "image":"ic_category",
+            "child": []
+          },
+          {
+            "type": "category",
+            "name": "Разное",
+            "image":"ic_category",
+            "child": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type":"category",
+    "name":"Вокализы",
+    "image":"ic_category",
+    "child": [
+      {
+        "type": "category",
+        "name": "Простые",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Средней сложности",
+        "image":"ic_category",
+        "child": []
+      },
+      {
+        "type": "category",
+        "name": "Сложные",
+        "image":"ic_category",
+        "child": []
+      }
+    ]
+  }
+]
