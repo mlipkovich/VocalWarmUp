@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.training.ConstructorActivity" />
+        <activity android:name=".ui.training.library.LibraryCategoryActivity" />
         <activity android:name=".ui.saved.SavedActivity" />
         <activity android:name=".ui.settings.SettingsActivity" />
     </application>

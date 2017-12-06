@@ -5,16 +5,14 @@ package com.berniac.vocalwarmup.ui;
  */
 public abstract class BottomNavigationPresenter {
 
-    private BottomNavigationActivity view;
+    protected BottomNavigationActivity view;
     private static final int MENU_SWITCH_DELAY_MS = 200;
 
     public void onAttach(BottomNavigationActivity view) {
         this.view = view;
     }
 
-    public void onViewCreated() {
-        view.setScreenTitle(getScreenTitle());
-    }
+    public void onViewCreated() {}
 
     public void onStart() {
         view.updateNavigationBarState();
@@ -39,6 +37,4 @@ public abstract class BottomNavigationPresenter {
     public void onCurrentMenuSelected() {
         // do nothing
     }
-
-    public abstract String getScreenTitle();
 }

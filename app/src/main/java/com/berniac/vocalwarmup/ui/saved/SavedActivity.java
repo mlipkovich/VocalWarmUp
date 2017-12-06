@@ -15,6 +15,11 @@ public class SavedActivity extends BottomNavigationActivity {
     }
 
     @Override
+    public String getScreenTitle() {
+        return "Сохраненные распевки";
+    }
+
+    @Override
     protected int getNavigationMenuItemId() {
         return R.id.menu_saved;
     }
