@@ -4,7 +4,7 @@ import com.berniac.vocalwarmup.model.HierarchyItem;
 import com.berniac.vocalwarmup.ui.model.IWarmUpRepository;
 import com.berniac.vocalwarmup.ui.training.ItemRowView;
 
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,15 +14,14 @@ public class LibraryListPresenter {
 
     private LibraryListView view;
     private IWarmUpRepository repository;
-    private List<Integer> categoryIds = new LinkedList<>();
     private HierarchyItem[] itemsList;
 
     public LibraryListPresenter(IWarmUpRepository repository) {
         this.repository = repository;
-        this.itemsList = repository.getItemsByHierarchy(categoryIds);
+        this.itemsList = repository.getItemsByHierarchy(Collections.EMPTY_LIST);
     }
 
-    public void onAttach(LibraryListAdapter view) {
+    public void onAttach(LibraryListView view) {
         this.view = view;
     }
 
@@ -35,19 +34,8 @@ public class LibraryListPresenter {
         return itemsList.length;
     }
 
-    public void onItemClicked(int clickedItemPosition) {
-        goDownByHierarchy(clickedItemPosition);
-    }
-
-    private void goUpByHierarchy() {
-        categoryIds.remove(categoryIds.size() - 1);
-        itemsList = repository.getItemsByHierarchy(categoryIds);
-        view.reloadListItems();
-    }
-
-    private void goDownByHierarchy(int categoryId) {
-        categoryIds.add(categoryId);
-        itemsList = repository.getItemsByHierarchy(categoryIds);
+    public void setCategories(List<Integer> categories) {
+        itemsList = repository.getItemsByHierarchy(categories);
         view.reloadListItems();
     }
 
@@ -60,11 +48,10 @@ public class LibraryListPresenter {
         return view.getDrawsViewType();
     }
 
-    public boolean onBackButtonClicked() {
-        if (categoryIds.isEmpty()) {
-            return false;
-        }
-        goUpByHierarchy();
-        return true;
+
+    public void onCategoryClicked(int clickedItem) {
+        String clickedItemName = itemsList[clickedItem].getName();
+        SelectedCategories.INSTANCE.goDownByHierarchy(clickedItem);
+        view.switchToActivityWithCategory(clickedItemName);
     }
 }

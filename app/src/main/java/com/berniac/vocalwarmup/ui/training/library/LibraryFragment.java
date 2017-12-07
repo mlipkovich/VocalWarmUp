@@ -1,6 +1,7 @@
 package com.berniac.vocalwarmup.ui.training.library;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 import com.berniac.vocalwarmup.R;
 import com.berniac.vocalwarmup.ui.ResourcesProvider;
 import com.berniac.vocalwarmup.ui.model.WarmUpRepository;
-import com.berniac.vocalwarmup.ui.training.TrainingFragment;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -20,9 +20,9 @@ import java.io.Reader;
 /**
  * Created by Mikhail Lipkovich on 11/28/2017.
  */
-public class LibraryFragment extends TrainingFragment {
+public class LibraryFragment extends Fragment {
 
-    private LibraryListView listView;
+    private LibraryListPresenter libraryListPresenter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,9 +34,10 @@ public class LibraryFragment extends TrainingFragment {
         libraryItemsList.setHasFixedSize(true);
 
         Reader hierarchyReader = new InputStreamReader(ResourcesProvider.getDrawHierarchy(getContext()));
-        LibraryListPresenter libraryListPresenter =
+        libraryListPresenter =
                 new LibraryListPresenter(new WarmUpRepository(hierarchyReader));
-        listView = new LibraryListAdapter(libraryListPresenter, getContext());
+        LibraryListView listView = new LibraryListAdapter(libraryListPresenter, getContext());
+
         libraryItemsList.setAdapter(listView);
 
         DividerItemDecoration dividerItemDecoration =
@@ -46,8 +47,7 @@ public class LibraryFragment extends TrainingFragment {
         return view;
     }
 
-    @Override
-    public boolean onBackButtonClicked() {
-        return listView.onBackButtonClicked();
+    public LibraryListPresenter getPresenter() {
+        return libraryListPresenter;
     }
 }

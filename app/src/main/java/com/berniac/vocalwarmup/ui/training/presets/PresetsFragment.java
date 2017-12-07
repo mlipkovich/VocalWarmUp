@@ -1,6 +1,7 @@
 package com.berniac.vocalwarmup.ui.training.presets;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +12,6 @@ import android.view.ViewGroup;
 import com.berniac.vocalwarmup.R;
 import com.berniac.vocalwarmup.ui.ResourcesProvider;
 import com.berniac.vocalwarmup.ui.model.WarmUpRepository;
-import com.berniac.vocalwarmup.ui.training.TrainingFragment;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -19,7 +19,7 @@ import java.io.Reader;
 /**
  * Created by Mikhail Lipkovich on 11/28/2017.
  */
-public class PresetsFragment extends TrainingFragment {
+public class PresetsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,10 +37,5 @@ public class PresetsFragment extends TrainingFragment {
         presetsList.setAdapter(adapter);
 
         return view;
-    }
-
-    @Override
-    public boolean onBackButtonClicked() {
-        return false;
     }
 }

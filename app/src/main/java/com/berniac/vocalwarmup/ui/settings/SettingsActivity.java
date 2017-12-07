@@ -20,6 +20,11 @@ public class SettingsActivity extends BottomNavigationActivity {
     }
 
     @Override
+    public String getScreenTitle() {
+        return "Настройки";
+    }
+
+    @Override
     protected void createPresenter() {
         presenter = new SettingsPresenter();
     }

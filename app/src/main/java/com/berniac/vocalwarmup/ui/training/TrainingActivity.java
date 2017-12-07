@@ -42,7 +42,7 @@ public class TrainingActivity extends BottomNavigationActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        topBar = getSupportActionBar();
+        super.initActionBar();
     }
 
     @Override
@@ -61,21 +61,14 @@ public class TrainingActivity extends BottomNavigationActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        // TODO: Probably this logic should be somehow moved to presenter
-        TrainingFragment fragment = pageAdapter.fragments.get(tabLayout.getSelectedTabPosition());
-        boolean backButtonApplied = fragment.onBackButtonClicked();
-
-        // exit from application
-        if (!backButtonApplied) {
-            super.onBackPressed();
-        }
+    protected String getScreenTitle() {
+        return "Начало тренировки";
     }
 
     private class TrainingPageAdapter extends FragmentStatePagerAdapter {
 
         private String tabTitles[] = new String[] {"БЫСТРЫЙ СТАРТ", "БИБЛИОТЕКА"};
-        private List<TrainingFragment> fragments;
+        private List<Fragment> fragments;
 
         TrainingPageAdapter(FragmentManager fm, Context context) {
             super(fm);

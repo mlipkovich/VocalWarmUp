@@ -1,6 +1,7 @@
 package com.berniac.vocalwarmup.ui.training.library;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,11 +61,19 @@ public class LibraryListAdapter extends LibraryListView<LibraryListAdapter.ViewH
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        View itemView;
+        final View itemView;
 
         if (viewType == getCategoriesViewType()) {
             itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_category, parent, false);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    RecyclerView list = (RecyclerView) parent;
+                    int clickedItemPosition = list.getChildLayoutPosition(v);
+                    presenter.onCategoryClicked(clickedItemPosition);
+                }
+            });
         } else if (viewType == getDrawsViewType()) {
             itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_draw, parent, false);
@@ -72,15 +81,14 @@ public class LibraryListAdapter extends LibraryListView<LibraryListAdapter.ViewH
             throw new IllegalStateException("There is no view type for " + viewType);
         }
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int clickedItemPosition = ((RecyclerView) parent).getChildLayoutPosition(v);
-                presenter.onItemClicked(clickedItemPosition);
-            }
-        });
-
         return new ViewHolder(itemView, viewType);
+    }
+
+    @Override
+    public void switchToActivityWithCategory(String clickedItemName) {
+        Intent intent = new Intent(context, LibraryCategoryActivity.class);
+        intent.putExtra(LibraryCategoryActivity.CATEGORY_NAME_PARAM, clickedItemName);
+        context.startActivity(intent);
     }
 
     @Override
@@ -91,10 +99,5 @@ public class LibraryListAdapter extends LibraryListView<LibraryListAdapter.ViewH
     @Override
     public int getItemCount() {
         return presenter.getItemsCount();
-    }
-
-    @Override
-    public boolean onBackButtonClicked() {
-        return presenter.onBackButtonClicked();
     }
 }

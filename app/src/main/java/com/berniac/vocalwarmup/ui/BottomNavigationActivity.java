@@ -29,6 +29,8 @@ public abstract class BottomNavigationActivity extends AppCompatActivity {
 
     protected abstract void createPresenter();
 
+    protected abstract String getScreenTitle();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,10 +75,7 @@ public abstract class BottomNavigationActivity extends AppCompatActivity {
 
     protected void initActionBar() {
         topBar = getSupportActionBar();
-    }
-
-    public void setScreenTitle(String title) {
-        topBar.setTitle(title);
+        topBar.setTitle(getScreenTitle());
     }
 
     // Remove inter-activity transition to avoid screen tossing on tapping bottom navigation items
