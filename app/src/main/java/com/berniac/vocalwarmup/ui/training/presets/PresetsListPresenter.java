@@ -13,12 +13,17 @@ public class PresetsListPresenter {
 
     private IWarmUpRepository repository;
     private HierarchyItem[] draws;
+    private PresetsListAdapter view;
 
     public PresetsListPresenter(IWarmUpRepository repository) {
         this.repository = repository;
 
         // TODO: Separate JSON and method for getting presets
         this.draws = repository.getItemsByHierarchy(Arrays.asList(0, 0));
+    }
+
+    public void onAttach(PresetsListAdapter view) {
+        this.view = view;
     }
 
     public void onBindDrawAtPosition(ItemRowView rowView, int position) {
@@ -28,5 +33,10 @@ public class PresetsListPresenter {
 
     public int getDrawsCount() {
         return draws.length;
+    }
+
+    public void onItemClicked(int clickedItemPosition) {
+        // TODO: Add methods parameters
+        view.switchToPlayer();
     }
 }
