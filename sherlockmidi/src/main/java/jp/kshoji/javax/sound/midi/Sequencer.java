@@ -178,7 +178,23 @@ public interface Sequencer extends MidiDevice {
      * @param listener event listener
      */
     void removeMetaEventListener(@NonNull MetaEventListener listener);
-    
+
+
+    /**
+     * Adds listener which will be notified when the sequence is finished
+     * @param listener even listener
+     * @return true if registered successfully
+     */
+    boolean addEndSequenceEventListener(@NonNull EndSequenceEventListener listener);
+
+
+    /**
+     * Removes listener
+     * @param listener event listener
+     */
+    void removeEndSequenceEventListener(@NonNull EndSequenceEventListener listener);
+
+
     /**
      * Get if the {@link Sequencer} is recording.
      * 
@@ -207,7 +223,7 @@ public interface Sequencer extends MidiDevice {
      * @param channel the channel, 0-15
      */
     void recordEnable(@NonNull Track track, int channel);
-    
+
     /**
      * Get the count of loop.
      * 
