@@ -9,6 +9,7 @@ import com.berniac.vocalwarmup.music.NoteValue;
 import jp.kshoji.javax.sound.midi.InvalidMidiDataException;
 import jp.kshoji.javax.sound.midi.MidiEvent;
 import jp.kshoji.javax.sound.midi.MidiMessage;
+import jp.kshoji.javax.sound.midi.MidiTrackSpecificEvent;
 import jp.kshoji.javax.sound.midi.Sequence;
 import jp.kshoji.javax.sound.midi.ShortMessage;
 import jp.kshoji.javax.sound.midi.Track;
@@ -33,14 +34,12 @@ public class SequenceConstructor {
         int step = 2; // TODO: get step from WarmUp.Step. Deal somehow with Random
         if (warmUp.getMelody() != null) {
             Track melody = sequence.getTracks()[MidiTrack.MELODY.index];
-            fillTrack(melody, warmUp.getMelody(), warmUp.getStartingNote(), warmUp.getLowerNote(),
-                    warmUp.getUpperNote(), step, warmUp.getDirections());
+            fillTrack(melody, MidiTrack.MELODY, warmUp.getMelody(), step);
         }
 
         if (warmUp.getHarmony() != null) {
             Track harmony = sequence.getTracks()[MidiTrack.HARMONY.index];
-            fillTrack(harmony, warmUp.getHarmony(), warmUp.getStartingNote(), warmUp.getLowerNote(),
-                    warmUp.getUpperNote(), step, warmUp.getDirections());
+            fillTrack(harmony, MidiTrack.HARMONY, warmUp.getHarmony(), step);
         }
 
         // TODO: Add metronome and lyrics
@@ -48,58 +47,40 @@ public class SequenceConstructor {
         return sequence;
     }
 
-    private static void fillTrack(Track track, Playable playable,
-                                  NoteRegister startNote, NoteRegister lowerNote, NoteRegister upperNote,
-                                  int step, Direction[] directions) throws InvalidMidiDataException {
+    private static void fillTrack(Track track, MidiTrack midiTrack, Playable playable,
+                                  int step) throws InvalidMidiDataException {
         long previousTick = 0;
         for (WarmUpVoice voice : playable.getVoices()) {
-            NoteRegister startingNote;
-            int orientedStep;
-            for (Direction direction : directions) {
-                switch (direction) {
-                    case START_TO_LOWER:
-                        startingNote = startNote;
-                        orientedStep = -step;
-                        break;
-                    case START_TO_UPPER:
-                        startingNote = startNote;
-                        orientedStep = step;
-                        break;
-                    case LOWER_TO_START:
-                        startingNote = lowerNote;
-                        orientedStep = step;
-                        break;
-                    case UPPER_TO_START:
-                        startingNote = upperNote;
-                        orientedStep = -step;
-                        break;
-                    default:
-                        throw new IllegalStateException("There is no value " + direction + " for directions");
-                }
-                previousTick = addDirection(track, lowerNote, upperNote, startingNote,
-                        orientedStep, voice, previousTick);
-            }
+            NoteRegister lowestNote = NoteRegister.LOWEST_NOTE;
+            NoteRegister highestNote = NoteRegister.HIGHEST_NOTE;
+
+            int orientedStep = step;
+            previousTick = addDirection(track, midiTrack, voice, lowestNote, highestNote,
+                    orientedStep, previousTick);
+            orientedStep = -step;
+            previousTick = addDirection(track, midiTrack, voice, highestNote, lowestNote,
+                    orientedStep, previousTick);
         }
     }
 
-    private static long addDirection(Track track, NoteRegister lowerNote, NoteRegister upperNote,
-                                     NoteRegister startingNote, int orientedStep,
-                                     WarmUpVoice voice, long previousTick) throws InvalidMidiDataException {
+    private static long addDirection(Track track, MidiTrack midiTrack, WarmUpVoice voice,
+                                     NoteRegister startNote, NoteRegister endNote,
+                                     int orientedStep, long previousTick) throws InvalidMidiDataException {
 
-        int lowerNoteMidi = MidiUtils.getMidiNote(lowerNote);
-        int upperNoteMidi = MidiUtils.getMidiNote(upperNote);
-        int note = MidiUtils.getMidiNote(startingNote);
-        System.out.println("Adding direction " + lowerNoteMidi + " " + upperNoteMidi + " " + note);
-        while (note >= lowerNoteMidi && note <= upperNoteMidi) {
-            System.out.println("Note " + note + " " + previousTick);
-            previousTick = addStep(track, voice, note, previousTick);
+        int startNoteMidi = MidiUtils.getMidiNote(startNote);
+        int endNoteMidi = MidiUtils.getMidiNote(endNote);
+        int note = startNoteMidi;
+        System.out.println("Adding direction from " + startNoteMidi + " to " + endNoteMidi);
+        while (note >= startNoteMidi && note <= endNoteMidi) {
+            System.out.println("Adding step from " + note + " with tick " + previousTick);
+            previousTick = addStep(track, midiTrack, voice, note, previousTick);
             note += orientedStep;
         }
         return previousTick;
     }
 
-    private static long addStep(Track track, WarmUpVoice voice, int tonic, long previousTick)
-            throws InvalidMidiDataException {
+    private static long addStep(Track track, MidiTrack midiTrack, WarmUpVoice voice,
+                                int tonic, long previousTick) throws InvalidMidiDataException {
 
         // TODO: Define channel by voice.getInstrument()
         int channel = 0;
@@ -108,20 +89,23 @@ public class SequenceConstructor {
             long duration = MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
             if (symbol.isSounding()) {
                 int midiNote = MidiUtils.transpose(((Note) symbol).getNoteRegister(), tonic);
-                addNote(track, channel, midiNote, duration, previousTick);
+                addNote(track, midiTrack, channel, midiNote, duration, previousTick);
             }
             previousTick += duration;
         }
         return previousTick;
     }
 
-    private static void addNote(Track track, int channel, int note, long duration, long position) throws InvalidMidiDataException {
+    private static void addNote(Track track, MidiTrack midiTrack, int channel, int note,
+                                long duration, long position) throws InvalidMidiDataException {
         MidiMessage midiMessage = new ShortMessage(ShortMessage.NOTE_ON, channel, note, VOLUME);
         MidiEvent midiEvent = new MidiEvent(midiMessage, position);
-        track.add(midiEvent);
+        MidiTrackSpecificEvent midiVoiceEvent = new MidiTrackSpecificEvent(midiEvent, midiTrack.index);
+        track.add(midiVoiceEvent);
         midiMessage = new ShortMessage(ShortMessage.NOTE_OFF, channel, note, VOLUME);
         midiEvent = new MidiEvent(midiMessage, position + duration);
-        track.add(midiEvent);
+        midiVoiceEvent = new MidiTrackSpecificEvent(midiEvent, midiTrack.index);
+        track.add(midiVoiceEvent);
     }
 
     enum MidiTrack {
