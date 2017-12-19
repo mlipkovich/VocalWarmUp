@@ -15,10 +15,10 @@
     <dimen name="category_font_size">16sp</dimen>
 
 
-    <dimen name="player_image_margin_top">20sp</dimen>
-    <dimen name="player_small_buttons_size">44sp</dimen>
-    <dimen name="player_big_button_size">64sp</dimen>
+    <dimen name="player_image_margin_top">20dp</dimen>
+    <dimen name="player_small_buttons_size">44dp</dimen>
+    <dimen name="player_big_button_size">64dp</dimen>
     <dimen name="player_slider_margin">8dp</dimen>
-    <dimen name="player_small_buttons_margin">4sp</dimen>
+    <dimen name="player_small_buttons_margin">4dp</dimen>
 
 </resources>

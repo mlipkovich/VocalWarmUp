@@ -1,9 +1,13 @@
 package com.berniac.vocalwarmup.ui;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.Window;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -26,11 +30,12 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_player);
 
         ActionBar topBar = getSupportActionBar();
-        // TODO: Sonya: It seems for me that it's better to do all these things in XML using custom styles
-        // but I wasn't able to achieve it.
         topBar.setTitle("Тренировка");
         topBar.setDisplayHomeAsUpEnabled(true);
-        topBar.setHomeAsUpIndicator(R.drawable.ic_cancel_black_24px);
+        topBar.setHomeAsUpIndicator(R.drawable.ic_player_close);
+
+        topBar.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        topBar.setElevation(0);
 
         final TextView textView = (TextView) findViewById(R.id.current_tempo_text);
 
