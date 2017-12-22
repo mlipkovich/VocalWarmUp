@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:windowBackground">@color/colorLightPrimary</item>
     </style>
 
     <style name="AppTheme.NoAppBar">
@@ -13,17 +15,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.TransparentAppBar" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="AppTheme.LightAppBar" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/colorLightPrimary</item>
+        <item name="colorPrimaryDark">@color/colorLightPrimaryDark</item>
+        <item name="colorAccent">@color/colorLightAccent</item>
 
-        <!--<item name="android:actionBarStyle">@style/TransparentActionBar</item>-->
+        <item name="android:windowBackground">@color/colorLightPrimary</item>
+
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:textColorPrimary">@color/colorLightAccent</item>
     </style>
-    <!--<style name="TransparentActionBar" parent="@style/Widget.AppCompat.ActionBar.Solid">-->
-        <!--<item name="android:titleTextStyle">@style/TransparentTitleStyle</item>-->
-    <!--</style>-->
-    <!--<style name="TransparentTitleStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">-->
-        <!--<item name="android:textColor">@color/colorPrimary</item>-->
-    <!--</style>-->
 </resources>
