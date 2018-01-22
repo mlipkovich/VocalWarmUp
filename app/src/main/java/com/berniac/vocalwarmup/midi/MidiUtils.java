@@ -131,4 +131,8 @@ public class MidiUtils {
             throw new IllegalStateException("Midi value " + midi + " should be between 0 and 255");
         }
     }
+
+    public  static int getTonic() {
+        return SMALL_OCTAVE_C_MIDI;
+    }
 }

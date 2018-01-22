@@ -1,7 +1,12 @@
 package com.berniac.vocalwarmup.sequence;
 
+import com.berniac.vocalwarmup.music.MusicalSymbol;
+import com.berniac.vocalwarmup.music.Note;
 import com.berniac.vocalwarmup.music.NoteRegister;
+import com.berniac.vocalwarmup.music.NoteSymbol;
 import com.berniac.vocalwarmup.music.Step;
+
+import static com.berniac.vocalwarmup.music.NoteRegister.semitonesBetween;
 
 /**
  * Created by Marina Gorlova on 13.11.2017.

@@ -1,5 +1,6 @@
 package com.berniac.vocalwarmup.sequence;
 
+import com.berniac.vocalwarmup.midi.MidiUtils;
 import com.berniac.vocalwarmup.music.MusicalSymbol;
 import com.berniac.vocalwarmup.music.MusicalSymbolParser;
 
@@ -43,6 +44,14 @@ public class WarmUpVoice {
         }
 
         return new WarmUpVoice(musicalSymbols, instrument);
+    }
+
+    public int getLength() {
+        int length = 0;
+        for (MusicalSymbol symbol: musicalSymbols) {
+            length += MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
+        }
+        return length;
     }
 
     public MusicalSymbol[] getMusicalSymbols() {
