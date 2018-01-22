@@ -3,6 +3,8 @@ package jp.kshoji.javax.sound.midi;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Arrays;
+
 /**
  * Abstract class for MIDI Message
  *
@@ -129,4 +131,22 @@ public abstract class MidiMessage implements Cloneable {
      * @return the clone of this object instance
      */
 	public abstract Object clone();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MidiMessage that = (MidiMessage) o;
+
+        return length == that.length && Arrays.equals(data, that.data);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(data);
+        result = 31 * result + length;
+        return result;
+    }
 }

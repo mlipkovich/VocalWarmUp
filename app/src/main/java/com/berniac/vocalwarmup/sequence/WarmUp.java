@@ -2,6 +2,8 @@ package com.berniac.vocalwarmup.sequence;
 
 import com.berniac.vocalwarmup.music.NoteRegister;
 import com.berniac.vocalwarmup.music.Step;
+import com.berniac.vocalwarmup.sequence.adjustment.Adjustment;
+import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;
 
 /**
  * Created by Marina Gorlova on 13.11.2017.
@@ -13,9 +15,10 @@ public class WarmUp {
     private NoteRegister startingNote;
     private int currentNote;       // TODO: Replace with NoteRegister?
     private Direction[] directions;
-    private Melody melody;
+    private Playable melody;
     private boolean runMelody;
-    private Harmony harmony;
+    private Playable harmony;
+    private AdjustmentRules adjustmentRules;
     private boolean runHarmony;
     private Step step;
     private boolean runMetronome;
@@ -67,7 +70,7 @@ public class WarmUp {
         this.patternChanged = true;
     }
 
-    public Melody getMelody() {
+    public Playable getMelody() {
         return melody;
     }
 
@@ -84,7 +87,7 @@ public class WarmUp {
         this.runMelody = runMelody;
     }
 
-    public Harmony getHarmony() {
+    public Playable getHarmony() {
         return harmony;
     }
 
@@ -138,5 +141,13 @@ public class WarmUp {
 
     public boolean getPatternChanged() {
         return patternChanged;
+    }
+
+    public AdjustmentRules getAdjustmentRules() {
+        return adjustmentRules;
+    }
+
+    public void setAdjustmentRules(AdjustmentRules adjustmentRules) {
+        this.adjustmentRules = adjustmentRules;
     }
 }

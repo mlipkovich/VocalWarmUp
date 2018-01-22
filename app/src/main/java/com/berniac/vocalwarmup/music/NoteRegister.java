@@ -5,8 +5,7 @@ package com.berniac.vocalwarmup.music;
  */
 public class NoteRegister {
 
-    // TODO: Ask Ilya about exact boundaries
-    public static final NoteRegister LOWEST_NOTE = new NoteRegister(NoteSymbol.C, -3);
+    public static final NoteRegister LOWEST_NOTE = new NoteRegister(NoteSymbol.F, -3);
     public static final NoteRegister HIGHEST_NOTE = new NoteRegister(NoteSymbol.C, 5);
 
     private static final int LOWER_OCTAVE = -3;
@@ -48,7 +47,14 @@ public class NoteRegister {
 
         NoteRegister that = (NoteRegister) o;
 
-        if (octave != that.octave) return false;
-        return noteSymbol == that.noteSymbol;
+        return octave == that.octave && noteSymbol == that.noteSymbol;
+    }
+
+    @Override
+    public String toString() {
+        return "NoteRegister{" +
+                "noteSymbol=" + noteSymbol +
+                ", octave=" + octave +
+                '}';
     }
 }

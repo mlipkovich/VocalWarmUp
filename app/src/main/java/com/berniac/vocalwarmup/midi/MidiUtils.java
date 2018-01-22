@@ -1,6 +1,7 @@
 package com.berniac.vocalwarmup.midi;
 
 import com.berniac.vocalwarmup.music.NoteRegister;
+import com.berniac.vocalwarmup.music.NoteSymbol;
 import com.berniac.vocalwarmup.music.NoteValue;
 
 /**
@@ -9,6 +10,7 @@ import com.berniac.vocalwarmup.music.NoteValue;
  */
 public class MidiUtils {
 
+    private static final int WHOLE_NOTE_VALUE_TICKS = 384;
     private static final int SMALL_OCTAVE_C_MIDI = 36;
     private static final int SEMITONES_IN_OCTAVE = 12;
 
@@ -22,6 +24,35 @@ public class MidiUtils {
         int transposedMidi = shiftFromCMajorTonic + newTonicMidi;
         validateMidiValue(transposedMidi);
         return transposedMidi;
+    }
+
+    public static NoteSymbol getNote(int midiValue) {
+        int numberOfSemitones = midiValue % 12;
+        if (numberOfSemitones == 0) {
+            return NoteSymbol.C;
+        } else if (numberOfSemitones == 1) {
+            return NoteSymbol.C_SHARP;
+        } else if (numberOfSemitones == 2) {
+            return NoteSymbol.D;
+        } else if (numberOfSemitones == 3) {
+            return NoteSymbol.D_SHARP;
+        } else if (numberOfSemitones == 4) {
+            return NoteSymbol.E;
+        } else if (numberOfSemitones == 5) {
+            return NoteSymbol.F;
+        } else if (numberOfSemitones == 6) {
+            return NoteSymbol.F_SHARP;
+        } else if (numberOfSemitones == 7) {
+            return NoteSymbol.G;
+        } else if (numberOfSemitones == 8) {
+            return NoteSymbol.G_SHARP;
+        } else if (numberOfSemitones == 9) {
+            return NoteSymbol.A;
+        } else if (numberOfSemitones == 10) {
+            return NoteSymbol.A_SHARP;
+        } else { // numberOfSemitones == 11
+            return NoteSymbol.H;
+        }
     }
 
     public static int getMidiNote(NoteRegister note) {
@@ -88,42 +119,7 @@ public class MidiUtils {
     }
 
     public static int getNoteValueInTicks(NoteValue noteValue) {
-        switch (noteValue) {
-            case WHOLE:
-                return 384;
-            case HALF:
-                return 192;
-            case HALF_DOTTED:
-                return 288;
-            case QUARTER:
-                return 96;
-            case QUARTER_DOTTED:
-                return 144;
-            case QUARTER_TRIOLE:
-                return 64;
-            case EIGHTH:
-                return 48;
-            case EIGHTH_DOTTED:
-                return 72;
-            case EIGHTH_TRIOLE:
-                return 32;
-            case SIXTEETH:
-                return 24;
-            case SIXTEETH_DOTTED:
-                return 36;
-            case SIXTEETH_TRIOLE:
-                return 16;
-            case THIRTYSECOND:
-                return 12;
-            case THIRTYSECOND_DOTTED:
-                return 18;
-            case THIRTYSECOND_TRIOLE:
-                return 8;
-            case SIXTYFOURTH:
-                return 6;
-            default:
-                throw new IllegalArgumentException("There is no such note value " + noteValue);
-        }
+        return noteValue.getNumerator() * WHOLE_NOTE_VALUE_TICKS / noteValue.getDenominator();
     }
 
     public static void validateMidiValue(int midi) {

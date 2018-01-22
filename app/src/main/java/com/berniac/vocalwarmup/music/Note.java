@@ -14,6 +14,7 @@ public class Note implements MusicalSymbol {
         this.noteValue = noteValue;
     }
 
+
     public Note(NoteRegister noteRegister, NoteValue noteValue) {
         this.noteRegister = noteRegister;
         this.noteValue = noteValue;
@@ -40,11 +41,14 @@ public class Note implements MusicalSymbol {
 
         Note note = (Note) o;
 
-        if (noteRegister != null ?
-                !noteRegister.equals(note.noteRegister) :
-                note.noteRegister != null) {
-            return false;
-        }
-        return noteValue == note.noteValue;
+        return noteRegister.equals(note.noteRegister) && noteValue.equals(note.noteValue);
+    }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "noteRegister=" + noteRegister +
+                ", noteValue=" + noteValue +
+                '}';
     }
 }
