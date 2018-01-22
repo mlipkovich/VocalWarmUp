@@ -6,7 +6,7 @@ import org.junit.Test;
 /**
  * Created by Mikhail Lipkovich on 11/17/2017.
  */
-public class MusicSymbolParserTest {
+public class MusicalSymbolParserTest {
     @Test
     public void testParsingNote() throws Exception {
         MusicalSymbol note = new Note(NoteSymbol.C, 0, NoteValue.EIGHTH);

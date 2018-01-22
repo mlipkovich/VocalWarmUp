@@ -12,7 +12,23 @@ public enum Instrument {
     FORTEPIANO("Fo"),
     ELECTROPIANO("El"),
     ORGAN("Or"),
-    ACORDEON("Ac");
+    ACORDEON("Ac"),
+    DRUMS("Dr"),
+    BASS_GUITAR("Ba"),
+//    ACOUSTIC_GUITAR("Ac"),
+    CLEAN_GUITAR("Gu"),
+    OVERDRIVE_GUITAR("Ov"),
+    CLASSIC_GUITAR_STRUMMING_1("C1"),
+    CLASSIC_GUITAR_STRUMMING_2("C1"),
+    CLASSIC_GUITAR_STRUMMING_3("C1"),
+    CLASSIC_GUITAR_STRUMMING_4("C1"),
+    CLASSIC_GUITAR_STRUMMING_5("C1"),
+    CLASSIC_GUITAR_STRUMMING_6("C1"),
+    FLUTE("Fl"),
+    CLARINET("Cl"),
+    HOBOJ("Ho"),
+    SAXOPHONE("Sa"),
+    FAGOT("Fa");
     // TODO: Add other instruments
 
     private String code;
