@@ -35,6 +35,8 @@ public class TrainingActivity extends BottomNavigationActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs_training);
         tabLayout.setupWithViewPager(viewPager);
+
+
     }
 
     @Override

@@ -1,20 +1,20 @@
 package com.berniac.vocalwarmup.sequence;
 
-import com.berniac.vocalwarmup.midi.MidiUtils;
 import com.berniac.vocalwarmup.music.MusicalSymbol;
 import com.berniac.vocalwarmup.music.MusicalSymbolParser;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Marina Gorlova on 13.11.2017.
  */
 public class WarmUpVoice {
 
-    private MusicalSymbol[] musicalSymbols;
+    private List<MusicalSymbol> musicalSymbols;
     private Instrument instrument;
 
-    public WarmUpVoice(MusicalSymbol[] musicalSymbols, Instrument instrument) {
+    public WarmUpVoice(List<MusicalSymbol> musicalSymbols, Instrument instrument) {
         this.musicalSymbols = musicalSymbols;
         this.instrument = instrument;
     }
@@ -36,25 +36,15 @@ public class WarmUpVoice {
         Instrument instrument = Instrument.getByCode(str.substring(0, voiceStart));
 
         String[] notes = str.substring(voiceStart + 1, voiceEnd).split(",");
-        MusicalSymbol[] musicalSymbols = new MusicalSymbol[notes.length];
-        int i = 0;
+        List<MusicalSymbol> musicalSymbols = new ArrayList<MusicalSymbol>(notes.length);
         for (String note : notes) {
-            musicalSymbols[i] = MusicalSymbolParser.parse(note);
-            i++;
+            musicalSymbols.add(MusicalSymbolParser.parse(note));
         }
 
         return new WarmUpVoice(musicalSymbols, instrument);
     }
 
-    public int getLength() {
-        int length = 0;
-        for (MusicalSymbol symbol: musicalSymbols) {
-            length += MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
-        }
-        return length;
-    }
-
-    public MusicalSymbol[] getMusicalSymbols() {
+    public List<MusicalSymbol> getMusicalSymbols() {
         return musicalSymbols;
     }
 
@@ -69,7 +59,14 @@ public class WarmUpVoice {
 
         WarmUpVoice that = (WarmUpVoice) o;
 
-        if (!Arrays.equals(musicalSymbols, that.musicalSymbols)) return false;
-        return instrument == that.instrument;
+        return musicalSymbols.equals(that.musicalSymbols) && instrument == that.instrument;
+    }
+
+    @Override
+    public String toString() {
+        return "WarmUpVoice{" +
+                "musicalSymbols=" + musicalSymbols +
+                ", instrument=" + instrument +
+                '}';
     }
 }

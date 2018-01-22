@@ -30,6 +30,13 @@ public class Rest implements MusicalSymbol {
 
         Rest rest = (Rest) o;
 
-        return noteValue == rest.noteValue;
+        return noteValue.equals(rest.noteValue);
+    }
+
+    @Override
+    public String toString() {
+        return "Rest{" +
+                "noteValue=" + noteValue +
+                '}';
     }
 }

@@ -50,4 +50,30 @@ public class MidiEvent {
     public void setTick(long tick) {
         this.tick = tick;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MidiEvent event = (MidiEvent) o;
+
+        return tick == event.tick && message.equals(event.message);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = message.hashCode();
+        result = 31 * result + (int) (tick ^ (tick >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "MidiEvent{" +
+                "message=" + message +
+                ", tick=" + tick +
+                '}';
+    }
 }

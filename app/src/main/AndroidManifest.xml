@@ -21,7 +21,9 @@
         <activity android:name=".ui.training.library.LibraryCategoryActivity" />
         <activity android:name=".ui.saved.SavedActivity" />
         <activity android:name=".ui.settings.SettingsActivity" />
-        <activity android:name=".ui.PlayerActivity" />
+        <activity
+            android:name=".ui.PlayerActivity"
+            android:theme="@style/AppTheme.LightAppBar" />
     </application>
 
 </manifest>

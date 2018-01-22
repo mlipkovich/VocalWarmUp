@@ -19,8 +19,8 @@ public class Harmony implements Playable {
     public static Harmony valueOf(String str) {
         List<WarmUpVoice> harmony = new ArrayList<>();
         Scanner scanner = new Scanner(str);
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
+        while (scanner.hasNext()) {
+            String line = scanner.next();
             harmony.add(WarmUpVoice.valueOf(line));
         }
         scanner.close();
@@ -40,7 +40,13 @@ public class Harmony implements Playable {
 
         Harmony that = (Harmony) o;
 
-        if (!harmony.equals(that.harmony)) return false;
-        return true;
+        return harmony.equals(that.harmony);
+    }
+
+    @Override
+    public String toString() {
+        return "Harmony{" +
+                "harmony=" + harmony +
+                '}';
     }
 }
