@@ -35,15 +35,18 @@ public class SequenceConstructor {
     private SequenceConstructor(){}
 
 
-    public static Sequence construct(WarmUp warmUp) throws Exception {
+    public static WarmUpSequence construct(WarmUp warmUp) throws Exception {
 
         System.out.println("Creating sequence for warm up " + warmUp);
         Sequence sequence = new Sequence(Sequence.PPQ, TICKS_IN_QUARTER_NOTE, MidiTrack.values().length);
 
         WarmUpVoice melodyVoice = warmUp.getMelody().getVoices().get(0);
-        int startingNoteMidi = MidiUtils.getMidiNote(warmUp.getStartingNote());
-        int lowestVoiceNoteMidi = MidiUtils.getMidiNote(getLowestNoteInVoice(melodyVoice));
-        int highestVoiceNoteMidi = MidiUtils.getMidiNote(getHighestNoteInVoice(melodyVoice));
+        Step step = warmUp.getStep();
+        int startingTonicMidi = MidiUtils.getMidiNote(warmUp.getStartingNote());
+        int lowestNoteInVoice = MidiUtils.getMidiNote(getLowestNoteInVoice(melodyVoice));
+        int highestNoteInVoice = MidiUtils.getMidiNote(getHighestNoteInVoice(melodyVoice));
+        int lowestTonicMidi = getLowestTonicInSequence(lowestNoteInVoice, startingTonicMidi, step.getNextShift());
+        int highestTonicMidi = getHighestTonicInSequence(highestNoteInVoice, startingTonicMidi, step.getNextShift());
 
         AdjustmentRules adjustmentRules = warmUp.getAdjustmentRules();
         Adjustment adjustment = new Adjustment(adjustmentRules, warmUp.getPauseSize());
@@ -59,7 +62,7 @@ public class SequenceConstructor {
         long adjustmentEndTick;
 
         TonicStateMachine tonicStateMachine =
-                TonicStateMachine.create(lowestVoiceNoteMidi, highestVoiceNoteMidi, startingNoteMidi, warmUp.getStep());
+                new TonicStateMachine(lowestTonicMidi, highestTonicMidi, warmUp.getStep());
 
         while (!tonicStateMachine.isFinished()) {
 
@@ -90,7 +93,7 @@ public class SequenceConstructor {
             // TODO: Add metronome and lyrics
         }
 
-        return sequence;
+        return new WarmUpSequence(sequence, lowestTonicMidi, highestTonicMidi);
     }
 
     static class TonicStateMachine {
@@ -108,7 +111,6 @@ public class SequenceConstructor {
             FINISHED
         }
 
-        // used mostly for test convenience
         TonicStateMachine(int lowestTonic, int highestTonic, Step step) {
             this.step = step;
             this.lowestTonic = lowestTonic;
@@ -116,28 +118,6 @@ public class SequenceConstructor {
             this.state = State.LOWEST_TO_HIGHEST;
             this.currentTonic = lowestTonic;
         }
-
-        static TonicStateMachine create(int lowestNoteInVoice, int highestNoteInVoice, int startingTonic, Step step) {
-            // TODO: Support random step
-            int lowestNote = getLowestNoteMidiInSequence(lowestNoteInVoice, startingTonic, step.getNextShift());
-            int highestNote = getHighestNoteMidiInSequence(highestNoteInVoice, startingTonic, step.getNextShift());
-            return new TonicStateMachine(lowestNote, highestNote, step);
-        }
-
-        static int getLowestNoteMidiInSequence(int lowestNoteMidiInVoice, int startingTonicMidi, int stepSize) {
-            int maxDist = lowestNoteMidiInVoice - MidiUtils.getMidiNote(NoteRegister.LOWEST_NOTE);
-            int maxDistFullStepsNumber = (int) Math.floor((float) maxDist / stepSize);
-            int maxReachableDist = maxDistFullStepsNumber * stepSize;
-            return startingTonicMidi - maxReachableDist;
-        }
-
-        static int getHighestNoteMidiInSequence(int highestNoteMidiInVoice, int startingTonicMidi, int stepSize) {
-            int maxDist = MidiUtils.getMidiNote(NoteRegister.HIGHEST_NOTE) - highestNoteMidiInVoice;
-            int maxDistFullStepsNumber = (int) Math.floor((float) maxDist / stepSize);
-            int maxReachableDist = maxDistFullStepsNumber * stepSize;
-            return startingTonicMidi + maxReachableDist;
-        }
-
 
         boolean isFinished() {
             return state == State.FINISHED;
@@ -207,6 +187,21 @@ public class SequenceConstructor {
             throw new IllegalStateException("There is no notes in voice " + symbols);
         }
         return highestSymbol.getNoteRegister();
+    }
+
+
+    static int getLowestTonicInSequence(int lowestNoteMidiInVoice, int startingTonicMidi, int stepSize) {
+        int maxDist = lowestNoteMidiInVoice - MidiUtils.getMidiNote(NoteRegister.LOWEST_NOTE);
+        int maxDistFullStepsNumber = (int) Math.floor((float) maxDist / stepSize);
+        int maxReachableDist = maxDistFullStepsNumber * stepSize;
+        return startingTonicMidi - maxReachableDist;
+    }
+
+    static int getHighestTonicInSequence(int highestNoteMidiInVoice, int startingTonicMidi, int stepSize) {
+        int maxDist = MidiUtils.getMidiNote(NoteRegister.HIGHEST_NOTE) - highestNoteMidiInVoice;
+        int maxDistFullStepsNumber = (int) Math.floor((float) maxDist / stepSize);
+        int maxReachableDist = maxDistFullStepsNumber * stepSize;
+        return startingTonicMidi + maxReachableDist;
     }
 
     static NoteValue getLastNoteDuration(WarmUpVoice voice) {

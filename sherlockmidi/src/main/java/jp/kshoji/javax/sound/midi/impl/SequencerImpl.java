@@ -328,7 +328,7 @@ public class SequencerImpl implements Sequencer {
                     for (int i = 0; i < playingTrack.size(); i++) {
                         final MidiEvent midiEvent = playingTrack.get(i);
                         if (midiEvent instanceof MidiTrackSpecificEvent) {
-                                int currentEventTrack = ((MidiTrackSpecificEvent) midiEvent).getTrackIndex();
+                            int currentEventTrack = ((MidiTrackSpecificEvent) midiEvent).getTrackIndex();
                             if (trackMute.get(currentEventTrack)) {
                                 // skip muted track
                                 continue;

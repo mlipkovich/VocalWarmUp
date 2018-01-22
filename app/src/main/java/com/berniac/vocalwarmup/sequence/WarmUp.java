@@ -1,6 +1,9 @@
 package com.berniac.vocalwarmup.sequence;
 
+import com.berniac.vocalwarmup.music.MusicalSymbol;
+import com.berniac.vocalwarmup.music.Note;
 import com.berniac.vocalwarmup.music.NoteRegister;
+import com.berniac.vocalwarmup.music.NoteSymbol;
 import com.berniac.vocalwarmup.music.Step;
 import com.berniac.vocalwarmup.sequence.adjustment.Adjustment;
 import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;

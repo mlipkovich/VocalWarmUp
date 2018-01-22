@@ -12,7 +12,7 @@ public class Harmony implements Playable {
 
     private List<WarmUpVoice> harmony;
 
-    Harmony(List<WarmUpVoice> harmony) {
+    public Harmony(List<WarmUpVoice> harmony) {
         this.harmony = harmony;
     }
 

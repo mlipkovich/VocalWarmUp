@@ -1,6 +1,5 @@
 package com.berniac.vocalwarmup.midi;
 
-import com.berniac.vocalwarmup.midi.MidiUtils;
 import com.berniac.vocalwarmup.music.NoteRegister;
 import com.berniac.vocalwarmup.music.NoteSymbol;
 
@@ -44,5 +43,25 @@ public class MidiUtilsTest {
         Assert.assertEquals(32, MidiUtils.transpose(new NoteRegister(NoteSymbol.H_SHARP, 0), 20));
         Assert.assertEquals(55, MidiUtils.transpose(new NoteRegister(NoteSymbol.C_BEMOL, 3), 20));
         Assert.assertEquals(68, MidiUtils.transpose(new NoteRegister(NoteSymbol.H_SHARP, 3), 20));
+    }
+
+    @Test
+    public void testSemitonesBetween() throws Exception {
+        NoteRegister noteRegisterFrom = new NoteRegister(NoteSymbol.C, 0);
+        NoteRegister noteRegisterTo = new NoteRegister(NoteSymbol.C, 0);
+        Assert.assertEquals(MidiUtils.semitonesBetween(noteRegisterFrom, noteRegisterTo), 0);
+
+        noteRegisterFrom = new NoteRegister(NoteSymbol.C, 0);
+        noteRegisterTo = new NoteRegister(NoteSymbol.C, 3);
+        Assert.assertEquals(MidiUtils.semitonesBetween(noteRegisterFrom, noteRegisterTo), 36);
+
+
+        noteRegisterFrom = new NoteRegister(NoteSymbol.C, -1);
+        noteRegisterTo = new NoteRegister(NoteSymbol.C, 1);
+        Assert.assertEquals(MidiUtils.semitonesBetween(noteRegisterFrom, noteRegisterTo), 24);
+
+        noteRegisterFrom = new NoteRegister(NoteSymbol.F, -1);
+        noteRegisterTo = new NoteRegister(NoteSymbol.C_SHARP, -1);
+        Assert.assertEquals(MidiUtils.semitonesBetween(noteRegisterFrom, noteRegisterTo), -4);
     }
 }

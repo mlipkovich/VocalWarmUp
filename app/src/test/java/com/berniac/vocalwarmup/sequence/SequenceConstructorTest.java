@@ -103,15 +103,15 @@ public class SequenceConstructorTest {
 
     @Test
     public void testLowestAndHighestNoteMidiInSequence() {
-        Assert.assertEquals(7, SequenceConstructor.TonicStateMachine.getLowestNoteMidiInSequence(5, 7, 2));
-        Assert.assertEquals(12, SequenceConstructor.TonicStateMachine.getLowestNoteMidiInSequence(14, 20, 2));
-        Assert.assertEquals(10, SequenceConstructor.TonicStateMachine.getLowestNoteMidiInSequence(15, 20, 2));
-        Assert.assertEquals(11, SequenceConstructor.TonicStateMachine.getLowestNoteMidiInSequence(15, 20, 3));
-        Assert.assertEquals(12, SequenceConstructor.TonicStateMachine.getLowestNoteMidiInSequence(15, 20, 4));
+        Assert.assertEquals(7, SequenceConstructor.getLowestTonicInSequence(5, 7, 2));
+        Assert.assertEquals(12, SequenceConstructor.getLowestTonicInSequence(14, 20, 2));
+        Assert.assertEquals(10, SequenceConstructor.getLowestTonicInSequence(15, 20, 2));
+        Assert.assertEquals(11, SequenceConstructor.getLowestTonicInSequence(15, 20, 3));
+        Assert.assertEquals(12, SequenceConstructor.getLowestTonicInSequence(15, 20, 4));
 
-        Assert.assertEquals(94, SequenceConstructor.TonicStateMachine.getHighestNoteMidiInSequence(96, 94, 2));
-        Assert.assertEquals(88, SequenceConstructor.TonicStateMachine.getHighestNoteMidiInSequence(87, 80, 2));
-        Assert.assertEquals(89, SequenceConstructor.TonicStateMachine.getHighestNoteMidiInSequence(87, 80, 3));
+        Assert.assertEquals(94, SequenceConstructor.getHighestTonicInSequence(96, 94, 2));
+        Assert.assertEquals(88, SequenceConstructor.getHighestTonicInSequence(87, 80, 2));
+        Assert.assertEquals(89, SequenceConstructor.getHighestTonicInSequence(87, 80, 3));
     }
 
     @Test
@@ -171,8 +171,8 @@ public class SequenceConstructorTest {
 
         warmUp.setMelody(new Melody(new WarmUpVoice(musicalSymbols, Instrument.FORTEPIANO)));
         warmUp.setAdjustmentRules(SilentAdjustmentRules.valueOf(null));
-        Sequence sequence = SequenceConstructor.construct(warmUp);
-        System.out.println(sequence.getTracks()[0].ticks());
+        WarmUpSequence sequence = SequenceConstructor.construct(warmUp);
+        System.out.println(sequence.getSequence().getTracks()[0].ticks());
 
 //        int[] expectedMidiNotes = new int[]{36, 37, 38,
 //                                            38, 39, 40,
