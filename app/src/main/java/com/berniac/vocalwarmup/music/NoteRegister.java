@@ -1,7 +1,5 @@
 package com.berniac.vocalwarmup.music;
 
-import static com.berniac.vocalwarmup.midi.MidiUtils.getMidiNote;
-
 /**
  * Created by Mikhail Lipkovich on 11/17/2017.
  */
@@ -40,10 +38,6 @@ public class NoteRegister {
 
     public int getOctave() {
         return octave;
-    }
-
-    public static int semitonesBetween(NoteRegister from, NoteRegister to) {
-        return getMidiNote(to) - getMidiNote(from);
     }
 
     @Override

@@ -8,8 +8,6 @@ import com.berniac.vocalwarmup.music.Step;
 import com.berniac.vocalwarmup.sequence.adjustment.Adjustment;
 import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;
 
-import static com.berniac.vocalwarmup.music.NoteRegister.semitonesBetween;
-
 /**
  * Created by Marina Gorlova on 13.11.2017.
  */

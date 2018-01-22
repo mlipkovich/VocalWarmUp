@@ -7,13 +7,13 @@ import com.berniac.vocalwarmup.music.NoteRegister;
 import com.berniac.vocalwarmup.music.NoteSymbol;
 import com.berniac.vocalwarmup.music.NoteValue;
 
+import java.util.List;
+
 import jp.kshoji.javax.sound.midi.EndSequenceEventListener;
 import jp.kshoji.javax.sound.midi.InvalidMidiDataException;
 import jp.kshoji.javax.sound.midi.MidiUnavailableException;
 import jp.kshoji.javax.sound.midi.Sequence;
 import jp.kshoji.javax.sound.midi.Sequencer;
-
-import static com.berniac.vocalwarmup.music.NoteRegister.semitonesBetween;
 
 /**
  * Created by Marina Gorlova on 02.12.2017.
@@ -115,7 +115,6 @@ public class WarmUpPlayer implements Player {
     @Override
     public void nextStep() {
         goToStep(getCurrentStep() + 1);
-
     }
 
     @Override
@@ -163,13 +162,21 @@ public class WarmUpPlayer implements Player {
 
     }
 
+    public static int getLengthInTicks(List<MusicalSymbol> musicalSymbols) {
+        int length = 0;
+        for (MusicalSymbol symbol: musicalSymbols) {
+            length += MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
+        }
+        return length;
+    }
+
     public int getStepSize() {
-        return warmUp.getMelody().getVoices().get(0).getLength()
+        return getLengthInTicks(warmUp.getMelody().getVoices().get(0).getMusicalSymbols())
                 + warmUp.getPauseSize()* MidiUtils.getNoteValueInTicks(NoteValue.QUARTER);
     }
 
     public void setBoundaries() {
-        MusicalSymbol[] musicalSymbols = warmUp.getMelody().getVoices().get(0).getMusicalSymbols();
+        List<MusicalSymbol> musicalSymbols = warmUp.getMelody().getVoices().get(0).getMusicalSymbols();
         int tonic = MidiUtils.getTonic();
         int semitonesToLowerBoundary = 0;
         int semitonesToUpperBoundary = 0;

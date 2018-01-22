@@ -122,6 +122,10 @@ public class MidiUtils {
         return noteValue.getNumerator() * WHOLE_NOTE_VALUE_TICKS / noteValue.getDenominator();
     }
 
+    public static int semitonesBetween(NoteRegister from, NoteRegister to) {
+        return getMidiNote(to) - getMidiNote(from);
+    }
+
     public static void validateMidiValue(int midi) {
         if (midi < 0 | midi > 255) {
             throw new IllegalStateException("Midi value " + midi + " should be between 0 and 255");
