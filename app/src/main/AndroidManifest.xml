@@ -22,7 +22,7 @@
         <activity android:name=".ui.saved.SavedActivity" />
         <activity android:name=".ui.settings.SettingsActivity" />
         <activity
-            android:name=".ui.PlayerActivity"
+            android:name=".ui.player.PlayerActivity"
             android:theme="@style/AppTheme.LightAppBar" />
     </application>
 

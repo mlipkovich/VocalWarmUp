@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.berniac.vocalwarmup.R;
-import com.berniac.vocalwarmup.ui.PlayerActivity;
+import com.berniac.vocalwarmup.ui.player.PlayerActivity;
 import com.berniac.vocalwarmup.ui.ResourcesProvider;
 import com.berniac.vocalwarmup.ui.training.ItemRowView;
 
