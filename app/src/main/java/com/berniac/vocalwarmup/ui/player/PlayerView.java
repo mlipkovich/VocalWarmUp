@@ -22,4 +22,12 @@ public abstract class PlayerView extends AppCompatActivity {
     public abstract void changePlayButtonToPause();
 
     public abstract void changePlayButtonToPlay();
+
+    public abstract void changeHarmonyButtonToOn();
+
+    public abstract void changeHarmonyButtonToOff();
+
+    public abstract void changeMelodyButtonToOn();
+
+    public abstract void changeMelodyButtonToOff();
 }

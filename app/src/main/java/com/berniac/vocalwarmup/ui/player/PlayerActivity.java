@@ -93,6 +93,7 @@ public class PlayerActivity extends PlayerView {
         });
 
         harmonySwitcherButton = (ImageButton) findViewById(R.id.harmony_btn);
+        harmonySwitcherButton.setBackgroundResource(R.drawable.ic_player_harmony_on);
         harmonySwitcherButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,12 +102,26 @@ public class PlayerActivity extends PlayerView {
         });
 
         melodySwitcherButton = (ImageButton) findViewById(R.id.melody_btn);
+        melodySwitcherButton.setBackgroundResource(R.drawable.ic_player_melody_on);
         melodySwitcherButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 presenter.onMelodySwitcherClicked();
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // TODO: Sonya: Isn't it overkill to use Menu here? Wasn't able to put regular button there
+        getMenuInflater().inflate(R.menu.player_top_bar, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -127,15 +142,22 @@ public class PlayerActivity extends PlayerView {
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+    public void changeHarmonyButtonToOn() {
+        harmonySwitcherButton.setBackgroundResource(R.drawable.ic_player_harmony_on);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO: Sonya: Isn't it overkill to use Menu here? Wasn't able to put regular button there
-        getMenuInflater().inflate(R.menu.player_top_bar, menu);
-        return super.onCreateOptionsMenu(menu);
+    public void changeHarmonyButtonToOff() {
+        harmonySwitcherButton.setBackgroundResource(R.drawable.ic_player_harmony_off);
+    }
+
+    @Override
+    public void changeMelodyButtonToOn() {
+        melodySwitcherButton.setBackgroundResource(R.drawable.ic_player_melody_on);
+    }
+
+    @Override
+    public void changeMelodyButtonToOff() {
+        melodySwitcherButton.setBackgroundResource(R.drawable.ic_player_melody_off);
     }
 }
