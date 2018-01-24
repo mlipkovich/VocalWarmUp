@@ -80,17 +80,23 @@ public class PlayerPresenter {
 
     public void onHarmonySwitcherClicked() {
         if (isHarmonySwitchedOff) {
+            view.changeHarmonyButtonToOn();
             player.harmonyOn();
         } else {
+            view.changeHarmonyButtonToOff();
             player.harmonyOff();
         }
+        isHarmonySwitchedOff = !isHarmonySwitchedOff;
     }
 
     public void onMelodySwitcherClicked() {
         if (isMelodySwitchedOff) {
+            view.changeMelodyButtonToOn();
             player.melodyOn();
         } else {
+            view.changeMelodyButtonToOff();
             player.melodyOff();
         }
+        isMelodySwitchedOff = !isMelodySwitchedOff;
     }
 }
