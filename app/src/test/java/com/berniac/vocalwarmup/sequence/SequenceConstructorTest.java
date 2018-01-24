@@ -1,5 +1,6 @@
 package com.berniac.vocalwarmup.sequence;
 
+import com.berniac.vocalwarmup.midi.MidiUtils;
 import com.berniac.vocalwarmup.music.FixedStep;
 import com.berniac.vocalwarmup.music.MusicalSymbol;
 import com.berniac.vocalwarmup.music.Note;
@@ -32,7 +33,7 @@ public class SequenceConstructorTest {
     private WarmUpVoice voice1 = new WarmUpVoice(
             Arrays.asList(
                     new Note(new NoteRegister(NoteSymbol.F, 0), NoteValue.QUARTER),
-                    new Rest(NoteValue.QUARTER),
+                    new Rest(NoteValue.EIGHTH),
                     new Note(new NoteRegister(NoteSymbol.D, 0), NoteValue.QUARTER),
                     new Note(new NoteRegister(NoteSymbol.C, 0), NoteValue.QUARTER)), Instrument.FORTEPIANO);
     private WarmUpVoice voice2 = new WarmUpVoice(
@@ -51,7 +52,6 @@ public class SequenceConstructorTest {
                     new Rest(NoteValue.QUARTER),
                     new Note(new NoteRegister(NoteSymbol.D, 0), NoteValue.QUARTER),
                     new Rest(NoteValue.EIGHTH)), Instrument.FORTEPIANO);
-
 
     @Test
     public void testTonicStateMachineEvenStep() {
@@ -100,7 +100,6 @@ public class SequenceConstructorTest {
                 SequenceConstructor.getHighestNoteInVoice(voice2));
     }
 
-
     @Test
     public void testLowestAndHighestNoteMidiInSequence() {
         Assert.assertEquals(7, SequenceConstructor.getLowestTonicInSequence(5, 7, 2));
@@ -121,12 +120,66 @@ public class SequenceConstructorTest {
         Assert.assertEquals(NoteValue.EIGHTH, SequenceConstructor.getLastNoteDuration(voice4));
     }
 
+
     @Test
-    public void testAddNote() throws InvalidMidiDataException {
+    public void testAddNote() throws Exception {
+        testAddNote(50, 0, 100, 0);
+        testAddNote(20, 100, 100, 0);
+        testAddNote(20, 100, 100, 1);
+    }
+
+    @Test
+    public void testAddStep() throws InvalidMidiDataException {
+        Track track = new Track();
+        SequenceConstructor.MidiTrack midiTrack = SequenceConstructor.MidiTrack.MELODY;
         int channel = 0;
-        long position = 0;
-        long duration = 100;
         int tonic = 50;
+        long previousTick = 50;
+
+        SequenceConstructor.addStepVoice(track, midiTrack, voice1, tonic, previousTick);
+
+        Track trackExpected = new Track();
+        long position = previousTick;
+        trackExpected.add(new MidiTrackSpecificEvent(
+                new MidiEvent(
+                        new ShortMessage(ShortMessage.NOTE_ON, channel, 50 + 5, SequenceConstructor.VOLUME),
+                        position), midiTrack.getIndex()));
+        position += MidiUtils.getNoteValueInTicks(NoteValue.QUARTER);
+        trackExpected.add(new MidiTrackSpecificEvent(
+                new MidiEvent(
+                        new ShortMessage(ShortMessage.NOTE_OFF, channel, 50 + 5, SequenceConstructor.VOLUME),
+                        position), midiTrack.getIndex()));
+        position += MidiUtils.getNoteValueInTicks(NoteValue.EIGHTH);
+        trackExpected.add(new MidiTrackSpecificEvent(
+                new MidiEvent(
+                        new ShortMessage(ShortMessage.NOTE_ON, channel, 50 + 2, SequenceConstructor.VOLUME),
+                        position), midiTrack.getIndex()));
+        position += MidiUtils.getNoteValueInTicks(NoteValue.QUARTER);
+        trackExpected.add(new MidiTrackSpecificEvent(
+                new MidiEvent(
+                        new ShortMessage(ShortMessage.NOTE_OFF, channel, 50 + 2, SequenceConstructor.VOLUME),
+                        position), midiTrack.getIndex()));
+        trackExpected.add(new MidiTrackSpecificEvent(
+                new MidiEvent(
+                        new ShortMessage(ShortMessage.NOTE_ON, channel, 50 + 0, SequenceConstructor.VOLUME),
+                        position), midiTrack.getIndex()));
+        position += MidiUtils.getNoteValueInTicks(NoteValue.QUARTER);
+        trackExpected.add(new MidiTrackSpecificEvent(
+                new MidiEvent(
+                        new ShortMessage(ShortMessage.NOTE_OFF, channel, 50 + 0, SequenceConstructor.VOLUME),
+                        position), midiTrack.getIndex()));
+
+        Assert.assertEquals(trackExpected.size(), track.size());
+        Assert.assertEquals(trackExpected.get(0), track.get(0));
+        Assert.assertEquals(trackExpected.get(1), track.get(1));
+        Assert.assertEquals(trackExpected.get(2), track.get(2));
+        Assert.assertEquals(trackExpected.get(3), track.get(3));
+        Assert.assertEquals(trackExpected.get(4), track.get(4));
+        Assert.assertEquals(trackExpected.get(5), track.get(5));
+    }
+
+
+    private void testAddNote(int tonic, int position,long duration, int channel) throws InvalidMidiDataException {
         Track track = new Track();
         SequenceConstructor.MidiTrack midiTrack = SequenceConstructor.MidiTrack.MELODY;
         SequenceConstructor.addNote(track, midiTrack, channel, tonic, duration, position);
@@ -143,14 +196,6 @@ public class SequenceConstructorTest {
                                 position + duration), midiTrack.getIndex());
         Assert.assertEquals(track.get(0), event1);
         Assert.assertEquals(track.get(1), event2);
-    }
-
-    @Test
-    public void testAddStep() throws InvalidMidiDataException {
-        Track track = new Track();
-        SequenceConstructor.addStepVoice(track, SequenceConstructor.MidiTrack.MELODY, voice1, 50, 0);
-        System.out.println(track.ticks());
-        System.out.println(track.size());
     }
 
     @Test

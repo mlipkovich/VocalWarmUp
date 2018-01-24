@@ -50,14 +50,14 @@ public class SequenceConstructor {
 
         AdjustmentRules adjustmentRules = warmUp.getAdjustmentRules();
         Adjustment adjustment = new Adjustment(adjustmentRules, warmUp.getPauseSize());
+        NoteValue lastMelodyNoteDuration = getLastNoteDuration(melodyVoice);
         Playable harmony = warmUp.getHarmony();
         if (harmony != null) {
-            alignHarmonyDueToAdjustment(harmony, warmUp.getMelody(), adjustmentRules);
+            alignHarmonyDueToAdjustment(harmony, adjustmentRules, lastMelodyNoteDuration);
         }
 
         long melodyStartTick = 0;
         long melodyEndTick;
-        long harmonyEndTick;
         long adjustmentStartTick;
         long adjustmentEndTick;
 
@@ -72,19 +72,16 @@ public class SequenceConstructor {
                     currentTonicMidi, melodyStartTick);
 
             if (harmony != null) {
-                harmonyEndTick = addStepPlayable(sequence, MidiTrack.HARMONY, warmUp.getHarmony(),
+                addStepPlayable(sequence, MidiTrack.HARMONY, warmUp.getHarmony(),
                         currentTonicMidi, melodyStartTick);
-                adjustmentStartTick = harmonyEndTick;
-            } else {
-                int lastNoteTicks =
-                        MidiUtils.getNoteValueInTicks(getLastNoteDuration(melodyVoice));
-                adjustmentStartTick = melodyEndTick - lastNoteTicks;
             }
 
             int nextTonicMidi = tonicStateMachine.getNextTonic();
             Playable adjustmentVoices = adjustment.getVoices(
                     MidiUtils.getNote(currentTonicMidi),
                     MidiUtils.getNote(nextTonicMidi));
+            adjustmentStartTick = getAdjustmentStartTick(adjustmentRules,
+                    melodyEndTick, lastMelodyNoteDuration);
             adjustmentEndTick = addStepPlayable(sequence, MidiTrack.ADJUSTMENT, adjustmentVoices,
                     currentTonicMidi, adjustmentStartTick);
 
@@ -148,6 +145,17 @@ public class SequenceConstructor {
         }
     }
 
+    static long getAdjustmentStartTick(AdjustmentRules adjustmentRules,
+                                       long melodyEndTick, NoteValue lastMelodyNoteDuration) {
+        long adjustmentStartTick = melodyEndTick;
+        if (adjustmentRules instanceof SilentAdjustmentRules) {
+            return adjustmentStartTick;
+        }
+
+        int lastNoteTicks = MidiUtils.getNoteValueInTicks(lastMelodyNoteDuration);
+        adjustmentStartTick -= lastNoteTicks;
+        return adjustmentStartTick;
+    }
 
     static NoteRegister getLowestNoteInVoice(WarmUpVoice voice) {
         List<MusicalSymbol> symbols = voice.getMusicalSymbols();
@@ -210,14 +218,13 @@ public class SequenceConstructor {
         return lastMelodyNote.getNoteValue();
     }
 
-    private static void alignHarmonyDueToAdjustment(Playable harmony, Playable melody,
-                                                    AdjustmentRules adjustmentRules) {
+    private static void alignHarmonyDueToAdjustment(Playable harmony, AdjustmentRules adjustmentRules,
+                                                    NoteValue lastMelodyNoteDuration) {
         if (adjustmentRules instanceof SilentAdjustmentRules) {
             return;
         }
 
-        WarmUpVoice melodyVoice = melody.getVoices().get(0);
-        float lastMelodyNoteQuartersCount = getLastNoteDuration(melodyVoice).getNumberOfQuarters();
+        float lastMelodyNoteQuartersCount = lastMelodyNoteDuration.getNumberOfQuarters();
         for (WarmUpVoice harmonyVoice : harmony.getVoices()) {
             List<MusicalSymbol> voiceSymbols = harmonyVoice.getMusicalSymbols();
             int symbolIndex = 0;
