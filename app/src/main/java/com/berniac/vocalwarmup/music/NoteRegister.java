@@ -32,6 +32,24 @@ public class NoteRegister {
         this.octave = octave;
     }
 
+    public static NoteRegister valueOf(String str) {
+        int octaveIndex = str.length();
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isLetter(str.charAt(i))) {
+                octaveIndex = i;
+                break;
+            }
+        }
+        NoteSymbol noteSymbol = NoteSymbol.getByCode(str.substring(0, octaveIndex));
+        int octave;
+        if (octaveIndex == str.length()) {
+            octave = 0;
+        } else {
+            octave = Integer.valueOf(str.substring(octaveIndex, str.length()));
+        }
+        return new NoteRegister(noteSymbol, octave);
+    }
+
     public NoteSymbol getNoteSymbol() {
         return noteSymbol;
     }

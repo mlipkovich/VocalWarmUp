@@ -18,12 +18,13 @@ public class MidiUtils {
      * Takes note in C-major scale and transposes it with respect to tonic which is given
      * as midi value. Result is also a midi value
      */
-    public static int transpose(NoteRegister noteInCMajorScale, int newTonicMidi) {
+    public static int transpose(NoteRegister noteInCMajorScale, int newTonicMidi, int octaveShift) {
         int noteInCMajorScaleMidi = getMidiNote(noteInCMajorScale);
         int shiftFromCMajorTonic = noteInCMajorScaleMidi - SMALL_OCTAVE_C_MIDI;
         int transposedMidi = shiftFromCMajorTonic + newTonicMidi;
-        validateMidiValue(transposedMidi);
-        return transposedMidi;
+        int shiftedTransposedMidi = transposedMidi + octaveShift * SEMITONES_IN_OCTAVE;
+        validateMidiValue(shiftedTransposedMidi);
+        return shiftedTransposedMidi;
     }
 
     public static NoteSymbol getNote(int midiValue) {

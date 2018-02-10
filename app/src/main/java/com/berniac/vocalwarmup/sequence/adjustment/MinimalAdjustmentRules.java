@@ -24,8 +24,8 @@ public class MinimalAdjustmentRules implements AdjustmentRules {
     }
 
     public static MinimalAdjustmentRules valueOf(String str) {
-        int rulesStart = str.indexOf("{");
-        int rulesEnd = str.indexOf("}");
+        int rulesStart = str.indexOf("<");
+        int rulesEnd = str.indexOf(">");
         RuleParser ruleParser = RuleParser.valueOf(str.substring(rulesStart + 1, rulesEnd));
         return new MinimalAdjustmentRules(ruleParser);
     }

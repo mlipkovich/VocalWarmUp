@@ -37,12 +37,12 @@ public class MidiUtilsTest {
 
     @Test
     public void testTranspose() {
-        Assert.assertEquals(0, MidiUtils.transpose(new NoteRegister(NoteSymbol.C, 0), 0));
-        Assert.assertEquals(20, MidiUtils.transpose(new NoteRegister(NoteSymbol.C, 0), 20));
-        Assert.assertEquals(19, MidiUtils.transpose(new NoteRegister(NoteSymbol.C_BEMOL, 0), 20));
-        Assert.assertEquals(32, MidiUtils.transpose(new NoteRegister(NoteSymbol.H_SHARP, 0), 20));
-        Assert.assertEquals(55, MidiUtils.transpose(new NoteRegister(NoteSymbol.C_BEMOL, 3), 20));
-        Assert.assertEquals(68, MidiUtils.transpose(new NoteRegister(NoteSymbol.H_SHARP, 3), 20));
+        Assert.assertEquals(0, MidiUtils.transpose(new NoteRegister(NoteSymbol.C, 0), 0, 0));
+        Assert.assertEquals(20, MidiUtils.transpose(new NoteRegister(NoteSymbol.C, 0), 20, 0));
+        Assert.assertEquals(19, MidiUtils.transpose(new NoteRegister(NoteSymbol.C_BEMOL, 0), 20, 0));
+        Assert.assertEquals(32, MidiUtils.transpose(new NoteRegister(NoteSymbol.H_SHARP, 0), 20, 0));
+        Assert.assertEquals(55, MidiUtils.transpose(new NoteRegister(NoteSymbol.C_BEMOL, 3), 20, 0));
+        Assert.assertEquals(68, MidiUtils.transpose(new NoteRegister(NoteSymbol.H_SHARP, 3), 20, 0));
     }
 
     @Test

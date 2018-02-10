@@ -129,6 +129,26 @@ public class SequenceConstructorTest {
     }
 
     @Test
+    public void testOctaveShift() {
+        List<OctaveShifts.BoundaryNote> lowerBoundaries = Collections.singletonList(
+                new OctaveShifts.BoundaryNote(new NoteRegister(NoteSymbol.D, -1), 1));
+        List<OctaveShifts.BoundaryNote> upperBoundaries = Arrays.asList(
+                new OctaveShifts.BoundaryNote(new NoteRegister(NoteSymbol.C_SHARP, 1), -1),
+                new OctaveShifts.BoundaryNote(new NoteRegister(NoteSymbol.D, 2), -2));
+        OctaveShifts octaveShifts = new OctaveShifts(lowerBoundaries, upperBoundaries);
+
+        Assert.assertEquals(0, SequenceConstructor.getOctaveShift(octaveShifts, 27));
+        Assert.assertEquals(1, SequenceConstructor.getOctaveShift(octaveShifts, 26));
+        Assert.assertEquals(1, SequenceConstructor.getOctaveShift(octaveShifts, 10));
+        Assert.assertEquals(0, SequenceConstructor.getOctaveShift(octaveShifts, 48));
+        Assert.assertEquals(-1, SequenceConstructor.getOctaveShift(octaveShifts, 49));
+        Assert.assertEquals(-1, SequenceConstructor.getOctaveShift(octaveShifts, 60));
+        Assert.assertEquals(-2, SequenceConstructor.getOctaveShift(octaveShifts, 62));
+        Assert.assertEquals(-2, SequenceConstructor.getOctaveShift(octaveShifts, 80));
+
+    }
+
+    @Test
     public void testAddStep() throws InvalidMidiDataException {
         Track track = new Track();
         SequenceConstructor.MidiTrack midiTrack = SequenceConstructor.MidiTrack.MELODY;
