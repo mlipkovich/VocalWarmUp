@@ -13,10 +13,19 @@ public class WarmUpVoice {
 
     private List<MusicalSymbol> musicalSymbols;
     private Instrument instrument;
+    private OctaveShifts octaveShifts;
+
+    public WarmUpVoice(List<MusicalSymbol> musicalSymbols, Instrument instrument,
+                       OctaveShifts octaveShifts) {
+        this.musicalSymbols = musicalSymbols;
+        this.instrument = instrument;
+        this.octaveShifts = octaveShifts;
+    }
 
     public WarmUpVoice(List<MusicalSymbol> musicalSymbols, Instrument instrument) {
         this.musicalSymbols = musicalSymbols;
         this.instrument = instrument;
+        this.octaveShifts = OctaveShifts.EMPTY_SHIFTS;
     }
 
     public static WarmUpVoice valueOf(String str) {
@@ -41,7 +50,8 @@ public class WarmUpVoice {
             musicalSymbols.add(MusicalSymbolParser.parse(note));
         }
 
-        return new WarmUpVoice(musicalSymbols, instrument);
+        OctaveShifts shifts = OctaveShifts.valueOf(str.substring(voiceEnd + 1, str.length()));
+        return new WarmUpVoice(musicalSymbols, instrument, shifts);
     }
 
     public List<MusicalSymbol> getMusicalSymbols() {
@@ -52,14 +62,31 @@ public class WarmUpVoice {
         return instrument;
     }
 
+    public OctaveShifts getOctaveShifts() {
+        return octaveShifts;
+    }
+
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof WarmUpVoice)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         WarmUpVoice that = (WarmUpVoice) o;
 
-        return musicalSymbols.equals(that.musicalSymbols) && instrument == that.instrument;
+        if (!musicalSymbols.equals(that.musicalSymbols)) return false;
+        if (instrument != that.instrument) return false;
+        return octaveShifts.equals(that.octaveShifts);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = musicalSymbols.hashCode();
+        result = 31 * result + instrument.hashCode();
+        result = 31 * result + octaveShifts.hashCode();
+        return result;
     }
 
     @Override
@@ -67,6 +94,7 @@ public class WarmUpVoice {
         return "WarmUpVoice{" +
                 "musicalSymbols=" + musicalSymbols +
                 ", instrument=" + instrument +
+                ", octaveShifts=" + octaveShifts +
                 '}';
     }
 }

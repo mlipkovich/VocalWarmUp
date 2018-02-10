@@ -21,22 +21,25 @@ public class FullAdjustmentRules implements AdjustmentRules {
     }
 
     public static FullAdjustmentRules valueOf(String str) {
+
         int fromIndex = 0;
+        int adjustmentStart = str.indexOf(FULL_ADJUSTMENT_MARK, fromIndex);
         SparseArray<RuleParser> pauseSizeToAdjustment = new SparseArray<>();
 
-        while (fromIndex < str.length()) {
-            int adjustmentStart = str.indexOf(FULL_ADJUSTMENT_MARK, fromIndex);
-
-            int ruleStart = str.indexOf("{", adjustmentStart);
-            int ruleEnd = str.indexOf("}", adjustmentStart);
+        do {
+            int ruleStart = str.indexOf("<", adjustmentStart);
+            int ruleEnd = str.indexOf(">", adjustmentStart);
             String ruleStr = str.substring(ruleStart + 1, ruleEnd);
             String pauseSizeStr = str.substring(
                     adjustmentStart + FULL_ADJUSTMENT_MARK.length(), ruleStart);
             int pauseSize = Integer.valueOf(pauseSizeStr);
+
             RuleParser rule = RuleParser.valueOf(ruleStr);
             pauseSizeToAdjustment.put(pauseSize, rule);
+
             fromIndex = ruleEnd;
-        }
+            adjustmentStart = str.indexOf(FULL_ADJUSTMENT_MARK, fromIndex);
+        } while (fromIndex < str.length() && adjustmentStart != -1);
 
         return new FullAdjustmentRules(pauseSizeToAdjustment);
     }

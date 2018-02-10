@@ -1,7 +1,9 @@
-package com.berniac.vocalwarmup.music;
+package com.berniac.vocalwarmup.sequence;
 
-import com.berniac.vocalwarmup.sequence.Instrument;
-import com.berniac.vocalwarmup.sequence.WarmUpVoice;
+import com.berniac.vocalwarmup.music.MusicalSymbol;
+import com.berniac.vocalwarmup.music.Note;
+import com.berniac.vocalwarmup.music.NoteSymbol;
+import com.berniac.vocalwarmup.music.NoteValue;
 
 import org.junit.Assert;
 import org.junit.Test;

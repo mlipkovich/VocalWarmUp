@@ -255,15 +255,38 @@ public class SequenceConstructor {
         // TODO: Define channel by voice.getInstrument()
         int channel = 0;
 
+        int octaveShift = getOctaveShift(voice.getOctaveShifts(), tonic);
         for (MusicalSymbol symbol : voice.getMusicalSymbols()) {
             long duration = MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
             if (symbol.isSounding()) {
-                int midiNote = MidiUtils.transpose(((Note) symbol).getNoteRegister(), tonic);
+                int midiNote = MidiUtils.transpose(((Note) symbol).getNoteRegister(), tonic, octaveShift);
                 addNote(track, midiTrack, channel, midiNote, duration, previousTick);
             }
             previousTick += duration;
         }
         return previousTick;
+    }
+
+    static int getOctaveShift(OctaveShifts shifts, int tonicMidi) {
+        List<OctaveShifts.BoundaryNote> lowerBoundaries = shifts.getLowerBoundaries();
+        for (int i = lowerBoundaries.size() - 1; i >= 0; i--) {
+            OctaveShifts.BoundaryNote boundaryNote = lowerBoundaries.get(i);
+            int boundaryMidi = MidiUtils.getMidiNote(boundaryNote.getBoundary());
+            if (tonicMidi <= boundaryMidi) {
+                return boundaryNote.getShift();
+            }
+        }
+
+        List<OctaveShifts.BoundaryNote> upperBoundaries = shifts.getUpperBoundaries();
+        for (int i = upperBoundaries.size() - 1; i >= 0; i--) {
+            OctaveShifts.BoundaryNote boundaryNote = upperBoundaries.get(i);
+            int boundaryMidi = MidiUtils.getMidiNote(boundaryNote.getBoundary());
+            if (tonicMidi >= boundaryMidi) {
+                return boundaryNote.getShift();
+            }
+        }
+
+        return 0;
     }
 
     static void addNote(Track track, MidiTrack midiTrack, int channel, int note,

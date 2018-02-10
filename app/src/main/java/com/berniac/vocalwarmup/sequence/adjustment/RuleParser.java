@@ -38,7 +38,7 @@ public class RuleParser {
             if (ruleFor.equals(DRUM_RULES)) {
                 drums = harmony;
             } else {
-                NoteSymbol tonic = NoteSymbol.valueOf(ruleFor);
+                NoteSymbol tonic = NoteSymbol.getByCode(ruleFor);
                 tonicToHarmony.put(tonic, harmony);
             }
         }

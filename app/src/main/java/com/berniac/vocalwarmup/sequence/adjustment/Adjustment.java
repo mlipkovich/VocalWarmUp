@@ -41,11 +41,11 @@ public class Adjustment {
         if (numberOfSemitones == 0) {
             return NoteSymbol.C;
         } else if (numberOfSemitones == 1) {
-            return NoteSymbol.C_SHARP;
+            return NoteSymbol.D_BEMOL;
         } else if (numberOfSemitones == 2) {
             return NoteSymbol.D;
         } else if (numberOfSemitones == 3) {
-            return NoteSymbol.D_SHARP;
+            return NoteSymbol.E_BEMOL;
         } else if (numberOfSemitones == 4) {
             return NoteSymbol.E;
         } else if (numberOfSemitones == 5) {
@@ -55,11 +55,11 @@ public class Adjustment {
         } else if (numberOfSemitones == 7) {
             return NoteSymbol.G;
         } else if (numberOfSemitones == 8) {
-            return NoteSymbol.G_SHARP;
+            return NoteSymbol.A_BEMOL;
         } else if (numberOfSemitones == 9) {
             return NoteSymbol.A;
         } else if (numberOfSemitones == 10) {
-            return NoteSymbol.A_SHARP;
+            return NoteSymbol.H_BEMOL;
         } else { // numberOfSemitones == 11
             return NoteSymbol.H;
         }
