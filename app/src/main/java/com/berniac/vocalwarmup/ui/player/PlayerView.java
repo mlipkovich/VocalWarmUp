@@ -10,24 +10,27 @@ public abstract class PlayerView extends AppCompatActivity {
 
     protected PlayerPresenter presenter;
 
+    protected PlayerScreenFragment screenFragment;
+    protected PlayerConfigFragment configFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         presenter = new PlayerPresenter();
         presenter.onAttach(this);
-    }
 
-    public abstract void changeTempoProgress(int progress);
+        screenFragment = new PlayerScreenFragment();
+        screenFragment.setPresenter(presenter);
+
+        configFragment = new PlayerConfigFragment();
+        configFragment.setPresenter(presenter);
+    }
 
     public abstract void changePlayButtonToPause();
 
     public abstract void changePlayButtonToPlay();
 
-    public abstract void changeHarmonyButtonToOn();
+    public abstract void switchToConfigPanel();
 
-    public abstract void changeHarmonyButtonToOff();
-
-    public abstract void changeMelodyButtonToOn();
-
-    public abstract void changeMelodyButtonToOff();
+    public abstract void switchToScreenPanel();
 }

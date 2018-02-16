@@ -203,7 +203,7 @@ public class SoftSynthesizer implements AudioSynthesizer,
 
     private int deviceid = 0;
 
-    private AudioFormat format = new AudioFormat(44100, 16, 2, true, false);
+    private AudioFormat format = new AudioFormat(8000, 16, 2, true, false);
 
     private SourceDataLine sourceDataLine = null;
 

@@ -1,12 +1,11 @@
 package com.berniac.vocalwarmup.ui.player;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.berniac.vocalwarmup.R;
 
@@ -16,19 +15,11 @@ import com.berniac.vocalwarmup.R;
  */
 public class PlayerActivity extends PlayerView {
 
-    // TODO: Remove this ...
-    private static final int SEEK_BAR_ZERO = 25;
-
-    private TextView tempoTextView;
     private ImageButton playButton;
     private ImageButton nextStepButton;
     private ImageButton previousStepButton;
     private ImageButton repeatButton;
     private ImageButton revertButton;
-
-    // TODO: Will be moved to separate panel
-    private ImageButton harmonySwitcherButton;
-    private ImageButton melodySwitcherButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,23 +32,9 @@ public class PlayerActivity extends PlayerView {
         topBar.setHomeAsUpIndicator(R.drawable.ic_player_close);
         topBar.setElevation(0);
 
-        tempoTextView = (TextView) findViewById(R.id.current_tempo_text);
-
-        SeekBar seekBar = (SeekBar) findViewById(R.id.tempo_seek_bar);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                presenter.onTempoChanged(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.player_fragment_container, screenFragment);
+        transaction.commit();
 
         playButton = (ImageButton) findViewById(R.id.play_btn);
         playButton.setBackgroundResource(R.drawable.ic_player_play);
@@ -91,24 +68,6 @@ public class PlayerActivity extends PlayerView {
                 presenter.onRepeatClicked();
             }
         });
-
-        harmonySwitcherButton = (ImageButton) findViewById(R.id.harmony_btn);
-        harmonySwitcherButton.setBackgroundResource(R.drawable.ic_player_harmony_on);
-        harmonySwitcherButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.onHarmonySwitcherClicked();
-            }
-        });
-
-        melodySwitcherButton = (ImageButton) findViewById(R.id.melody_btn);
-        melodySwitcherButton.setBackgroundResource(R.drawable.ic_player_melody_on);
-        melodySwitcherButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.onMelodySwitcherClicked();
-            }
-        });
     }
 
     @Override
@@ -119,16 +78,8 @@ public class PlayerActivity extends PlayerView {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO: Sonya: Isn't it overkill to use Menu here? Wasn't able to put regular button there
         getMenuInflater().inflate(R.menu.player_top_bar, menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public void changeTempoProgress(int progress) {
-        String sign = progress - SEEK_BAR_ZERO > 0 ? "+" : "-";
-        String text = sign + "0." + String.valueOf(Math.abs(progress - SEEK_BAR_ZERO)) + "x";
-        tempoTextView.setText(text);
     }
 
     @Override
@@ -142,22 +93,16 @@ public class PlayerActivity extends PlayerView {
     }
 
     @Override
-    public void changeHarmonyButtonToOn() {
-        harmonySwitcherButton.setBackgroundResource(R.drawable.ic_player_harmony_on);
+    public void switchToConfigPanel() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.player_fragment_container, configFragment);
+        transaction.commit();
     }
 
     @Override
-    public void changeHarmonyButtonToOff() {
-        harmonySwitcherButton.setBackgroundResource(R.drawable.ic_player_harmony_off);
-    }
-
-    @Override
-    public void changeMelodyButtonToOn() {
-        melodySwitcherButton.setBackgroundResource(R.drawable.ic_player_melody_on);
-    }
-
-    @Override
-    public void changeMelodyButtonToOff() {
-        melodySwitcherButton.setBackgroundResource(R.drawable.ic_player_melody_off);
+    public void switchToScreenPanel() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.player_fragment_container, screenFragment);
+        transaction.commit();
     }
 }
