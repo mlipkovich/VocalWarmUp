@@ -1,6 +1,7 @@
 package com.berniac.vocalwarmup.sequence;
 
 import com.berniac.vocalwarmup.midi.MidiUtils;
+import com.berniac.vocalwarmup.midi.SF2Sequencer;
 import com.berniac.vocalwarmup.music.MusicalSymbol;
 import com.berniac.vocalwarmup.music.Note;
 import com.berniac.vocalwarmup.music.NoteRegister;
@@ -10,7 +11,9 @@ import com.berniac.vocalwarmup.sequence.adjustment.Adjustment;
 import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;
 import com.berniac.vocalwarmup.sequence.adjustment.SilentAdjustmentRules;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jp.kshoji.javax.sound.midi.InvalidMidiDataException;
 import jp.kshoji.javax.sound.midi.MidiEvent;
@@ -37,7 +40,7 @@ public class SequenceConstructor {
 
     public static WarmUpSequence construct(WarmUp warmUp) throws Exception {
 
-        System.out.println("Creating sequence for warm up " + warmUp);
+        changePrograms(warmUp.getMelody(), warmUp.getHarmony());
         Sequence sequence = new Sequence(Sequence.PPQ, TICKS_IN_QUARTER_NOTE, MidiTrack.values().length);
 
         WarmUpVoice melodyVoice = warmUp.getMelody().getVoices().get(0);
@@ -91,6 +94,17 @@ public class SequenceConstructor {
         }
 
         return new WarmUpSequence(sequence, lowestTonicMidi, highestTonicMidi);
+    }
+
+    static void changePrograms(Playable melody, Playable harmony) {
+        Set<Instrument> instruments = new HashSet<>();
+        for (WarmUpVoice voice : melody.getVoices()) {
+            instruments.add(voice.getInstrument());
+        }
+        for (WarmUpVoice voice : harmony.getVoices()) {
+            instruments.add(voice.getInstrument());
+        }
+        SF2Sequencer.changePrograms(instruments);
     }
 
     static class TonicStateMachine {
@@ -252,8 +266,7 @@ public class SequenceConstructor {
     static long addStepVoice(Track track, MidiTrack midiTrack, WarmUpVoice voice,
                              int tonic, long previousTick) throws InvalidMidiDataException {
 
-        // TODO: Define channel by voice.getInstrument()
-        int channel = 0;
+        int channel = SF2Sequencer.getChannel(voice.getInstrument());
 
         int octaveShift = getOctaveShift(voice.getOctaveShifts(), tonic);
         for (MusicalSymbol symbol : voice.getMusicalSymbols()) {
