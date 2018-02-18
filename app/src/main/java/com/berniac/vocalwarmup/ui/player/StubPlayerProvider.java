@@ -97,7 +97,6 @@ public class StubPlayerProvider {
         warmUp.setPauseSize(8);
 
         WarmUpSequence warmUpSequence = SequenceConstructor.construct(warmUp);
-        SF2Sequencer.configure(ResourcesProvider.getSf2Database(view));
         Sequencer sequencer = SF2Sequencer.getSequencer();
         return new WarmUpPlayer(warmUpSequence.getSequence(), sequencer, warmUp);
     }

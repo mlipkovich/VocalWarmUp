@@ -1,9 +1,12 @@
 package com.berniac.vocalwarmup.midi;
 
-import android.content.res.AssetManager;
+import com.berniac.vocalwarmup.sequence.Instrument;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.sherlock.com.sun.media.sound.SF2Soundbank;
 import cn.sherlock.com.sun.media.sound.SoftSynthesizer;
@@ -20,14 +23,16 @@ public class SF2Sequencer {
 
     private static volatile boolean isConfigured;
     private static Sequencer sequencer;
+    private static SoftSynthesizer synthesizer;
+    private static Map<Instrument, Integer> instrumentToChannel;
 
     private SF2Sequencer(){}
 
-    public static void configure(InputStream stream) {
+    public static void setSoundbank(InputStream stream) {
         try {
             SF2Soundbank sf = new SF2Soundbank(stream);
 
-            SoftSynthesizer synthesizer = new SoftSynthesizer();
+            synthesizer = new SoftSynthesizer();
             synthesizer.open();
             synthesizer.loadAllInstruments(sf);
 
@@ -42,6 +47,23 @@ public class SF2Sequencer {
         } catch (IOException | MidiUnavailableException e) {
             throw new IllegalStateException("Failed to get sequencer", e);
         }
+    }
+
+    public static void changePrograms(Collection<Instrument> instruments) {
+        if (!isConfigured) {
+            throw new IllegalStateException("SF2Sequencer should be configured first");
+        }
+        instrumentToChannel = new HashMap<>(instruments.size());
+        int channel = 0;
+        for (Instrument instrument : instruments) {
+            SF2Database.Program program = SF2Database.getProgram(instrument);
+            synthesizer.getChannels()[channel].programChange(program.getBank(), program.getProgram());
+            instrumentToChannel.put(instrument, channel);
+        }
+    }
+
+    public static int getChannel(Instrument instrument) {
+        return instrumentToChannel.get(instrument);
     }
 
     public static Sequencer getSequencer() {
