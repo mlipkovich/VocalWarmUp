@@ -37,7 +37,7 @@ public class PlayerActivity extends PlayerView {
         transaction.commit();
 
         playButton = (ImageButton) findViewById(R.id.play_btn);
-        playButton.setBackgroundResource(R.drawable.ic_player_play);
+        playButton.setImageResource(R.drawable.ic_player_play);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,12 +84,12 @@ public class PlayerActivity extends PlayerView {
 
     @Override
     public void changePlayButtonToPause() {
-        playButton.setBackgroundResource(R.drawable.ic_player_pause);
+        playButton.setImageResource(R.drawable.ic_player_pause);
     }
 
     @Override
     public void changePlayButtonToPlay() {
-        playButton.setBackgroundResource(R.drawable.ic_player_play);
+        playButton.setImageResource(R.drawable.ic_player_play);
     }
 
     @Override

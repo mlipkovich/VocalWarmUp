@@ -8,6 +8,7 @@
     android:layout_marginTop="2dp"
     android:layout_marginEnd="@dimen/card_margin"
     android:layout_marginStart="@dimen/card_margin"
+    android:layout_marginBottom="@dimen/card_margin"
     app:cardCornerRadius="@dimen/card_corner_radius">
 
     <android.support.constraint.ConstraintLayout
