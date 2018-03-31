@@ -37,7 +37,7 @@ public class Adjustment {
 
     private static NoteSymbol getNoteInDistanceFromC(int numberOfSemitones) {
         // TODO: Make sure which note symbols to use. think about bidirectional map
-        numberOfSemitones = numberOfSemitones % 12;
+        numberOfSemitones = (numberOfSemitones + 12) % 12;
         if (numberOfSemitones == 0) {
             return NoteSymbol.C;
         } else if (numberOfSemitones == 1) {
