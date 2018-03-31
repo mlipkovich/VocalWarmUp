@@ -54,7 +54,7 @@ public class PlayerScreenFragment extends Fragment {
         });
 
         harmonySwitcherButton = (ImageButton) view.findViewById(R.id.harmony_btn);
-        harmonySwitcherButton.setBackgroundResource(R.drawable.ic_player_harmony_on);
+        harmonySwitcherButton.setImageResource(R.drawable.ic_player_harmony_on);
         harmonySwitcherButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +63,7 @@ public class PlayerScreenFragment extends Fragment {
         });
 
         melodySwitcherButton = (ImageButton) view.findViewById(R.id.melody_btn);
-        melodySwitcherButton.setBackgroundResource(R.drawable.ic_player_melody_on);
+        melodySwitcherButton.setImageResource(R.drawable.ic_player_melody_on);
         melodySwitcherButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,18 +95,18 @@ public class PlayerScreenFragment extends Fragment {
     }
 
     public void changeHarmonyButtonToOn() {
-        harmonySwitcherButton.setBackgroundResource(R.drawable.ic_player_harmony_on);
+        harmonySwitcherButton.setImageResource(R.drawable.ic_player_harmony_on);
     }
 
     public void changeHarmonyButtonToOff() {
-        harmonySwitcherButton.setBackgroundResource(R.drawable.ic_player_harmony_off);
+        harmonySwitcherButton.setImageResource(R.drawable.ic_player_harmony_off);
     }
 
     public void changeMelodyButtonToOn() {
-        melodySwitcherButton.setBackgroundResource(R.drawable.ic_player_melody_on);
+        melodySwitcherButton.setImageResource(R.drawable.ic_player_melody_on);
     }
 
     public void changeMelodyButtonToOff() {
-        melodySwitcherButton.setBackgroundResource(R.drawable.ic_player_melody_off);
+        melodySwitcherButton.setImageResource(R.drawable.ic_player_melody_off);
     }
 }
