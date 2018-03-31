@@ -21,4 +21,9 @@
     <dimen name="player_slider_margin">8dp</dimen>
     <dimen name="player_small_buttons_margin">4dp</dimen>
 
+
+    <dimen name="settings_title_top_margin">35dp</dimen>
+    <dimen name="settings_button_margin">40dp</dimen>
+    <dimen name="settings_title_bottom_margin">25dp</dimen>
+
 </resources>
