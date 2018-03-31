@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class NoteValue {
     public static final NoteValue WHOLE = new NoteValue(1, 1);
+    public static final NoteValue WHOLE_DOTTED = new NoteValue(3, 2);
     public static final NoteValue HALF = new NoteValue(1, 2);
     public static final NoteValue HALF_DOTTED = new NoteValue(3, 4);
     public static final NoteValue QUARTER = new NoteValue(1, 4);
@@ -30,6 +31,7 @@ public class NoteValue {
     private static final Map<String, NoteValue> VALUE_BY_CODE = new HashMap<>();
     static {
         VALUE_BY_CODE.put("1",   WHOLE);
+        VALUE_BY_CODE.put("15",  WHOLE_DOTTED);
         VALUE_BY_CODE.put("2",   HALF);
         VALUE_BY_CODE.put("25",  HALF_DOTTED);
         VALUE_BY_CODE.put("4",   QUARTER);

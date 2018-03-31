@@ -1,5 +1,7 @@
 package com.berniac.vocalwarmup.sequence;
 
+import jp.kshoji.javax.sound.midi.Sequence;
+
 /**
  * Created by Marina Gorlova on 02.12.2017.
  */
@@ -38,4 +40,5 @@ public interface Player {
 
     void showLyrics();
 
+    Sequence getSequence();
 }

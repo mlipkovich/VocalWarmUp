@@ -3,8 +3,6 @@ package com.berniac.vocalwarmup.sequence;
 import com.berniac.vocalwarmup.midi.MidiUtils;
 import com.berniac.vocalwarmup.music.MusicalSymbol;
 import com.berniac.vocalwarmup.music.Note;
-import com.berniac.vocalwarmup.music.NoteRegister;
-import com.berniac.vocalwarmup.music.NoteSymbol;
 import com.berniac.vocalwarmup.music.NoteValue;
 
 import java.util.List;
@@ -160,6 +158,11 @@ public class WarmUpPlayer implements Player {
     @Override
     public void showLyrics() {
 
+    }
+
+    @Override
+    public Sequence getSequence() {
+        return sequence;
     }
 
     public static int getLengthInTicks(List<MusicalSymbol> musicalSymbols) {

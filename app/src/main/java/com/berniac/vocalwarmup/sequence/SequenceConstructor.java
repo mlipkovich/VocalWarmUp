@@ -241,7 +241,7 @@ public class SequenceConstructor {
         float lastMelodyNoteQuartersCount = lastMelodyNoteDuration.getNumberOfQuarters();
         for (WarmUpVoice harmonyVoice : harmony.getVoices()) {
             List<MusicalSymbol> voiceSymbols = harmonyVoice.getMusicalSymbols();
-            int symbolIndex = 0;
+            int symbolIndex = voiceSymbols.size() - 1;
             float erasedNotesQuartersCount = 0;
             while (erasedNotesQuartersCount < lastMelodyNoteQuartersCount) {
                 erasedNotesQuartersCount +=
