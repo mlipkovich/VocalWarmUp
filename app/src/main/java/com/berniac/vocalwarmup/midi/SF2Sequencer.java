@@ -4,6 +4,7 @@ import com.berniac.vocalwarmup.sequence.Instrument;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class SF2Sequencer {
             SF2Database.Program program = SF2Database.getProgram(instrument);
             synthesizer.getChannels()[channel].programChange(program.getBank(), program.getProgram());
             instrumentToChannel.put(instrument, channel);
+            channel++;
         }
     }
 
