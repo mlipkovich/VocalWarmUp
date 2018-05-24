@@ -42,7 +42,6 @@ public class SequenceConstructor {
 
         changePrograms(warmUp.getMelody(), warmUp.getHarmony());
         Sequence sequence = new Sequence(Sequence.PPQ, TICKS_IN_QUARTER_NOTE, MidiTrack.values().length);
-
         WarmUpVoice melodyVoice = warmUp.getMelody().getVoices().get(0);
         Step step = warmUp.getStep();
         int startingTonicMidi = MidiUtils.getMidiNote(warmUp.getStartingNote());
@@ -73,12 +72,10 @@ public class SequenceConstructor {
 
             melodyEndTick = addStepPlayable(sequence, MidiTrack.MELODY, warmUp.getMelody(),
                     currentTonicMidi, melodyStartTick);
-
             if (harmony != null) {
                 addStepPlayable(sequence, MidiTrack.HARMONY, warmUp.getHarmony(),
                         currentTonicMidi, melodyStartTick);
             }
-
             int nextTonicMidi = tonicStateMachine.getNextTonic();
             Playable adjustmentVoices = adjustment.getVoices(
                     MidiUtils.getNote(currentTonicMidi),
@@ -87,9 +84,7 @@ public class SequenceConstructor {
                     melodyEndTick, lastMelodyNoteDuration);
             adjustmentEndTick = addStepPlayable(sequence, MidiTrack.ADJUSTMENT, adjustmentVoices,
                     currentTonicMidi, adjustmentStartTick);
-
             melodyStartTick = adjustmentEndTick;
-
             // TODO: Add metronome and lyrics
         }
 
@@ -271,10 +266,16 @@ public class SequenceConstructor {
         int octaveShift = getOctaveShift(voice.getOctaveShifts(), tonic);
         for (MusicalSymbol symbol : voice.getMusicalSymbols()) {
             long duration = MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
-            if (symbol.isSounding()) {
-                int midiNote = MidiUtils.transpose(((Note) symbol).getNoteRegister(), tonic, octaveShift);
-                addNote(track, midiTrack, channel, midiNote, duration, previousTick);
+            int midiNote;
+            if (!symbol.isSounding()) {
+                midiNote = MidiUtils.getMidiNote(NoteRegister.HIGHEST_NOTE);
+            } else {
+                midiNote = MidiUtils.transpose(((Note) symbol).getNoteRegister(), tonic, octaveShift);
             }
+//            if (symbol.isSounding()) {
+//                midiNote = MidiUtils.transpose(((Note) symbol).getNoteRegister(), tonic, octaveShift);
+                addNote(track, midiTrack, channel, midiNote, duration, previousTick);
+//            }
             previousTick += duration;
         }
         return previousTick;

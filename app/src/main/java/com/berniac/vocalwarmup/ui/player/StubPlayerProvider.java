@@ -16,6 +16,7 @@ import com.berniac.vocalwarmup.sequence.WarmUpSequence;
 import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;
 import com.berniac.vocalwarmup.sequence.adjustment.FullAdjustmentRules;
 import com.berniac.vocalwarmup.sequence.adjustment.MinimalAdjustmentRules;
+import com.berniac.vocalwarmup.sequence.adjustment.SilentAdjustmentRules;
 import com.berniac.vocalwarmup.ui.ResourcesProvider;
 
 import jp.kshoji.javax.sound.midi.Sequencer;
@@ -87,17 +88,18 @@ public class StubPlayerProvider {
                 ">");
 
         System.out.println("Full rules " + fullRules.getAdjustmentRules(8));
-//        warmUp.setAdjustmentRules(SilentAdjustmentRules.valueOf(null));
+        warmUp.setAdjustmentRules(SilentAdjustmentRules.valueOf(null));
 //        warmUp.setAdjustmentRules(minimalRules);
-        warmUp.setAdjustmentRules(fullRules);
-
-        warmUp.setLowerNote(new NoteRegister(NoteSymbol.C, 0));
-        warmUp.setUpperNote(new NoteRegister(NoteSymbol.C, 2));
-        warmUp.setStartingNote(new NoteRegister(NoteSymbol.C, 1));
+//        warmUp.setAdjustmentRules(fullRules);
+        System.out.println("Adjustments set");
+        warmUp.setLowerNote(new NoteRegister(NoteSymbol.H, -1));
+        warmUp.setUpperNote(new NoteRegister(NoteSymbol.H, 0));
+        warmUp.setStartingNote(new NoteRegister(NoteSymbol.H, -1));
         warmUp.setPauseSize(8);
 
         WarmUpSequence warmUpSequence = SequenceConstructor.construct(warmUp);
+        System.out.println("Sequence constructed");
         Sequencer sequencer = SF2Sequencer.getSequencer();
-        return new WarmUpPlayer(warmUpSequence.getSequence(), sequencer, warmUp);
+        return new WarmUpPlayer(warmUpSequence, sequencer, warmUp);
     }
 }

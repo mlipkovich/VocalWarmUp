@@ -1,6 +1,7 @@
 package com.berniac.vocalwarmup.sequence;
 
 import com.berniac.vocalwarmup.midi.MidiUtils;
+import com.berniac.vocalwarmup.music.FixedStep;
 import com.berniac.vocalwarmup.music.MusicalSymbol;
 import com.berniac.vocalwarmup.music.Note;
 import com.berniac.vocalwarmup.music.NoteValue;
@@ -17,24 +18,26 @@ import jp.kshoji.javax.sound.midi.Sequencer;
  * Created by Marina Gorlova on 02.12.2017.
  */
 public class WarmUpPlayer implements Player {
-    private Sequence sequence;
+    private WarmUpSequence warmUpSequence;
     private Sequencer sequencer;
     private WarmUp warmUp;
     public long currentTickPosition;
     private long sequenceLengthInTicks;
-    private int lowerBoundary;
-    private int upperBoundary;
-    private int lowerTonicFromSequence;
-    private int upperTonicFromSequence;
+    private int semitonesToLowerBoundary;
+    private int semitonesToUpperBoundary;
+    private int playFrom;
 
-    public WarmUpPlayer(Sequence sequence, Sequencer sequencer, WarmUp warmUp) {
-        this.sequence = sequence;
+    public WarmUpPlayer(WarmUpSequence warmUpSequence, Sequencer sequencer, WarmUp warmUp) {
+        this.warmUpSequence = warmUpSequence;
         this.sequencer = sequencer;
         this.warmUp = warmUp;
-        this.sequenceLengthInTicks = sequence.getTickLength();
+        this.sequenceLengthInTicks = warmUpSequence.getSequence().getTickLength();
+        this.currentTickPosition = MidiUtils.getMidiNote(warmUp.getStartingNote());
         this.setBoundaries();
+        this.currentTickPosition = setStartTickPosition();
+        this.playFrom = MidiUtils.getMidiNote(warmUp.getStartingNote());
         try {
-            sequencer.setSequence(sequence);
+            sequencer.setSequence(warmUpSequence.getSequence());
             sequencer.open();
             sequencer.addEndSequenceEventListener(new EndSequenceEventListener() {
                 @Override
@@ -48,14 +51,22 @@ public class WarmUpPlayer implements Player {
         }
     }
 
+    private int setStartTickPosition(){
+        FixedStep step = (FixedStep) this.warmUp.getStep();
+        int stepSize = step.getNextShift();
+        int skipSteps = (MidiUtils.getMidiNote(warmUp.getStartingNote()) - warmUpSequence.getLowestTonic())/stepSize;
+        return skipSteps*getStepSize();
+    }
+
     public void onPlayFinished() {
 
     }
 
     @Override
     public void play() {
+        setBoundaries();
         sequencer.setLoopStartPoint(currentTickPosition);
-        //TODO: sequencer.setLoopEndPoint();
+        sequencer.setLoopEndPoint(currentTickPosition + goUpToTick() - 1);
         sequencer.start();
     }
 
@@ -113,6 +124,7 @@ public class WarmUpPlayer implements Player {
     @Override
     public void nextStep() {
         goToStep(getCurrentStep() + 1);
+        System.out.println("next step");
     }
 
     @Override
@@ -162,7 +174,7 @@ public class WarmUpPlayer implements Player {
 
     @Override
     public Sequence getSequence() {
-        return sequence;
+        return warmUpSequence.getSequence();
     }
 
     public static int getLengthInTicks(List<MusicalSymbol> musicalSymbols) {
@@ -179,15 +191,17 @@ public class WarmUpPlayer implements Player {
     }
 
     public void setBoundaries() {
+        // only with FixedStep warmUps
         List<MusicalSymbol> musicalSymbols = warmUp.getMelody().getVoices().get(0).getMusicalSymbols();
         int tonic = MidiUtils.getTonic();
+
         int semitonesToLowerBoundary = 0;
         int semitonesToUpperBoundary = 0;
 
-        for (MusicalSymbol musicalSymbol: musicalSymbols) {
+        for (MusicalSymbol musicalSymbol : musicalSymbols) {
             if (musicalSymbol.isSounding()) {
                 Note note = (Note) musicalSymbol;
-                int semitonesToTonic = tonic - MidiUtils.getMidiNote(note.getNoteRegister());
+                int semitonesToTonic = MidiUtils.getMidiNote(note.getNoteRegister()) - tonic;
                 if (semitonesToTonic < semitonesToLowerBoundary) {
                     semitonesToLowerBoundary = semitonesToTonic;
                 }
@@ -197,5 +211,55 @@ public class WarmUpPlayer implements Player {
 
             }
         }
+        this.semitonesToLowerBoundary = semitonesToLowerBoundary;
+        this.semitonesToUpperBoundary = semitonesToUpperBoundary;
+    }
+
+    public int goUpToTick() {
+        FixedStep step = (FixedStep) warmUp.getStep();
+        int stepSize = step.getNextShift();
+
+        int availableSteps = (MidiUtils.getMidiNote(warmUp.getUpperNote())
+                - playFrom - semitonesToUpperBoundary - 1)/stepSize;
+        System.out.println("availableSteps " + availableSteps);
+        System.out.println(MidiUtils.getMidiNote(warmUp.getUpperNote()));
+        System.out.println(MidiUtils.getMidiNote(warmUp.getLowerNote()));
+        System.out.println(MidiUtils.getMidiNote(warmUp.getStartingNote()));
+
+        List<MusicalSymbol> musicalSymbols = warmUp.getMelody().getVoices().get(0).getMusicalSymbols();
+        for (MusicalSymbol musicalSymbol : musicalSymbols) {
+            Note note = (Note) musicalSymbol;
+            System.out.print(" " + MidiUtils.getMidiNote(note.getNoteRegister()));
+        }
+         System.out.println("");
+        return availableSteps*getStepSize();
+
+//
+//        int lowerNoteMidi = MidiUtils.getMidiNote(this.warmUp.getLowerNote());
+//        int upperNoteMidi = MidiUtils.getMidiNote(this.warmUp.getUpperNote());
+//
+//        int toLowerAvailTonic = (lowerStart - lowerNoteMidi) % stepSize;
+//        int lowerAvailTonic = 0;
+//        if (toLowerAvailTonic >= 0) {
+//            lowerAvailTonic = lowerNoteMidi + toLowerAvailTonic;
+//        } else if (toLowerAvailTonic < 0) {
+//            lowerAvailTonic = lowerNoteMidi + stepSize + toLowerAvailTonic;
+//        }
+//
+//        int toUpperAvailTonic = (upperNoteMidi - upperStart) % stepSize;
+//        int upperAvailTonic = 0;
+//        if (toUpperAvailTonic >= 0) {
+//            upperAvailTonic = upperNoteMidi - toUpperAvailTonic - stepSize;
+//        } else if (toUpperAvailTonic < 0) {
+//            upperAvailTonic = upperNoteMidi - 2*stepSize - toUpperAvailTonic;
+//        }
+//
+//        if ((lowerNoteMidi <= lowerAvailTonic && lowerAvailTonic <= upperNoteMidi)
+//                && (lowerNoteMidi <= upperAvailTonic && upperAvailTonic <= upperNoteMidi)) {
+//            this.lowerBoundary = lowerAvailTonic;
+//            this.upperBoundary = upperAvailTonic;
+//        } else {
+//            throw new IllegalStateException("Can't play any music");
+//        }
     }
 }
