@@ -171,7 +171,7 @@
             android:id="@+id/current_tempo_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0x"
+            android:text="120"
             app:layout_constraintBottom_toTopOf="@+id/tempo_seek_bar"
             app:layout_constraintEnd_toEndOf="@+id/tempo_seek_bar"
             app:layout_constraintStart_toStartOf="@+id/tempo_seek_bar"/>

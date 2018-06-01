@@ -25,6 +25,11 @@ public class Adjustment {
             public List<WarmUpVoice> getVoices() {
                 return tonicToVoices.get(tonic);
             }
+
+            @Override
+            public String toString() {
+                return getVoices().toString();
+            }
         };
     }
 
