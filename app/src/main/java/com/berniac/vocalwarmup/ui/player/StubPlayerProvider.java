@@ -6,18 +6,24 @@ import com.berniac.vocalwarmup.midi.SF2Sequencer;
 import com.berniac.vocalwarmup.music.FixedStep;
 import com.berniac.vocalwarmup.music.NoteRegister;
 import com.berniac.vocalwarmup.music.NoteSymbol;
+import com.berniac.vocalwarmup.sequence.Direction;
 import com.berniac.vocalwarmup.sequence.Harmony;
 import com.berniac.vocalwarmup.sequence.Melody;
 import com.berniac.vocalwarmup.sequence.Player;
-import com.berniac.vocalwarmup.sequence.SequenceConstructor;
-import com.berniac.vocalwarmup.sequence.WarmUp;
 import com.berniac.vocalwarmup.sequence.WarmUpPlayer;
-import com.berniac.vocalwarmup.sequence.WarmUpSequence;
+import com.berniac.vocalwarmup.sequence.sequencer.QueueStepConsumer;
+import com.berniac.vocalwarmup.sequence.sequencer.QueueStepProducer;
+import com.berniac.vocalwarmup.sequence.sequencer.StepConsumer;
+import com.berniac.vocalwarmup.sequence.sequencer.StepProducer;
+import com.berniac.vocalwarmup.sequence.sequencer.StepSequencer;
+import com.berniac.vocalwarmup.sequence.WarmUp;
+import com.berniac.vocalwarmup.sequence.sequencer.WarmUpStep;
 import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;
 import com.berniac.vocalwarmup.sequence.adjustment.FullAdjustmentRules;
 import com.berniac.vocalwarmup.sequence.adjustment.MinimalAdjustmentRules;
-import com.berniac.vocalwarmup.sequence.adjustment.SilentAdjustmentRules;
-import com.berniac.vocalwarmup.ui.ResourcesProvider;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import jp.kshoji.javax.sound.midi.Sequencer;
 
@@ -51,11 +57,12 @@ public class StubPlayerProvider {
         warmUp.setStep(new FixedStep(2));
 //        warmUp.setMelody(Melody.valueOf("Me(4C,4D,4E,4D,2C)"));
         warmUp.setMelody(Melody.valueOf("Me(4C,4D,4E,4F,4G,4F,4E,4D,2C)"));
+//        warmUp.setMelody(Melody.valueOf("Me(4C,4D,4E,4D,4C)"));
         warmUp.setHarmony(Harmony.valueOf("Fo(2E1,4E1,4G1,2F1,8G1,8F1,8E1,8D1,2E1){D-1,+1<Cis1,-1;D2,-2}" + "\n" +
                 "Fo(25C1,4A,1H,2C1){D-1,+1<Hes,-1;Hes1,-2;E2,-3}" + "\n" +
                 "Fo(25G,4F,25G,4A,2G){F-1,+1<Aes,-1;Aes1,-2;E2,-3}" + "\n" +
                 "Fo(2C-1,2G-1,2D-1,2G-2,2C-1){Hes-1,+1;C-1,+2<Cis1,-1;Cis2,-2;A2,-3}"));
-
+//        warmUp.setHarmony(null);
         AdjustmentRules minimalRules = MinimalAdjustmentRules.valueOf(
                 "Min<C[Fo(4E1,4N,2E1){D-1,+1<Cis1,-1;D2,-2} Fo(4C1,4N,2C1){D-1,+1<Hes,-1;Hes1,-2;E2,-3} Fo(4G,4N,2G){F-1,+1<Aes,-1;Aes1,-2;E2,-3} Fo(4C-1,4N,2C-1){Hes-1,+1;C-1,+2<Cis1,-1;Cis2,-2;A2,-3}]" + "\n" +
                         "Des[Fo(4E1,4N,2Aes1){D-1,+1<Cis1,-1;D2,-2} Fo(4C1,4N,2Des1){D-1,+1<Hes,-1;Hes1,-2;E2,-3} Fo(4G,4N,2F){F-1,+1<Aes,-1;Aes1,-2;E2,-3} Fo(4C-1,4N,2Des-1){Hes-1,+1;C-1,+2<Cis1,-1;Cis2,-2;A2,-3}]" + "\n" +
@@ -88,18 +95,31 @@ public class StubPlayerProvider {
                 ">");
 
         System.out.println("Full rules " + fullRules.getAdjustmentRules(8));
-        warmUp.setAdjustmentRules(SilentAdjustmentRules.valueOf(null));
+//        warmUp.setAdjustmentRules(SilentAdjustmentRules.valueOf(null));
 //        warmUp.setAdjustmentRules(minimalRules);
-//        warmUp.setAdjustmentRules(fullRules);
+        warmUp.setAdjustmentRules(fullRules);
         System.out.println("Adjustments set");
-        warmUp.setLowerNote(new NoteRegister(NoteSymbol.H, -1));
-        warmUp.setUpperNote(new NoteRegister(NoteSymbol.H, 0));
-        warmUp.setStartingNote(new NoteRegister(NoteSymbol.H, -1));
+        warmUp.setLowerNote(new NoteRegister(NoteSymbol.C, -1));
+        warmUp.setStartingNote(new NoteRegister(NoteSymbol.C, 0));
+        warmUp.setUpperNote(new NoteRegister(NoteSymbol.C, 1));
         warmUp.setPauseSize(8);
+        warmUp.setDirections(new Direction[]{Direction.START_TO_UPPER, Direction.UPPER_TO_LOWER});
 
-        WarmUpSequence warmUpSequence = SequenceConstructor.construct(warmUp);
+//        WarmUpSequenceTemp warmUpSequence = SequenceConstructor.construct(warmUp);
         System.out.println("Sequence constructed");
         Sequencer sequencer = SF2Sequencer.getSequencer();
-        return new WarmUpPlayer(warmUpSequence, sequencer, warmUp);
+
+//        System.out.println("Environment " + Environment.getExternalStorageDirectory());
+        System.out.println("Path to write " + view.getApplicationContext().getFilesDir().getPath());
+
+//        MidiSystem.write(warmUpSequence.getSequence(), 1, new File(view.getApplicationContext().getFilesDir().getPath() + "/testfile1.mid"));
+//        MidiSystem.write(warmUpSequence.getSequence(), 1, new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/testfile.mid"));
+
+        BlockingQueue<WarmUpStep> queue = new ArrayBlockingQueue<>(10);
+        StepConsumer stepConsumer = new QueueStepConsumer(queue);
+        StepProducer stepProducer = new QueueStepProducer(queue, warmUp);
+        StepSequencer stepSequencer = new StepSequencer(stepConsumer, stepProducer, sequencer.getReceiver());
+
+        return new WarmUpPlayer(stepSequencer);
     }
 }

@@ -18,7 +18,7 @@ public class LibraryListPresenter {
 
     public LibraryListPresenter(IWarmUpRepository repository) {
         this.repository = repository;
-        this.itemsList = repository.getItemsByHierarchy(Collections.EMPTY_LIST);
+        this.itemsList = repository.getItemsByHierarchy(Collections.<Integer>emptyList());
     }
 
     public void onAttach(LibraryListView view) {

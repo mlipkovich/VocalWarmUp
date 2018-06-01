@@ -11,13 +11,12 @@ import android.widget.TextView;
 
 import com.berniac.vocalwarmup.R;
 
+import java.util.Locale;
+
 /**
  * Created by Mikhail Lipkovich on 2/16/2018.
  */
 public class PlayerScreenFragment extends Fragment {
-
-    // TODO: Remove this ...
-    private static final int SEEK_BAR_ZERO = 25;
 
     private PlayerPresenter presenter;
 
@@ -88,10 +87,10 @@ public class PlayerScreenFragment extends Fragment {
         this.presenter.onAttachScreenFragment(this);
     }
 
-    public void changeTempoProgress(int progress) {
-        String sign = progress - SEEK_BAR_ZERO > 0 ? "+" : "-";
-        String text = sign + "0." + String.valueOf(Math.abs(progress - SEEK_BAR_ZERO)) + "x";
-        tempoTextView.setText(text);
+    public float changeTempoProgress(int progress) {
+        float progressValue = (float)0.75 + (float)progress/100;
+        tempoTextView.setText(String.format(Locale.ENGLISH, "%.2fx", progressValue));
+        return progressValue;
     }
 
     public void changeHarmonyButtonToOn() {
