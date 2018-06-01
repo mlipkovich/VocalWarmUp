@@ -271,7 +271,7 @@ public class WarmUpPlayerTemp {/*implements Player {
     }
 
     @Override
-    public void changeTempo() {
+    public void changeTempoFactor() {
 
     }
 

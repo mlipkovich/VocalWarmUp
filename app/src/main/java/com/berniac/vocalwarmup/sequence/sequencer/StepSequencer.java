@@ -61,6 +61,10 @@ public class StepSequencer {
         consumerThread.setTempoFactor(tempoFactor);
     }
 
+    public void setTempo(int tempoBpm) {
+        consumerThread.setTempo(tempoBpm);
+    }
+
     private static class ConsumerThread extends Thread {
 
         private static final int DEFAULT_BPM = 120;
@@ -74,7 +78,7 @@ public class StepSequencer {
         private volatile boolean isHarmonyMuted;
 
         private volatile float tempoFactor;
-        private volatile int tempoBPM;
+        private volatile int tempoBpm;
 
         private StepConsumer consumer;
         private Receiver receiver;
@@ -91,7 +95,7 @@ public class StepSequencer {
             this.isHarmonyMuted = false;
 
             this.tempoFactor = 1;
-            this.tempoBPM = DEFAULT_BPM;
+            this.tempoBpm = DEFAULT_BPM;
         }
 
         public void muteMelody() {
@@ -137,6 +141,11 @@ public class StepSequencer {
 
         public void setTempoFactor(float tempoFactor) {
             this.tempoFactor = tempoFactor;
+        }
+
+
+        public void setTempo(int tempoBpm) {
+            this.tempoBpm = tempoBpm;
         }
 
         @Override
@@ -224,7 +233,7 @@ public class StepSequencer {
 
         float getTicksPerMicrosecond() {
             int ticksPerBeat = MidiUtils.getNoteValueInTicks(NoteValue.QUARTER);
-            float beatsPerSecond = tempoBPM / 60f;
+            float beatsPerSecond = tempoBpm / 60f;
             float microsecondPerSecond = 1000000.0f;
 
             return (beatsPerSecond * ticksPerBeat) / microsecondPerSecond;
@@ -232,7 +241,10 @@ public class StepSequencer {
 
         void muteAllSounds() {
             try {
-                receiver.send(new ShortMessage(ShortMessage.CONTROL_CHANGE, 0x7B, 0),
+                // TODO: Do it for all channels
+                receiver.send(new ShortMessage(0xb0, 0x7B, 0),
+                        -1);
+                receiver.send(new ShortMessage(0xb1, 0x7B, 0),
                         -1);
             } catch (InvalidMidiDataException ignored) {
                 // should never happen

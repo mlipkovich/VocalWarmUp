@@ -32,7 +32,9 @@ public interface Player {
 
     void recordOff();
 
-    void changeTempo(float tempoFactor);
+    void changeTempoFactor(float tempoFactor);
+
+    void changeTempo(int tempoBpm);
 
     void showNoteVisualisation();
 

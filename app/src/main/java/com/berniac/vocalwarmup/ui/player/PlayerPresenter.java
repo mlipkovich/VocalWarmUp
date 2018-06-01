@@ -57,9 +57,14 @@ public class PlayerPresenter {
     }
 
 
-    public void onTempoChanged(int progress) {
+    public void onTempoFactorChanged(int progress) {
         float tempoFactor = screenView.changeTempoProgress(progress);
-        player.changeTempo(tempoFactor);
+        player.changeTempoFactor(tempoFactor);
+    }
+
+    public void onGlobalTempoChanged(int progress) {
+        int tempoBpm = configView.changeGlobalTempoProgress(progress);
+        player.changeTempo(tempoBpm);
     }
 
     public void onHarmonySwitcherClicked() {

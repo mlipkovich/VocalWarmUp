@@ -2,8 +2,6 @@ package com.berniac.vocalwarmup.sequence;
 
 import com.berniac.vocalwarmup.sequence.sequencer.StepSequencer;
 
-import jp.kshoji.javax.sound.midi.Sequence;
-
 /**
  * Created by Marina Gorlova on 02.12.2017.
  */
@@ -66,8 +64,13 @@ public class WarmUpPlayer implements Player {
     }
 
     @Override
-    public void changeTempo(float tempoFactor) {
+    public void changeTempoFactor(float tempoFactor) {
         sequencer.setTempoFactor(tempoFactor);
+    }
+
+    @Override
+    public void changeTempo(int tempoBpm) {
+        sequencer.setTempo(tempoBpm);
     }
 
     @Override
