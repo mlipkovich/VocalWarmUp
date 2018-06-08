@@ -16,6 +16,8 @@ public interface Player {
 
     void repeatCurrentStep();
 
+    void changeDirection();
+
     void previousStep();
 
     void nextStep();

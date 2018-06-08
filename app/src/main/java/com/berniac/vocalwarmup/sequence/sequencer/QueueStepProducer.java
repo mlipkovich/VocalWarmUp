@@ -20,6 +20,7 @@ import com.berniac.vocalwarmup.sequence.adjustment.SilentAdjustmentRules;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 
 import jp.kshoji.javax.sound.midi.InvalidMidiDataException;
@@ -37,19 +38,23 @@ public class QueueStepProducer implements StepProducer {
     static final int VOLUME = 100;
     private BlockingQueue<WarmUpStep> steps;
     private WarmUp warmUp;
+    private Playable harmony;
+    private AdjustmentRules adjustmentRules;
+    private Adjustment adjustment;
+    private NoteValue lastMelodyNoteDuration;
+
+    private TonicStateMachine stateMachine;
 
     public QueueStepProducer(BlockingQueue<WarmUpStep> steps, WarmUp warmUp) {
         this.steps = steps;
         this.warmUp = warmUp;
-    }
+        this.adjustmentRules = warmUp.getAdjustmentRules();
+        this.adjustment = new Adjustment(adjustmentRules, warmUp.getPauseSize());
+        this.harmony = warmUp.getHarmony();
 
-    @Override
-    public void run() {
-        AdjustmentRules adjustmentRules = warmUp.getAdjustmentRules();
-        Adjustment adjustment = new Adjustment(adjustmentRules, warmUp.getPauseSize());
         WarmUpVoice melodyVoice = warmUp.getMelody().getVoices().get(0);
-        NoteValue lastMelodyNoteDuration = getLastNoteDuration(melodyVoice);
-        Playable harmony = warmUp.getHarmony();
+        this.lastMelodyNoteDuration = getLastNoteDuration(melodyVoice);
+
         if (harmony != null) {
             alignHarmonyDueToAdjustment(harmony, adjustmentRules, lastMelodyNoteDuration);
         }
@@ -67,48 +72,113 @@ public class QueueStepProducer implements StepProducer {
         int highestTonicMidi = getHighestTonicInSequence(warmUp.getUpperNote(),
                 highestNoteInVoice, startingTonicMidi, warmUp.getStep().getNextShift());
 
-
-        TonicStateMachine stateMachine = new TonicStateMachine(lowestTonicMidi, startingTonicMidi,
+        stateMachine = new TonicStateMachine(lowestTonicMidi, startingTonicMidi,
                 highestTonicMidi, warmUp.getStep(), warmUp.getDirections());
+    }
 
+    @Override
+    public void generateSteps() throws InterruptedException {
         while (!stateMachine.isFinished()) {
 
-            WarmUpStep step = new WarmUpStep();
             long melodyStartTick = 0;
             long melodyEndTick = 0;
             long adjustmentStartTick;
 
             int currentTonicMidi = stateMachine.getCurrentTonic();
+            Direction direction = stateMachine.getCurrentDirection();
             int nextTonicMidi = stateMachine.getNextTonic();
 
+            int forwardTonicMidi = nextTonicMidi;
+            int backwardTonicMidi = currentTonicMidi - (nextTonicMidi - currentTonicMidi);
+
+            WarmUpStep step = new WarmUpStep(currentTonicMidi, forwardTonicMidi, backwardTonicMidi, direction);
+
             for (WarmUpVoice voice : warmUp.getMelody().getVoices()) {
-                melodyEndTick = addStepVoice(step, currentTonicMidi, melodyStartTick, voice, MidiTrack.MELODY);
+                melodyEndTick =
+                        addStepVoice(step.getBaseEvents(), currentTonicMidi, melodyStartTick, voice, MidiTrack.MELODY);
             }
 
             if (harmony != null) {
                 for (WarmUpVoice voice : harmony.getVoices()) {
-                    addStepVoice(step, currentTonicMidi, melodyStartTick, voice, MidiTrack.HARMONY);
+                    addStepVoice(step.getBaseEvents(), currentTonicMidi, melodyStartTick, voice, MidiTrack.HARMONY);
                 }
             }
 
-            Playable adjustmentVoices = adjustment.getVoices(
-                    MidiUtils.getNote(currentTonicMidi),
-                    MidiUtils.getNote(nextTonicMidi));
             adjustmentStartTick = getAdjustmentStartTick(adjustmentRules,
                     melodyEndTick, lastMelodyNoteDuration);
 
-            for (WarmUpVoice voice : adjustmentVoices.getVoices()) {
-                addStepVoice(step, currentTonicMidi,adjustmentStartTick, voice, MidiTrack.ADJUSTMENT);
-            }
+            addAdjustment(step.getAdjustmentForwardEvents(), currentTonicMidi,
+                    forwardTonicMidi, adjustmentStartTick, adjustment);
+            addAdjustment(step.getAdjustmentBackwardEvents(), currentTonicMidi,
+                    backwardTonicMidi, adjustmentStartTick, adjustment);
+            addAdjustment(step.getAdjustmentRepeatEvents(), currentTonicMidi,
+                    currentTonicMidi, adjustmentStartTick, adjustment);
 
-            try {
-                steps.put(step);
-            } catch (InterruptedException e) {
-                // TODO: Process later
-                e.printStackTrace();
-            }
+            MidiEvent lastMelodyNoteOffEvent = ((TreeSet<MidiEvent>) step.getBaseEvents()).pollLast();
+            step.getAdjustmentForwardEvents().add(lastMelodyNoteOffEvent);
+            step.getAdjustmentBackwardEvents().add(lastMelodyNoteOffEvent);
+            step.getAdjustmentRepeatEvents().add(lastMelodyNoteOffEvent);
+
+            System.out.println("Putting step from " + currentTonicMidi + " to " + nextTonicMidi);
+            steps.put(step);
+            System.out.println("Putting done");
         }
     }
+
+    @Override
+    public void cleanGenerated() {
+        System.out.println("Clearing queue");
+        steps.clear();
+        System.out.println("Clearing done");
+    }
+
+    @Override
+    public void changeDirection(int startingTonicMidi, Direction directionToChange) {
+        System.out.println("Changing direction");
+
+        int lowestNoteInVoice = MidiUtils.getMidiNote(SequenceConstructor.getLowestNoteInVoice(
+                warmUp.getMelody().getVoices().get(0)));
+        int highestNoteInVoice = MidiUtils.getMidiNote(SequenceConstructor.getHighestNoteInVoice(
+                warmUp.getMelody().getVoices().get(0)));
+
+        int lowestTonicMidi = getLowestTonicInSequence(NoteRegister.LOWEST_NOTE, lowestNoteInVoice,
+                startingTonicMidi, warmUp.getStep().getNextShift());
+        int highestTonicMidi = getHighestTonicInSequence(NoteRegister.HIGHEST_NOTE, highestNoteInVoice,
+                startingTonicMidi, warmUp.getStep().getNextShift());
+
+
+        Direction changedDirection;
+        switch (directionToChange) {
+            case LOWER_TO_START:
+            case LOWER_TO_UPPER:
+            case START_TO_UPPER:
+                changedDirection = Direction.START_TO_LOWER;
+                break;
+            case UPPER_TO_START:
+            case UPPER_TO_LOWER:
+            case START_TO_LOWER:
+                changedDirection = Direction.START_TO_UPPER;
+                break;
+            default:
+                throw new IllegalStateException("Unknown direction " + directionToChange);
+        }
+        System.out.println("Generating from " + startingTonicMidi + " between " + lowestTonicMidi + " "
+                + highestTonicMidi);
+        stateMachine = new TonicStateMachine(lowestTonicMidi, startingTonicMidi, highestTonicMidi,
+                warmUp.getStep(), new Direction[]{changedDirection});
+    }
+
+
+    void addAdjustment(Set<MidiEvent> events, int fromTonic, int toTonic, long position, Adjustment adjustment) {
+        Playable adjustmentVoices = adjustment.getVoices(
+                MidiUtils.getNote(fromTonic),
+                MidiUtils.getNote(toTonic));
+
+        for (WarmUpVoice voice : adjustmentVoices.getVoices()) {
+            addStepVoice(events, fromTonic, position, voice, MidiTrack.ADJUSTMENT);
+        }
+    }
+
 
     static void changePrograms(Playable melody, Playable harmony) {
         Set<Instrument> instruments = new HashSet<>();
@@ -155,6 +225,10 @@ public class QueueStepProducer implements StepProducer {
             return currentTonic;
         }
 
+        Direction getCurrentDirection() {
+            return directions[currentDirection];
+        }
+
         int getNextTonic() {
             int nextTonic;
             switch (directions[currentDirection]) {
@@ -170,7 +244,6 @@ public class QueueStepProducer implements StepProducer {
                     break;
                 default:
                     throw new IllegalStateException("Unknown direction " + directions[currentDirection]);
-
             }
 
             if (isDirectionFinished()) {
@@ -254,7 +327,7 @@ public class QueueStepProducer implements StepProducer {
         return adjustmentStartTick;
     }
 
-    private long addStepVoice(WarmUpStep step, int currentTonicMidi, long position,
+    private long addStepVoice(Set<MidiEvent> events, int currentTonicMidi, long position,
                               WarmUpVoice voice, MidiTrack midiTrack) {
         int channel = SF2Sequencer.getChannel(voice.getInstrument());
         int octaveShift = getOctaveShift(voice.getOctaveShifts(), currentTonicMidi);
@@ -268,11 +341,11 @@ public class QueueStepProducer implements StepProducer {
                 MidiEvent midiEvent = new MidiEvent(midiMessage, position);
                 MidiTrackSpecificEvent midiVoiceEvent = new MidiTrackSpecificEvent(midiEvent, midiTrack.index);
 
-                step.add(midiVoiceEvent);
+                events.add(midiVoiceEvent);
                 midiMessage = new ShortMessage(ShortMessage.NOTE_OFF, channel, note, VOLUME);
                 midiEvent = new MidiEvent(midiMessage, position + duration);
                 midiVoiceEvent = new MidiTrackSpecificEvent(midiEvent, midiTrack.index);
-                step.add(midiVoiceEvent);
+                events.add(midiVoiceEvent);
             } catch (InvalidMidiDataException ignored) {
                 throw new IllegalStateException("Failed to create midi event from tonic " + note +
                         " with channel " + channel + " and volume " + VOLUME);

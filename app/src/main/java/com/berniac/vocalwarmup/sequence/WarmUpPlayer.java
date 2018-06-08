@@ -30,7 +30,12 @@ public class WarmUpPlayer implements Player {
 
     @Override
     public void repeatCurrentStep() {
+        sequencer.repeatCurrentStep();
+    }
 
+    @Override
+    public void changeDirection() {
+        sequencer.changeDirection();
     }
 
     @Override

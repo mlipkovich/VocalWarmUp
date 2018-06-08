@@ -56,6 +56,10 @@ public class PlayerPresenter {
         player.repeatCurrentStep();
     }
 
+    public void onRevertClicked() {
+        view.changeDirection();
+        player.changeDirection();
+    }
 
     public void onTempoFactorChanged(int progress) {
         float tempoFactor = screenView.changeTempoProgress(progress);
