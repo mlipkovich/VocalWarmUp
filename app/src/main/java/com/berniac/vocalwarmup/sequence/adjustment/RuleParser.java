@@ -25,13 +25,15 @@ public class RuleParser {
     }
 
     public static RuleParser valueOf(String str) {
+        str = str.trim();
         String[] rules = str.split("\n");
         List<WarmUpVoice> drums = new ArrayList<>();
         Map<NoteSymbol, List<WarmUpVoice>> tonicToHarmony = new HashMap<>();
 
         for (String rule : rules) {
+            rule = rule.trim();
             int voiceStart = rule.indexOf("[");
-            String ruleFor = rule.substring(0, voiceStart);
+            String ruleFor = rule.substring(0, voiceStart).trim();
             String voices = rule.substring(voiceStart + 1, rule.length() - 1);
             List<WarmUpVoice> harmony = Harmony.valueOf(voices).getVoices();
 
@@ -42,7 +44,6 @@ public class RuleParser {
                 tonicToHarmony.put(tonic, harmony);
             }
         }
-
         return new RuleParser(drums, tonicToHarmony);
     }
 
@@ -52,5 +53,13 @@ public class RuleParser {
 
     Map<NoteSymbol, List<WarmUpVoice>> getHarmony() {
         return tonicToHarmony;
+    }
+
+    @Override
+    public String toString() {
+        return "RuleParser{" +
+                "drums=" + drums +
+                ", tonicToHarmony=" + tonicToHarmony +
+                '}';
     }
 }

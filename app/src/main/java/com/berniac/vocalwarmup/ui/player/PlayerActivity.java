@@ -80,8 +80,15 @@ public class PlayerActivity extends PlayerView {
 
     @Override
     public boolean onSupportNavigateUp() {
+        presenter.onNavigateUp();
         finish();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // TODO: Perhaps different behaviour
+        onSupportNavigateUp();
     }
 
     @Override

@@ -29,7 +29,7 @@ import jp.kshoji.javax.sound.midi.Track;
  * Created by Mikhail Lipkovich on 11/17/2017.
  */
 public class SequenceConstructorTest {
-
+/*
     private WarmUpVoice voice1 = new WarmUpVoice(
             Arrays.asList(
                     new Note(new NoteRegister(NoteSymbol.F, 0), NoteValue.QUARTER),
@@ -277,4 +277,5 @@ public class SequenceConstructorTest {
     }
 
     // TODO: Marina and Mikhail add much more tests
+    */
 }

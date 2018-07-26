@@ -31,7 +31,7 @@ public class SilentAdjustmentRules implements AdjustmentRules {
             symbols.add(new Rest(NoteValue.QUARTER));
         }
 
-        List<WarmUpVoice> voice = Collections.singletonList(new WarmUpVoice(symbols, Instrument.MELODIC_VOICE));
+        List<WarmUpVoice> voice = Collections.singletonList(new WarmUpVoice(symbols, 0));
         Map<NoteSymbol, List<WarmUpVoice>> voices = new HashMap<>();
         for (NoteSymbol noteSymbol : NoteSymbol.values()) {
             voices.put(noteSymbol, voice);

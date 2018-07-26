@@ -24,7 +24,7 @@ import java.util.Map;
  * Created by Mikhail Lipkovich on 1/16/2018.
  */
 public class RuleParserTest {
-
+/*
     private List<WarmUpVoice> drums;
     private Map<NoteSymbol, List<WarmUpVoice>> harmony;
 
@@ -84,5 +84,5 @@ public class RuleParserTest {
 
         Assert.assertEquals(harmony, ruleParser.getHarmony());
         Assert.assertEquals(drums, ruleParser.getDrums());
-    }
+    }*/
 }

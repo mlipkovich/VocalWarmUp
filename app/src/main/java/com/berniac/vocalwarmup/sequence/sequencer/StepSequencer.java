@@ -3,7 +3,7 @@ package com.berniac.vocalwarmup.sequence.sequencer;
 import com.berniac.vocalwarmup.midi.MidiUtils;
 import com.berniac.vocalwarmup.music.NoteValue;
 import com.berniac.vocalwarmup.sequence.Direction;
-import com.berniac.vocalwarmup.sequence.WarmUp;
+import com.berniac.vocalwarmup.sequence.SequenceFinishedListener;
 
 import java.util.Set;
 
@@ -18,16 +18,48 @@ import jp.kshoji.javax.sound.midi.ShortMessage;
  * Created by Mikhail Lipkovich on 6/01/2018.
  */
 public class StepSequencer {
+    private StepConsumer consumer;
+    private StepProducer producer;
+    private Receiver receiver;
+
     private ConsumerThread consumerThread;
     private ProducerThread producerThread;
 
+    private SequenceFinishedListener sequenceFinishedListener;
+    private boolean isRunning;
+
     public StepSequencer(StepConsumer consumer, StepProducer producer, Receiver receiver) {
+        this.consumer = consumer;
+        this.producer = producer;
+        this.receiver = receiver;
+    }
 
-        this.consumerThread = new ConsumerThread(consumer, receiver);
-        this.consumerThread.start();
+    public void setSequenceFinishedListener(SequenceFinishedListener sequenceFinishedListener) {
+        this.sequenceFinishedListener = sequenceFinishedListener;
+    }
 
-        this.producerThread = new ProducerThread(producer);
-        this.producerThread.start();
+    public void run() {
+        isRunning = true;
+        producer.cleanGenerated();
+        producer.restart();
+        producerThread = new ProducerThread(producer);
+        producerThread.start();
+
+        consumer.restart();
+        consumerThread = new ConsumerThread(consumer, receiver);
+        consumerThread.setSequenceFinishedListener(new SequenceFinishedListener() {
+            @Override
+            public void onSequenceFinished() {
+                sequenceFinishedListener.onSequenceFinished();
+                isRunning = false;
+                producerThread.close();
+            }
+        });
+        consumerThread.start();
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
     public void play() {
@@ -103,6 +135,12 @@ public class StepSequencer {
             this.isInterrupted = false;
         }
 
+        public void close() {
+            System.out.println("Closing producer thread");
+            isRunning = false;
+            isOpen = false;
+            interrupt();
+        }
 
         @Override
         public void run() {
@@ -121,6 +159,7 @@ public class StepSequencer {
                 }
 
                 if (!isRunning || !isOpen) {
+                    System.out.println("Return from producer");
                     return;
                 }
 
@@ -191,6 +230,7 @@ public class StepSequencer {
 
         private StepConsumer consumer;
         private Receiver receiver;
+        private volatile SequenceFinishedListener sequenceFinishedListener;
 
         public ConsumerThread(StepConsumer consumer, Receiver receiver) {
             this.receiver = receiver;
@@ -313,6 +353,15 @@ public class StepSequencer {
                     continue;
                 }
 
+                // producer has finished
+                if (step == WarmUpStep.EMPTY_STEP) {
+                    System.out.println("WarmUp has finished");
+                    if (sequenceFinishedListener != null) {
+                        sequenceFinishedListener.onSequenceFinished();
+                    }
+                    return;
+                }
+
                 eventTonic = step.getTonic();
                 eventBackwardTonic = step.getBackwardTonic();
                 System.out.println("Playing tonic " + eventTonic);
@@ -359,6 +408,7 @@ public class StepSequencer {
         }
 
         private long processEvents(long tickPosition, Set<MidiEvent> events) throws InterruptedException {
+            System.out.println("Processing events " + events);
             for (MidiEvent event : events) {
                 if (event instanceof MidiTrackSpecificEvent) {
                     int currentEventTrack = ((MidiTrackSpecificEvent) event).getTrackIndex();
@@ -424,6 +474,10 @@ public class StepSequencer {
             } catch (InvalidMidiDataException ignored) {
                 // should never happen
             }
+        }
+
+        public void setSequenceFinishedListener(SequenceFinishedListener sequenceFinishedListener) {
+            this.sequenceFinishedListener = sequenceFinishedListener;
         }
     }
 }

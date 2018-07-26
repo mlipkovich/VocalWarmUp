@@ -16,7 +16,7 @@ public class DrawHierarchyJsonParserTest {
             "\"type\": \"draw\",\n" +
             "\"name\": \"draw1\",\n" +
             "\"image\": \"01bbff12\",\n" +
-            "\"voice\": \"25C+12D-3\",\n" +
+            "\"melody\": \"25C+12D-3\",\n" +
             "\"sample\": \"09ffaf\",  \n" +
             "\"harmony\": []\n" +
             "}\n";
@@ -33,7 +33,7 @@ public class DrawHierarchyJsonParserTest {
             "\"type\": \"draw\",\n" +
             "\"name\": \"draw1\",\n" +
             "\"image\": \"01bbff12\",\n" +
-            "\"voice\": \"25C+12D-3\",\n" +
+            "\"melody\": \"25C+12D-3\",\n" +
             "\"sample\": \"09ffaf\",  \n" +
             "\"harmony\": []\n" +
             "},\n" +
@@ -41,7 +41,7 @@ public class DrawHierarchyJsonParserTest {
             "\"type\": \"draw\",\n" +
             "\"name\": \"draw2\",\n" +
             "\"image\": \"01fbff12\",\n" +
-            "\"voice\": \"25C+12D-3\",\n" +
+            "\"melody\": \"25C+12D-3\",\n" +
             "\"sample\": \"01bfaf\"  \n" +
             "}]\n" +
             "}";

@@ -8,21 +8,23 @@ import java.util.Arrays;
 public class DrawItem extends HierarchyItem {
 
     // TODO: what are the fields required for draws? At least harmony should be added
-    protected String voice;
+    protected String melody;
+    protected String accompaniment;
     protected String sample;
 
     public DrawItem(HierarchyItem[] childItems, ItemType type, String name, String image,
-                    String voice, String sample) {
+                    String melody, String accompaniment, String sample) {
         this.child = childItems;
         this.type = type;
         this.name = name;
         this.image = image;
-        this.voice = voice;
+        this.melody = melody;
+        this.accompaniment = accompaniment;
         this.sample = sample;
     }
 
-    public String getVoice() {
-        return voice;
+    public String getMelody() {
+        return melody;
     }
 
     public String getSample() {
@@ -37,7 +39,7 @@ public class DrawItem extends HierarchyItem {
 
         DrawItem drawItem = (DrawItem) o;
 
-        if (voice != null ? !voice.equals(drawItem.voice) : drawItem.voice != null) return false;
+        if (melody != null ? !melody.equals(drawItem.melody) : drawItem.melody != null) return false;
         return sample != null ? sample.equals(drawItem.sample) : drawItem.sample == null;
 
     }
@@ -45,7 +47,7 @@ public class DrawItem extends HierarchyItem {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (voice != null ? voice.hashCode() : 0);
+        result = 31 * result + (melody != null ? melody.hashCode() : 0);
         result = 31 * result + (sample != null ? sample.hashCode() : 0);
         return result;
     }
@@ -57,8 +59,12 @@ public class DrawItem extends HierarchyItem {
                 ", type=" + type +
                 ", name='" + name + '\'' +
                 ", image='" + image + '\'' +
-                ", voice='" + voice + '\'' +
+                ", melody='" + melody + '\'' +
                 ", sample='" + sample + '\'' +
                 '}';
+    }
+
+    public String getAccompaniment() {
+        return accompaniment;
     }
 }

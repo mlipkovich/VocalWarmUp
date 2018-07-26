@@ -1,10 +1,9 @@
 package com.berniac.vocalwarmup.sequence.adjustment;
 
-import android.util.SparseArray;
-
 import com.berniac.vocalwarmup.music.NoteSymbol;
 import com.berniac.vocalwarmup.sequence.WarmUpVoice;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +13,9 @@ import java.util.Map;
 public class FullAdjustmentRules implements AdjustmentRules {
 
     private static final String FULL_ADJUSTMENT_MARK = "Full";
-    private SparseArray<RuleParser> pauseSizeToAdjustment;
+    private Map<Integer, RuleParser> pauseSizeToAdjustment;
 
-    private FullAdjustmentRules(SparseArray<RuleParser> pauseSizeToAdjustment){
+    private FullAdjustmentRules(Map<Integer, RuleParser> pauseSizeToAdjustment){
         this.pauseSizeToAdjustment = pauseSizeToAdjustment;
     }
 
@@ -24,7 +23,7 @@ public class FullAdjustmentRules implements AdjustmentRules {
 
         int fromIndex = 0;
         int adjustmentStart = str.indexOf(FULL_ADJUSTMENT_MARK, fromIndex);
-        SparseArray<RuleParser> pauseSizeToAdjustment = new SparseArray<>();
+        Map<Integer, RuleParser> pauseSizeToAdjustment = new HashMap<>();
 
         do {
             int ruleStart = str.indexOf("<", adjustmentStart);
@@ -53,5 +52,12 @@ public class FullAdjustmentRules implements AdjustmentRules {
             voices.addAll(drums);
         }
         return allVoices;
+    }
+
+    @Override
+    public String toString() {
+        return "FullAdjustmentRules{" +
+                "pauseSizeToAdjustment=" + pauseSizeToAdjustment +
+                '}';
     }
 }

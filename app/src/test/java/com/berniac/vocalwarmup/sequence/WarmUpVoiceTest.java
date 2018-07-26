@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Marina Gorlova on 24.11.2017.
  */
-public class WarmUpVoiceTest {
+public class WarmUpVoiceTest {/*
     @Test
     public void testParsingVoice() throws Exception {
         List<MusicalSymbol> musicalSymbols = new ArrayList<>();
@@ -46,5 +46,5 @@ public class WarmUpVoiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void testParsingSkipInstrument() throws Exception {
         WarmUpVoice.valueOf("(4G,16Cis,4D3)");
-    }
+    }*/
 }
