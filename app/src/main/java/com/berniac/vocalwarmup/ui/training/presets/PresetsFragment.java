@@ -30,9 +30,7 @@ public class PresetsFragment extends Fragment {
         presetsList.setItemAnimator(new DefaultItemAnimator());
         presetsList.setHasFixedSize(true);
 
-        Reader hierarchyReader = new InputStreamReader(ResourcesProvider.getDrawHierarchy(getContext()));
-        PresetsListPresenter presetsListPresenter =
-                new PresetsListPresenter(new WarmUpRepository(hierarchyReader));
+        PresetsListPresenter presetsListPresenter = new PresetsListPresenter();
         RecyclerView.Adapter adapter = new PresetsListAdapter(presetsListPresenter, getContext());
         presetsList.setAdapter(adapter);
 

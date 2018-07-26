@@ -14,7 +14,10 @@ public class WarmUp {
     private NoteRegister startingNote;
     private int currentNote;       // TODO: Replace with NoteRegister?
     private Direction[] directions;
+
     private Playable melody;
+    private Accompaniment accompaniment;
+
     private boolean runMelody;
     private Playable harmony;
     private AdjustmentRules adjustmentRules;
@@ -76,6 +79,14 @@ public class WarmUp {
     public void setMelody(Melody melody) {
         this.melody = melody;
         this.patternChanged = true;
+    }
+
+    public void setAccompaniment(Accompaniment accompaniment) {
+        this.accompaniment = accompaniment;
+    }
+
+    public Accompaniment getAccompaniment() {
+        return accompaniment;
     }
 
     public boolean getRunMelody() {

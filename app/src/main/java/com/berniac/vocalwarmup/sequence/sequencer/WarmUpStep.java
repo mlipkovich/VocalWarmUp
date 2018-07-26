@@ -13,6 +13,9 @@ import jp.kshoji.javax.sound.midi.MidiEvent;
  */
 public class WarmUpStep {
 
+    public static final WarmUpStep EMPTY_STEP =
+            new WarmUpStep(-1, -1, -1, null);
+
     private Direction direction;
     private int tonic;
     private int forwardTonic;
@@ -93,5 +96,35 @@ public class WarmUpStep {
             }
             return (event1.getTick() < event2.getTick()) ? -1 : 1;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        WarmUpStep that = (WarmUpStep) o;
+
+        if (tonic != that.tonic) return false;
+        if (forwardTonic != that.forwardTonic) return false;
+        if (backwardTonic != that.backwardTonic) return false;
+        if (direction != that.direction) return false;
+        if (!baseEvents.equals(that.baseEvents)) return false;
+        if (!adjustmentForwardEvents.equals(that.adjustmentForwardEvents)) return false;
+        if (!adjustmentBackwardEvents.equals(that.adjustmentBackwardEvents)) return false;
+        return adjustmentRepeatEvents.equals(that.adjustmentRepeatEvents);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = direction != null ? direction.hashCode() : 0;
+        result = 31 * result + tonic;
+        result = 31 * result + forwardTonic;
+        result = 31 * result + backwardTonic;
+        result = 31 * result + baseEvents.hashCode();
+        result = 31 * result + adjustmentForwardEvents.hashCode();
+        result = 31 * result + adjustmentBackwardEvents.hashCode();
+        result = 31 * result + adjustmentRepeatEvents.hashCode();
+        return result;
     }
 }

@@ -36,6 +36,20 @@ public class OctaveShifts {
         return new OctaveShifts(lowerBoundaries, upperBoundaries);
     }
 
+    public static OctaveShifts valueOfNew(String str) {
+        int shiftsStart = str.indexOf('[');
+        if (str.equals("") || shiftsStart == -1) {
+            return EMPTY_SHIFTS;
+        }
+        int shiftsEnd = str.indexOf(']');
+        int splitIndex = str.indexOf("<");
+        String lowerShifts = str.substring(shiftsStart + 1, splitIndex);
+        List<BoundaryNote> lowerBoundaries = getBoundaries(lowerShifts);
+        String upperShifts = str.substring(splitIndex + 1, shiftsEnd);
+        List<BoundaryNote> upperBoundaries = getBoundaries(upperShifts);
+        return new OctaveShifts(lowerBoundaries, upperBoundaries);
+    }
+
     public List<BoundaryNote> getLowerBoundaries() {
         return lowerBoundaries;
     }

@@ -1,10 +1,9 @@
 package com.berniac.vocalwarmup.ui.training.presets;
 
-import com.berniac.vocalwarmup.model.HierarchyItem;
+import com.berniac.vocalwarmup.model.Preset;
 import com.berniac.vocalwarmup.ui.model.IWarmUpRepository;
+import com.berniac.vocalwarmup.ui.model.RepositoryFactory;
 import com.berniac.vocalwarmup.ui.training.ItemRowView;
-
-import java.util.Arrays;
 
 /**
  * Created by Mikhail Lipkovich on 11/28/2017.
@@ -12,14 +11,12 @@ import java.util.Arrays;
 public class PresetsListPresenter {
 
     private IWarmUpRepository repository;
-    private HierarchyItem[] draws;
+    private Preset[] draws;
     private PresetsListAdapter view;
 
-    public PresetsListPresenter(IWarmUpRepository repository) {
-        this.repository = repository;
-
-        // TODO: Separate JSON and method for getting presets
-        this.draws = repository.getItemsByHierarchy(Arrays.asList(0, 0));
+    public PresetsListPresenter() {
+        this.repository = RepositoryFactory.getRepository();
+        this.draws = repository.getPresetItems();
     }
 
     public void onAttach(PresetsListAdapter view) {
@@ -36,7 +33,7 @@ public class PresetsListPresenter {
     }
 
     public void onItemClicked(int clickedItemPosition) {
-        // TODO: Add methods parameters
+        repository.setSelectedItem(draws[clickedItemPosition]);
         view.switchToPlayer();
     }
 }

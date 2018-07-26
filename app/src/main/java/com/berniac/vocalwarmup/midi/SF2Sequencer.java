@@ -68,6 +68,17 @@ public class SF2Sequencer {
         return instrumentToChannel.get(instrument);
     }
 
+    public static Receiver getReceiver() {
+        if (!isConfigured) {
+            throw new IllegalStateException("SF2Sequencer should be configured first");
+        }
+        try {
+            return sequencer.getReceiver();
+        } catch (MidiUnavailableException e) {
+            throw new RuntimeException("Failed to get receiver", e);
+        }
+    }
+
     public static Sequencer getSequencer() {
         if (!isConfigured) {
             throw new IllegalStateException("SF2Sequencer should be configured first");

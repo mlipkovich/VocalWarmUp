@@ -13,7 +13,7 @@
             "type": "draw",
             "name": "Сигарета после проливного дождя во Франкфурте",
             "image": "pattern_visualisation",
-            "voice": "25C+12D-3",
+            "melody": "25C+12D-3",
             "sample": "09ffaf",
             "harmony": []
           },
@@ -21,14 +21,14 @@
             "type": "draw",
             "name": "Круассан с кофе у океана",
             "image": "pattern_visualisation",
-            "voice": "25C+12D-3",
+            "melody": "25C+12D-3",
             "sample": "01bfaf"
           },
           {
             "type": "draw",
             "name": "В стиле музыки французских улиц",
             "image": "pattern_visualisation",
-            "voice": "25C+12D-3",
+            "melody": "25C+12D-3",
             "sample": "12afaf"
           }
         ]
@@ -42,7 +42,7 @@
             "type": "draw",
             "name": "draw4",
             "image": "01bbff12",
-            "voice": "25C+12D-3",
+            "melody": "25C+12D-3",
             "sample": "09ffaf"
           }
         ]
@@ -56,7 +56,7 @@
             "type": "draw",
             "name": "draw4",
             "image": "01bbff12",
-            "voice": "25C+12D-3",
+            "melody": "25C+12D-3",
             "sample": "09ffaf"
           }
         ]
@@ -70,7 +70,7 @@
             "type": "draw",
             "name": "draw4",
             "image": "01bbff12",
-            "voice": "25C+12D-3",
+            "melody": "25C+12D-3",
             "sample": "09ffaf"
           }
         ]

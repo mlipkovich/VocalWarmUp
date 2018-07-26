@@ -2,6 +2,7 @@ package com.berniac.vocalwarmup.ui.model;
 
 import com.berniac.vocalwarmup.model.DrawHierarchyJsonParser;
 import com.berniac.vocalwarmup.model.HierarchyItem;
+import com.berniac.vocalwarmup.model.Preset;
 
 import java.io.Reader;
 import java.util.List;
@@ -12,10 +13,13 @@ import java.util.List;
 public class WarmUpRepository implements IWarmUpRepository {
 
     private HierarchyItem[] hierarchyItems;
+    private Preset[] presetItems;
+    private HierarchyItem selectedItem;
 
     // TODO: Do not parse JSON each time
-    public WarmUpRepository(Reader reader) {
-        hierarchyItems = DrawHierarchyJsonParser.parseItemArray(reader);
+    public WarmUpRepository(Reader library, Reader presets) {
+        hierarchyItems = DrawHierarchyJsonParser.parseItemArray(library);
+        presetItems = DrawHierarchyJsonParser.parsePresetArray(presets);
     }
 
     @Override
@@ -26,5 +30,20 @@ public class WarmUpRepository implements IWarmUpRepository {
         }
 
         return currentLevel;
+    }
+
+    @Override
+    public Preset[] getPresetItems() {
+        return presetItems;
+    }
+
+    @Override
+    public void setSelectedItem(HierarchyItem item) {
+        this.selectedItem = item;
+    }
+
+    @Override
+    public HierarchyItem getSelectedItem() {
+        return selectedItem;
     }
 }

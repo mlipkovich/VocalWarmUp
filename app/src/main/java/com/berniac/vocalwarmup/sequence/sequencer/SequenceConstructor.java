@@ -99,11 +99,13 @@ public class SequenceConstructor {
     static void changePrograms(Playable melody, Playable harmony) {
         Set<Instrument> instruments = new HashSet<>();
         for (WarmUpVoice voice : melody.getVoices()) {
-            instruments.add(voice.getInstrument());
+            //TODO:
+//            instruments.add(melody.getInstrument());
         }
         if (harmony != null) {
             for (WarmUpVoice voice : harmony.getVoices()) {
-                instruments.add(voice.getInstrument());
+                //TODO:
+//                instruments.add(melody.getInstrument());
             }
         }
         SF2Sequencer.changePrograms(instruments);
@@ -188,7 +190,7 @@ public class SequenceConstructor {
             }
         }
         if (lowestSymbol == null) {
-            throw new IllegalStateException("There is no notes in voice " + symbols);
+            throw new IllegalStateException("There is no notes in melody " + symbols);
         }
         return lowestSymbol.getNoteRegister();
     }
@@ -208,7 +210,7 @@ public class SequenceConstructor {
             }
         }
         if (highestSymbol== null) {
-            throw new IllegalStateException("There is no notes in voice " + symbols);
+            throw new IllegalStateException("There is no notes in melody " + symbols);
         }
         return highestSymbol.getNoteRegister();
     }
@@ -281,9 +283,12 @@ public class SequenceConstructor {
     static long addStepVoice(Track track, MidiTrack midiTrack, WarmUpVoice voice,
                              int tonic, long previousTick) throws InvalidMidiDataException {
 
-        int channel = SF2Sequencer.getChannel(voice.getInstrument());
+        // TODO:
+//        int channel = SF2Sequencer.getChannel(melody.getInstrument());
 
-        int octaveShift = getOctaveShift(voice.getOctaveShifts(), tonic);
+//        int octaveShift = getOctaveShift(melody.getOctaveShifts(), tonic);
+        int channel = 0;
+        int octaveShift = 0;
         for (MusicalSymbol symbol : voice.getMusicalSymbols()) {
             long duration = MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
 //            int midiNote;

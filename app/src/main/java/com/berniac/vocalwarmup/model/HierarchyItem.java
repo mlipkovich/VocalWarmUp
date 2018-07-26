@@ -23,7 +23,9 @@ public class HierarchyItem {
         @SerializedName("category")
         CATEGORY,
         @SerializedName("draw")
-        DRAW;
+        DRAW,
+        @SerializedName("preset")
+        PRESET
     }
 
     public ItemType getType() {

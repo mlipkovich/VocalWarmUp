@@ -52,7 +52,7 @@ public class MinimalAdjustmentRules implements AdjustmentRules {
                     symbolIndex = 0;
                 }
             }
-            resultingDrums.add(new WarmUpVoice(resultingVoiceSymbols, drumVoice.getInstrument()));
+            resultingDrums.add(new WarmUpVoice(resultingVoiceSymbols, drumVoice.getVoiceNumber()));
         }
 
         Map<NoteSymbol, List<WarmUpVoice>> harmonies = ruleParser.getHarmony();
@@ -77,7 +77,7 @@ public class MinimalAdjustmentRules implements AdjustmentRules {
                     }
                     weightedSymbols.add(weightedSymbol);
                 }
-                WarmUpVoice weightedVoice = new WarmUpVoice(weightedSymbols, voice.getInstrument());
+                WarmUpVoice weightedVoice = new WarmUpVoice(weightedSymbols, voice.getVoiceNumber());
                 resultingVoices.add(weightedVoice);
             }
             resultingRules.put(harmonyRule.getKey(), resultingVoices);

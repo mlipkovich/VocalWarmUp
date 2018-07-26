@@ -2,6 +2,7 @@ package com.berniac.vocalwarmup.ui.training.library;
 
 import com.berniac.vocalwarmup.model.HierarchyItem;
 import com.berniac.vocalwarmup.ui.model.IWarmUpRepository;
+import com.berniac.vocalwarmup.ui.model.RepositoryFactory;
 import com.berniac.vocalwarmup.ui.training.ItemRowView;
 
 import java.util.Collections;
@@ -16,8 +17,8 @@ public class LibraryListPresenter {
     private IWarmUpRepository repository;
     private HierarchyItem[] itemsList;
 
-    public LibraryListPresenter(IWarmUpRepository repository) {
-        this.repository = repository;
+    public LibraryListPresenter() {
+        this.repository = RepositoryFactory.getRepository();
         this.itemsList = repository.getItemsByHierarchy(Collections.<Integer>emptyList());
     }
 

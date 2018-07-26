@@ -9,12 +9,16 @@ public class WarmUpPlayer implements Player {
 
     private StepSequencer sequencer;
 
-    public WarmUpPlayer(StepSequencer sequencer) {
+    public WarmUpPlayer(StepSequencer sequencer, SequenceFinishedListener sequenceFinishedListener) {
         this.sequencer = sequencer;
+        this.sequencer.setSequenceFinishedListener(sequenceFinishedListener);
     }
 
     @Override
     public void play() {
+        if (!sequencer.isRunning()) {
+            sequencer.run();
+        }
         sequencer.play();
     }
 

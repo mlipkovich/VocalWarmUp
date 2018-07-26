@@ -12,20 +12,11 @@ import java.util.List;
 public class WarmUpVoice {
 
     private List<MusicalSymbol> musicalSymbols;
-    private Instrument instrument;
-    private OctaveShifts octaveShifts;
+    private int voiceNumber;
 
-    public WarmUpVoice(List<MusicalSymbol> musicalSymbols, Instrument instrument,
-                       OctaveShifts octaveShifts) {
+    public WarmUpVoice(List<MusicalSymbol> musicalSymbols, int voiceNumber) {
         this.musicalSymbols = musicalSymbols;
-        this.instrument = instrument;
-        this.octaveShifts = octaveShifts;
-    }
-
-    public WarmUpVoice(List<MusicalSymbol> musicalSymbols, Instrument instrument) {
-        this.musicalSymbols = musicalSymbols;
-        this.instrument = instrument;
-        this.octaveShifts = OctaveShifts.EMPTY_SHIFTS;
+        this.voiceNumber = voiceNumber;
     }
 
     public static WarmUpVoice valueOf(String str) {
@@ -39,10 +30,10 @@ public class WarmUpVoice {
 
         if (voiceStart == 0) {
             throw new IllegalArgumentException("Voice " + str +
-                    " should start with an instrument.");
+                    " should start with a number.");
         }
 
-        Instrument instrument = Instrument.getByCode(str.substring(0, voiceStart));
+        int voiceNumber = Integer.parseInt(str.substring(0, voiceStart));
 
         String[] notes = str.substring(voiceStart + 1, voiceEnd).split(",");
         List<MusicalSymbol> musicalSymbols = new ArrayList<MusicalSymbol>(notes.length);
@@ -50,23 +41,16 @@ public class WarmUpVoice {
             musicalSymbols.add(MusicalSymbolParser.parse(note));
         }
 
-        OctaveShifts shifts = OctaveShifts.valueOf(str.substring(voiceEnd + 1, str.length()));
-        return new WarmUpVoice(musicalSymbols, instrument, shifts);
+        return new WarmUpVoice(musicalSymbols, voiceNumber);
     }
 
     public List<MusicalSymbol> getMusicalSymbols() {
         return musicalSymbols;
     }
 
-    public Instrument getInstrument() {
-        return instrument;
+    public int getVoiceNumber() {
+        return voiceNumber;
     }
-
-    public OctaveShifts getOctaveShifts() {
-        return octaveShifts;
-    }
-
-
 
     @Override
     public boolean equals(Object o) {
@@ -75,17 +59,13 @@ public class WarmUpVoice {
 
         WarmUpVoice that = (WarmUpVoice) o;
 
-        if (!musicalSymbols.equals(that.musicalSymbols)) return false;
-        if (instrument != that.instrument) return false;
-        return octaveShifts.equals(that.octaveShifts);
-
+        return musicalSymbols.equals(that.musicalSymbols) && voiceNumber == that.voiceNumber;
     }
 
     @Override
     public int hashCode() {
         int result = musicalSymbols.hashCode();
-        result = 31 * result + instrument.hashCode();
-        result = 31 * result + octaveShifts.hashCode();
+        result = 31 * result + voiceNumber;
         return result;
     }
 
@@ -93,8 +73,7 @@ public class WarmUpVoice {
     public String toString() {
         return "WarmUpVoice{" +
                 "musicalSymbols=" + musicalSymbols +
-                ", instrument=" + instrument +
-                ", octaveShifts=" + octaveShifts +
+                ", voiceNumber=" + voiceNumber +
                 '}';
     }
 }

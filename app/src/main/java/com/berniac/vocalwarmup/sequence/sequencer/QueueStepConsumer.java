@@ -17,8 +17,12 @@ public class QueueStepConsumer implements StepConsumer {
 
     public QueueStepConsumer(BlockingQueue<WarmUpStep> forwardSteps) {
         this.forwardSteps = forwardSteps;
-        this.previousSteps = new ArrayList<>();
-        this.numberOfStepsBehind = 0;
+    }
+
+    @Override
+    public void restart() {
+        previousSteps = new ArrayList<>();
+        numberOfStepsBehind = 0;
     }
 
     @Override
