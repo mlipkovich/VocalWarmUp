@@ -16,6 +16,8 @@ public interface Player {
 
     void repeatCurrentStep();
 
+    void changeDirection();
+
     void previousStep();
 
     void nextStep();
@@ -32,10 +34,11 @@ public interface Player {
 
     void recordOff();
 
-    void changeTemp();
+    void changeTempoFactor(float tempoFactor);
+
+    void changeTempo(int tempoBpm);
 
     void showNoteVisualisation();
 
     void showLyrics();
-
 }

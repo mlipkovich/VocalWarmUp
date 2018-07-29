@@ -1,11 +1,7 @@
 package com.berniac.vocalwarmup.sequence;
 
-import com.berniac.vocalwarmup.music.MusicalSymbol;
-import com.berniac.vocalwarmup.music.Note;
 import com.berniac.vocalwarmup.music.NoteRegister;
-import com.berniac.vocalwarmup.music.NoteSymbol;
 import com.berniac.vocalwarmup.music.Step;
-import com.berniac.vocalwarmup.sequence.adjustment.Adjustment;
 import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;
 
 /**
@@ -18,7 +14,10 @@ public class WarmUp {
     private NoteRegister startingNote;
     private int currentNote;       // TODO: Replace with NoteRegister?
     private Direction[] directions;
+
     private Playable melody;
+    private Accompaniment accompaniment;
+
     private boolean runMelody;
     private Playable harmony;
     private AdjustmentRules adjustmentRules;
@@ -80,6 +79,14 @@ public class WarmUp {
     public void setMelody(Melody melody) {
         this.melody = melody;
         this.patternChanged = true;
+    }
+
+    public void setAccompaniment(Accompaniment accompaniment) {
+        this.accompaniment = accompaniment;
+    }
+
+    public Accompaniment getAccompaniment() {
+        return accompaniment;
     }
 
     public boolean getRunMelody() {

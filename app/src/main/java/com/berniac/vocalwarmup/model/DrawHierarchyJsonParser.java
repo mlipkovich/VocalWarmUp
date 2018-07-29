@@ -35,6 +35,9 @@ public class DrawHierarchyJsonParser {
                             case DRAW:
                                 actualType = DrawItem.class;
                                 break;
+                            case PRESET:
+                                actualType = Preset.class;
+                                break;
                             default:
                                 throw new IllegalStateException("Unsupported item type " + type);
                         }
@@ -55,5 +58,9 @@ public class DrawHierarchyJsonParser {
 
     public static HierarchyItem[] parseItemArray(Reader json) {
         return GSON.fromJson(json, HierarchyItem[].class);
+    }
+
+    public static Preset[] parsePresetArray(Reader json) {
+        return GSON.fromJson(json, Preset[].class);
     }
 }

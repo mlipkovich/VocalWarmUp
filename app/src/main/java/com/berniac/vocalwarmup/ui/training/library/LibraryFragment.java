@@ -33,9 +33,7 @@ public class LibraryFragment extends Fragment {
         libraryItemsList.setItemAnimator(new DefaultItemAnimator());
         libraryItemsList.setHasFixedSize(true);
 
-        Reader hierarchyReader = new InputStreamReader(ResourcesProvider.getDrawHierarchy(getContext()));
-        libraryListPresenter =
-                new LibraryListPresenter(new WarmUpRepository(hierarchyReader));
+        libraryListPresenter = new LibraryListPresenter();
         LibraryListView listView = new LibraryListAdapter(libraryListPresenter, getContext());
 
         libraryItemsList.setAdapter(listView);

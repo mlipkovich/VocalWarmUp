@@ -68,12 +68,27 @@ public class PlayerActivity extends PlayerView {
                 presenter.onRepeatClicked();
             }
         });
+
+        revertButton = (ImageButton) findViewById(R.id.change_direction_btn);
+        revertButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onRevertClicked();
+            }
+        });
     }
 
     @Override
     public boolean onSupportNavigateUp() {
+        presenter.onNavigateUp();
         finish();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        // TODO: Perhaps different behaviour
+        onSupportNavigateUp();
     }
 
     @Override
@@ -104,5 +119,10 @@ public class PlayerActivity extends PlayerView {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.player_fragment_container, screenFragment);
         transaction.commit();
+    }
+
+    @Override
+    public void changeDirection() {
+        // TODO: Change image with direction
     }
 }

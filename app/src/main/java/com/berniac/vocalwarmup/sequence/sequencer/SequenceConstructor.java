@@ -1,4 +1,4 @@
-package com.berniac.vocalwarmup.sequence;
+package com.berniac.vocalwarmup.sequence.sequencer;
 
 import com.berniac.vocalwarmup.midi.MidiUtils;
 import com.berniac.vocalwarmup.midi.SF2Sequencer;
@@ -7,6 +7,12 @@ import com.berniac.vocalwarmup.music.Note;
 import com.berniac.vocalwarmup.music.NoteRegister;
 import com.berniac.vocalwarmup.music.NoteValue;
 import com.berniac.vocalwarmup.music.Step;
+import com.berniac.vocalwarmup.sequence.Instrument;
+import com.berniac.vocalwarmup.sequence.OctaveShifts;
+import com.berniac.vocalwarmup.sequence.Playable;
+import com.berniac.vocalwarmup.sequence.WarmUp;
+import com.berniac.vocalwarmup.sequence.WarmUpSequenceTemp;
+import com.berniac.vocalwarmup.sequence.WarmUpVoice;
 import com.berniac.vocalwarmup.sequence.adjustment.Adjustment;
 import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;
 import com.berniac.vocalwarmup.sequence.adjustment.SilentAdjustmentRules;
@@ -38,11 +44,10 @@ public class SequenceConstructor {
     private SequenceConstructor(){}
 
 
-    public static WarmUpSequence construct(WarmUp warmUp) throws Exception {
+    public static WarmUpSequenceTemp construct(WarmUp warmUp) throws Exception {
 
         changePrograms(warmUp.getMelody(), warmUp.getHarmony());
         Sequence sequence = new Sequence(Sequence.PPQ, TICKS_IN_QUARTER_NOTE, MidiTrack.values().length);
-
         WarmUpVoice melodyVoice = warmUp.getMelody().getVoices().get(0);
         Step step = warmUp.getStep();
         int startingTonicMidi = MidiUtils.getMidiNote(warmUp.getStartingNote());
@@ -66,19 +71,16 @@ public class SequenceConstructor {
 
         TonicStateMachine tonicStateMachine =
                 new TonicStateMachine(lowestTonicMidi, highestTonicMidi, warmUp.getStep());
-
         while (!tonicStateMachine.isFinished()) {
 
             int currentTonicMidi = tonicStateMachine.getCurrentTonic();
 
             melodyEndTick = addStepPlayable(sequence, MidiTrack.MELODY, warmUp.getMelody(),
                     currentTonicMidi, melodyStartTick);
-
             if (harmony != null) {
                 addStepPlayable(sequence, MidiTrack.HARMONY, warmUp.getHarmony(),
                         currentTonicMidi, melodyStartTick);
             }
-
             int nextTonicMidi = tonicStateMachine.getNextTonic();
             Playable adjustmentVoices = adjustment.getVoices(
                     MidiUtils.getNote(currentTonicMidi),
@@ -87,22 +89,24 @@ public class SequenceConstructor {
                     melodyEndTick, lastMelodyNoteDuration);
             adjustmentEndTick = addStepPlayable(sequence, MidiTrack.ADJUSTMENT, adjustmentVoices,
                     currentTonicMidi, adjustmentStartTick);
-
             melodyStartTick = adjustmentEndTick;
-
             // TODO: Add metronome and lyrics
         }
 
-        return new WarmUpSequence(sequence, lowestTonicMidi, highestTonicMidi);
+        return new WarmUpSequenceTemp(sequence, lowestTonicMidi, highestTonicMidi);
     }
 
     static void changePrograms(Playable melody, Playable harmony) {
         Set<Instrument> instruments = new HashSet<>();
         for (WarmUpVoice voice : melody.getVoices()) {
-            instruments.add(voice.getInstrument());
+            //TODO:
+//            instruments.add(melody.getInstrument());
         }
-        for (WarmUpVoice voice : harmony.getVoices()) {
-            instruments.add(voice.getInstrument());
+        if (harmony != null) {
+            for (WarmUpVoice voice : harmony.getVoices()) {
+                //TODO:
+//                instruments.add(melody.getInstrument());
+            }
         }
         SF2Sequencer.changePrograms(instruments);
     }
@@ -147,10 +151,10 @@ public class SequenceConstructor {
                     }
                     break;
                 case HIGHEST_TO_LOWEST:
-                    currentTonic = currentTonic - step.getNextShift();
                     if (currentTonic == lowestTonic) {
                         state = State.FINISHED;
                     }
+                    currentTonic = currentTonic - step.getNextShift();
                     break;
                 case FINISHED:
                     throw new IllegalStateException("State machine is in FINISHED state");
@@ -186,7 +190,7 @@ public class SequenceConstructor {
             }
         }
         if (lowestSymbol == null) {
-            throw new IllegalStateException("There is no notes in voice " + symbols);
+            throw new IllegalStateException("There is no notes in melody " + symbols);
         }
         return lowestSymbol.getNoteRegister();
     }
@@ -206,11 +210,24 @@ public class SequenceConstructor {
             }
         }
         if (highestSymbol== null) {
-            throw new IllegalStateException("There is no notes in voice " + symbols);
+            throw new IllegalStateException("There is no notes in melody " + symbols);
         }
         return highestSymbol.getNoteRegister();
     }
 
+    static int getLowestUserTonicInSequence(NoteRegister lowerNote, int lowestNoteMidiInVoice, int startingTonicMidi, int stepSize) {
+        int maxDist = lowestNoteMidiInVoice - MidiUtils.getMidiNote(lowerNote);
+        int maxDistFullStepsNumber = (int) Math.floor((float) maxDist / stepSize);
+        int maxReachableDist = maxDistFullStepsNumber * stepSize;
+        return startingTonicMidi - maxReachableDist;
+    }
+
+    static int getHighestUserTonicInSequence(NoteRegister upperNote, int highestNoteMidiInVoice, int startingTonicMidi, int stepSize) {
+        int maxDist = MidiUtils.getMidiNote(upperNote) - highestNoteMidiInVoice;
+        int maxDistFullStepsNumber = (int) Math.floor((float) maxDist / stepSize);
+        int maxReachableDist = maxDistFullStepsNumber * stepSize;
+        return startingTonicMidi + maxReachableDist;
+    }
 
     static int getLowestTonicInSequence(int lowestNoteMidiInVoice, int startingTonicMidi, int stepSize) {
         int maxDist = lowestNoteMidiInVoice - MidiUtils.getMidiNote(NoteRegister.LOWEST_NOTE);
@@ -241,7 +258,7 @@ public class SequenceConstructor {
         float lastMelodyNoteQuartersCount = lastMelodyNoteDuration.getNumberOfQuarters();
         for (WarmUpVoice harmonyVoice : harmony.getVoices()) {
             List<MusicalSymbol> voiceSymbols = harmonyVoice.getMusicalSymbols();
-            int symbolIndex = 0;
+            int symbolIndex = voiceSymbols.size() - 1;
             float erasedNotesQuartersCount = 0;
             while (erasedNotesQuartersCount < lastMelodyNoteQuartersCount) {
                 erasedNotesQuartersCount +=
@@ -266,11 +283,24 @@ public class SequenceConstructor {
     static long addStepVoice(Track track, MidiTrack midiTrack, WarmUpVoice voice,
                              int tonic, long previousTick) throws InvalidMidiDataException {
 
-        int channel = SF2Sequencer.getChannel(voice.getInstrument());
+        // TODO:
+//        int channel = SF2Sequencer.getChannel(melody.getInstrument());
 
-        int octaveShift = getOctaveShift(voice.getOctaveShifts(), tonic);
+//        int octaveShift = getOctaveShift(melody.getOctaveShifts(), tonic);
+        int channel = 0;
+        int octaveShift = 0;
         for (MusicalSymbol symbol : voice.getMusicalSymbols()) {
             long duration = MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
+//            int midiNote;
+//            if (!symbol.isSounding()) {
+//                midiNote = MidiUtils.getMidiNote(NoteRegister.HIGHEST_NOTE);
+//            } else {
+//                midiNote = MidiUtils.transpose(((Note) symbol).getNoteRegister(), tonic, octaveShift);
+//            }
+////            if (symbol.isSounding()) {
+////                midiNote = MidiUtils.transpose(((Note) symbol).getNoteRegister(), tonic, octaveShift);
+//                addNote(track, midiTrack, channel, midiNote, duration, previousTick);
+////            }
             if (symbol.isSounding()) {
                 int midiNote = MidiUtils.transpose(((Note) symbol).getNoteRegister(), tonic, octaveShift);
                 addNote(track, midiTrack, channel, midiNote, duration, previousTick);

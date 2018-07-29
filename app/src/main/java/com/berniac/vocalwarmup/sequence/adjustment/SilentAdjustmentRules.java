@@ -4,6 +4,7 @@ import com.berniac.vocalwarmup.music.MusicalSymbol;
 import com.berniac.vocalwarmup.music.NoteSymbol;
 import com.berniac.vocalwarmup.music.NoteValue;
 import com.berniac.vocalwarmup.music.Rest;
+import com.berniac.vocalwarmup.sequence.Instrument;
 import com.berniac.vocalwarmup.sequence.WarmUpVoice;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class SilentAdjustmentRules implements AdjustmentRules {
             symbols.add(new Rest(NoteValue.QUARTER));
         }
 
-        List<WarmUpVoice> voice = Collections.singletonList(new WarmUpVoice(symbols, null));
+        List<WarmUpVoice> voice = Collections.singletonList(new WarmUpVoice(symbols, 0));
         Map<NoteSymbol, List<WarmUpVoice>> voices = new HashMap<>();
         for (NoteSymbol noteSymbol : NoteSymbol.values()) {
             voices.put(noteSymbol, voice);

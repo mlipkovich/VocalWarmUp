@@ -7,8 +7,8 @@ public class FixedStep implements Step {
 
     private int numberOfSemitones;
 
-    public FixedStep(int numberOfQuarters) {
-        this.numberOfSemitones = numberOfQuarters;
+    public FixedStep(int numberOfSemitones) {
+        this.numberOfSemitones = numberOfSemitones;
     }
 
     @Override

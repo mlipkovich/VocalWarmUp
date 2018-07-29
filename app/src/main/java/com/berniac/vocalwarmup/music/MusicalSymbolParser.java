@@ -32,7 +32,7 @@ public class MusicalSymbolParser {
 
         if (symbol.equals(Rest.REST_SYMBOL)) {
             if (symbolEnd != octaveEnd) {
-                throw new IllegalArgumentException("Rest shouldn't contain octave. Your string to parse: " +
+                throw new IllegalArgumentException("Rest shouldn't contain octave. Your string to valueOf: " +
                         octave);
             }
             currentSymbol = new Rest(NoteValue.getByCode(noteValue));

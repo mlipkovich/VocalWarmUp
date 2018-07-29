@@ -4,6 +4,7 @@ import com.berniac.vocalwarmup.sequence.Instrument;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,11 +60,23 @@ public class SF2Sequencer {
             SF2Database.Program program = SF2Database.getProgram(instrument);
             synthesizer.getChannels()[channel].programChange(program.getBank(), program.getProgram());
             instrumentToChannel.put(instrument, channel);
+            channel++;
         }
     }
 
     public static int getChannel(Instrument instrument) {
         return instrumentToChannel.get(instrument);
+    }
+
+    public static Receiver getReceiver() {
+        if (!isConfigured) {
+            throw new IllegalStateException("SF2Sequencer should be configured first");
+        }
+        try {
+            return sequencer.getReceiver();
+        } catch (MidiUnavailableException e) {
+            throw new RuntimeException("Failed to get receiver", e);
+        }
     }
 
     public static Sequencer getSequencer() {

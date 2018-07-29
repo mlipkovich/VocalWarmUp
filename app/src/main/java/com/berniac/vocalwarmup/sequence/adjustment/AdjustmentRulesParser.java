@@ -1,5 +1,8 @@
 package com.berniac.vocalwarmup.sequence.adjustment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Mikhail Lipkovich on 12/24/2017.
  */
@@ -20,5 +23,18 @@ public class AdjustmentRulesParser {
         }
 
         throw new IllegalArgumentException("Unknown adjustment type for string " + str);
+    }
+
+    public static List<AdjustmentRules> parseSeveral(String str) {
+        List<AdjustmentRules> rules = new ArrayList<>();
+        int ruleStart = 0;
+        int ruleEnd;
+        while ((ruleEnd = str.indexOf(">", ruleStart)) != -1) {
+            String adjustmentStr = str.substring(ruleStart, ruleEnd + 1);
+            rules.add(parse(adjustmentStr));
+            ruleStart = ruleEnd + 1;
+        }
+
+        return rules;
     }
 }
