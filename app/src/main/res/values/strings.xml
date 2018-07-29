@@ -10,6 +10,10 @@
     <string name="warm_up_step_pause">Пауза между шагами</string>
     <string name="warm_up_tempo">Темп распевки, bpm</string>
 
+    <string name="player_config_visualization">Визуализация</string>
+    <string name="player_config_melody_harmony_level">Громкость мелодии / гармонии</string>
+    <string name="player_config_tempo">Темп распевки, bpm</string>
+
     <string name="menu_bottom_training">Training</string>
     <string name="menu_bottom_saved">Saved</string>
     <string name="menu_bottom_settings">Settings</string>
