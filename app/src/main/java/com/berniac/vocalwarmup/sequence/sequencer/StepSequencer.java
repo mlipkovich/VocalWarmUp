@@ -32,6 +32,9 @@ public class StepSequencer {
         this.consumer = consumer;
         this.producer = producer;
         this.receiver = receiver;
+
+        this.producerThread = new ProducerThread(producer);
+        this.consumerThread = new ConsumerThread(consumer, receiver);
     }
 
     public void setSequenceFinishedListener(SequenceFinishedListener sequenceFinishedListener) {
@@ -42,11 +45,9 @@ public class StepSequencer {
         isRunning = true;
         producer.cleanGenerated();
         producer.restart();
-        producerThread = new ProducerThread(producer);
         producerThread.start();
 
         consumer.restart();
-        consumerThread = new ConsumerThread(consumer, receiver);
         consumerThread.setSequenceFinishedListener(new SequenceFinishedListener() {
             @Override
             public void onSequenceFinished() {
