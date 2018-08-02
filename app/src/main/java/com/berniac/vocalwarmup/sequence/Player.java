@@ -38,6 +38,12 @@ public interface Player {
 
     void changeTempo(int tempoBpm);
 
+    void changeMelodyVolume(int volume);
+
+    void changeHarmonyVolume(int volume);
+
+    void changeAdjustmentVolume(int volume);
+
     void showNoteVisualisation();
 
     void showLyrics();

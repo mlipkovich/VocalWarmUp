@@ -1,7 +1,6 @@
 package com.berniac.vocalwarmup.ui.player;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +15,12 @@ import java.util.Locale;
 /**
  * Created by Mikhail Lipkovich on 2/16/2018.
  */
-public class PlayerScreenFragment extends Fragment {
+public class PlayerScreenFragment extends MuteButtonsFragment {
 
-    private PlayerPresenter presenter;
-
+    private TextView drawTitle;
     private TextView tempoTextView;
-    private SeekBar seekBar;
+    private SeekBar tempoFactorSeekBar;
 
-    // TODO: Will be removed from here
-    private ImageButton harmonySwitcherButton;
-    private ImageButton melodySwitcherButton;
     private ImageButton configPanelButton;
 
 
@@ -34,42 +29,18 @@ public class PlayerScreenFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_player_screen, container, false);
 
+        drawTitle = (TextView) view.findViewById(R.id.player_draw_title);
+        presenter.onDrawTitleInitialized();
+
         tempoTextView = (TextView) view.findViewById(R.id.current_tempo_text);
 
-        seekBar = (SeekBar) view.findViewById(R.id.tempo_seek_bar);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        tempoFactorSeekBar = (SeekBar) view.findViewById(R.id.tempo_seek_bar);
+        tempoFactorSeekBar.setOnSeekBarChangeListener(new ProgressSeekBarListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 presenter.onTempoFactorChanged(progress);
             }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
         });
-
-        harmonySwitcherButton = (ImageButton) view.findViewById(R.id.harmony_btn);
-        harmonySwitcherButton.setImageResource(R.drawable.ic_player_harmony_on);
-        harmonySwitcherButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.onHarmonySwitcherClicked();
-            }
-        });
-
-        melodySwitcherButton = (ImageButton) view.findViewById(R.id.melody_btn);
-        melodySwitcherButton.setImageResource(R.drawable.ic_player_melody_on);
-        melodySwitcherButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.onMelodySwitcherClicked();
-            }
-        });
-
 
         configPanelButton = (ImageButton) view.findViewById(R.id.configure_player_image);
         configPanelButton.setOnClickListener(new View.OnClickListener() {
@@ -79,33 +50,25 @@ public class PlayerScreenFragment extends Fragment {
             }
         });
 
+        initMelodySwitcher(view, R.id.melody_btn);
+        initHarmonySwitcher(view, R.id.harmony_btn);
+
         return view;
     }
 
+    @Override
     public void setPresenter(final PlayerPresenter presenter) {
-        this.presenter = presenter;
+        super.setPresenter(presenter);
         this.presenter.onAttachScreenFragment(this);
+    }
+
+    public void setDrawTitle(String title) {
+        drawTitle.setText(title);
     }
 
     public float changeTempoProgress(int progress) {
         float progressValue = (float)0.75 + (float)progress/100;
         tempoTextView.setText(String.format(Locale.ENGLISH, "%.2fx", progressValue));
         return progressValue;
-    }
-
-    public void changeHarmonyButtonToOn() {
-        harmonySwitcherButton.setImageResource(R.drawable.ic_player_harmony_on);
-    }
-
-    public void changeHarmonyButtonToOff() {
-        harmonySwitcherButton.setImageResource(R.drawable.ic_player_harmony_off);
-    }
-
-    public void changeMelodyButtonToOn() {
-        melodySwitcherButton.setImageResource(R.drawable.ic_player_melody_on);
-    }
-
-    public void changeMelodyButtonToOff() {
-        melodySwitcherButton.setImageResource(R.drawable.ic_player_melody_off);
     }
 }

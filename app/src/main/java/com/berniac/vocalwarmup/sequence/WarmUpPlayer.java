@@ -83,6 +83,21 @@ public class WarmUpPlayer implements Player {
     }
 
     @Override
+    public void changeMelodyVolume(int volume) {
+        sequencer.setMelodyVolume(volume);
+    }
+
+    @Override
+    public void changeHarmonyVolume(int volume) {
+        sequencer.setHarmonyVolume(volume);
+    }
+
+    @Override
+    public void changeAdjustmentVolume(int volume) {
+        sequencer.setAdjustmentVolume(volume);
+    }
+
+    @Override
     public void openSettings() {
 
     }

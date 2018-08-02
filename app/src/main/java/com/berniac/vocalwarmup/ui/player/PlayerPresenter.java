@@ -30,6 +30,7 @@ import jp.kshoji.javax.sound.midi.Receiver;
 public class PlayerPresenter {
 
     private PlayerView view;
+    private String drawTitle;
     private PlayerScreenFragment screenView;
     private PlayerConfigFragment configView;
 
@@ -38,6 +39,10 @@ public class PlayerPresenter {
 
     private boolean isHarmonySwitchedOff = false;
     private boolean isMelodySwitchedOff = false;
+    private boolean isAdjustmentSwitchedOff = false;
+    private int melodyVolumeBeforeMute = 100;
+    private int harmonyVolumeBeforeMute = 100;
+    private int adjustmentVolumeBeforeMute = 100;
 
     public PlayerPresenter() {
     }
@@ -47,6 +52,7 @@ public class PlayerPresenter {
         IWarmUpRepository repository = RepositoryFactory.getRepository();
         // TODO: Work with regular draws as well
         Preset presetToPlay = (Preset)repository.getSelectedItem();
+        this.drawTitle = presetToPlay.getName();
 
         WarmUp warmUp = new WarmUp();
         warmUp.setStep(new FixedStep(presetToPlay.getStep()));
@@ -124,26 +130,73 @@ public class PlayerPresenter {
         player.changeTempo(tempoBpm);
     }
 
-    public void onHarmonySwitcherClicked() {
-        if (isHarmonySwitchedOff) {
-            screenView.changeHarmonyButtonToOn();
-            player.harmonyOn();
-        } else {
-            screenView.changeHarmonyButtonToOff();
-            player.harmonyOff();
-        }
-        isHarmonySwitchedOff = !isHarmonySwitchedOff;
-    }
 
     public void onMelodySwitcherClicked() {
         if (isMelodySwitchedOff) {
-            screenView.changeMelodyButtonToOn();
-            player.melodyOn();
+            configView.changeMelodyVolumeBar(melodyVolumeBeforeMute);
         } else {
-            screenView.changeMelodyButtonToOff();
-            player.melodyOff();
+            melodyVolumeBeforeMute = configView.changeMelodyVolumeBar(0);
         }
-        isMelodySwitchedOff = !isMelodySwitchedOff;
+    }
+
+    public void onMelodyVolumeChanged(int progress) {
+        if (progress == 0) {
+            player.melodyOff();
+            screenView.changeMelodyButtonToOff();
+            configView.changeMelodyButtonToOff();
+            isMelodySwitchedOff = true;
+        } else {
+            player.changeMelodyVolume(progress);
+            player.melodyOn();
+            screenView.changeMelodyButtonToOn();
+            configView.changeMelodyButtonToOn();
+            isMelodySwitchedOff = false;
+        }
+    }
+
+    public void onHarmonySwitcherClicked() {
+        if (isHarmonySwitchedOff) {
+            configView.changeHarmonyVolumeBar(harmonyVolumeBeforeMute);
+        } else {
+            harmonyVolumeBeforeMute = configView.changeHarmonyVolumeBar(0);
+        }
+    }
+
+    public void onHarmonyVolumeChanged(int progress) {
+        if (progress == 0) {
+            player.harmonyOff();
+            screenView.changeHarmonyButtonToOff();
+            configView.changeHarmonyButtonToOff();
+            isHarmonySwitchedOff = true;
+        } else {
+            player.changeHarmonyVolume(progress);
+            player.harmonyOn();
+            screenView.changeHarmonyButtonToOn();
+            configView.changeHarmonyButtonToOn();
+            isHarmonySwitchedOff = false;
+        }
+    }
+
+    public void onAdjustmentSwitcherClicked() {
+        if (isAdjustmentSwitchedOff) {
+            configView.changeAdjustmentVolumeBar(adjustmentVolumeBeforeMute);
+        } else {
+            adjustmentVolumeBeforeMute = configView.changeAdjustmentVolumeBar(0);
+        }
+    }
+
+    public void onAdjustmentVolumeChanged(int progress) {
+        if (progress == 0) {
+            // TODO: there is no mute method for adjustment. Should it be added?
+            player.changeAdjustmentVolume(progress);
+            configView.changeAdjustmentButtonToOff();
+            isAdjustmentSwitchedOff = true;
+        } else {
+            // TODO: there is no unmute method for adjustment. Should it be added?
+            player.changeAdjustmentVolume(progress);
+            configView.changeAdjustmentButtonToOn();
+            isAdjustmentSwitchedOff = false;
+        }
     }
 
     public void onConfigPanelClicked() {
@@ -158,5 +211,9 @@ public class PlayerPresenter {
         if (isPlaying) {
             player.pause();
         }
+    }
+
+    public void onDrawTitleInitialized() {
+        screenView.setDrawTitle(drawTitle);
     }
 }

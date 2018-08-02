@@ -33,7 +33,8 @@ public class PlayerActivity extends PlayerView {
         topBar.setElevation(0);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.player_fragment_container, screenFragment);
+        transaction.add(R.id.player_fragment_container, configFragment);
+        transaction.add(R.id.player_fragment_container, screenFragment);
         transaction.commit();
 
         playButton = (ImageButton) findViewById(R.id.play_btn);
@@ -110,14 +111,16 @@ public class PlayerActivity extends PlayerView {
     @Override
     public void switchToConfigPanel() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.player_fragment_container, configFragment);
+        transaction.hide(screenFragment);
+        transaction.show(configFragment);
         transaction.commit();
     }
 
     @Override
     public void switchToScreenPanel() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.player_fragment_container, screenFragment);
+        transaction.hide(configFragment);
+        transaction.show(screenFragment);
         transaction.commit();
     }
 
