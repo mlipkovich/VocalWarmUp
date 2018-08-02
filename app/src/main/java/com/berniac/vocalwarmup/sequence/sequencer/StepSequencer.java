@@ -1,8 +1,10 @@
 package com.berniac.vocalwarmup.sequence.sequencer;
 
 import com.berniac.vocalwarmup.midi.MidiUtils;
+import com.berniac.vocalwarmup.midi.SF2Sequencer;
 import com.berniac.vocalwarmup.music.NoteValue;
 import com.berniac.vocalwarmup.sequence.Direction;
+import com.berniac.vocalwarmup.sequence.Instrument;
 import com.berniac.vocalwarmup.sequence.SequenceFinishedListener;
 
 import java.util.Set;
@@ -101,6 +103,24 @@ public class StepSequencer {
 
     public void setTempo(int tempoBpm) {
         consumerThread.setTempo(tempoBpm);
+    }
+
+    public void setMelodyVolume(int volume) {
+        try {
+            // TODO: very dirty.
+            int channel = SF2Sequencer.getChannel(Instrument.MELODIC_VOICE);
+            receiver.send(new ShortMessage(ShortMessage.CONTROL_CHANGE | channel, 7, volume), 0);
+        } catch (InvalidMidiDataException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setHarmonyVolume(int volume) {
+        consumerThread.setHarmonyVolume(volume);
+    }
+
+    public void setAdjustmentVolume(int volume) {
+        consumerThread.setAdjustmentVolume(volume);
     }
 
     public void repeatCurrentStep() {
@@ -211,6 +231,7 @@ public class StepSequencer {
     private static class ConsumerThread extends Thread {
 
         private static final int DEFAULT_BPM = 120;
+        private static final int DEFAULT_VOLUME = 100;
 
         private volatile boolean isRunning;
         private volatile boolean isOpen;
@@ -221,6 +242,12 @@ public class StepSequencer {
         private volatile boolean isStepRevert;
         private volatile boolean isMelodyMuted;
         private volatile boolean isHarmonyMuted;
+
+        private volatile int harmonyVolume;
+        private int previousHarmonyVolume;
+
+        private volatile int adjustmentVolume;
+        private int previousAdjustmentVolume;
 
         private volatile int eventTonic;
         private volatile int eventBackwardTonic;
@@ -243,6 +270,10 @@ public class StepSequencer {
             this.isStepBackward = false;
             this.isMelodyMuted = false;
             this.isHarmonyMuted = false;
+            this.harmonyVolume = DEFAULT_VOLUME;
+            this.previousHarmonyVolume = DEFAULT_VOLUME;
+            this.adjustmentVolume = DEFAULT_VOLUME;
+            this.previousAdjustmentVolume = DEFAULT_VOLUME;
 
             this.tempoFactor = 1;
             this.tempoBpm = DEFAULT_BPM;
@@ -304,6 +335,14 @@ public class StepSequencer {
 
         public void setTempo(int tempoBpm) {
             this.tempoBpm = tempoBpm;
+        }
+
+        public void setHarmonyVolume(int volume) {
+            this.harmonyVolume = volume;
+        }
+
+        public void setAdjustmentVolume(int adjustmentVolume) {
+            this.adjustmentVolume = adjustmentVolume;
         }
 
         public int getEventTonic() {
@@ -371,6 +410,14 @@ public class StepSequencer {
                 Set<MidiEvent> baseEvents = step.getBaseEvents();
                 Set<MidiEvent> adjustmentEvents = step.getAdjustmentForwardEvents();
                 long tickPosition = 0;
+                // TODO: get rid of this $#%@$
+                try {
+                    previousHarmonyVolume = harmonyVolume;
+                    int channel = SF2Sequencer.getChannel(Instrument.FORTEPIANO);
+                    receiver.send(new ShortMessage(ShortMessage.CONTROL_CHANGE | channel, 7, previousHarmonyVolume), 0);
+                } catch (InvalidMidiDataException e) {
+                    e.printStackTrace();
+                }
                 try {
                     tickPosition = processEvents(tickPosition, baseEvents);
                 } catch (InterruptedException e) {
@@ -392,6 +439,14 @@ public class StepSequencer {
                     isStepRevert = false;
                 }
 
+                // TODO: get rid of this $#%@$ as well
+                try {
+                    previousAdjustmentVolume = adjustmentVolume;
+                    int channel = SF2Sequencer.getChannel(Instrument.FORTEPIANO);
+                    receiver.send(new ShortMessage(ShortMessage.CONTROL_CHANGE | channel, 7, previousAdjustmentVolume), 0);
+                } catch (InvalidMidiDataException e) {
+                    e.printStackTrace();
+                }
                 try {
                     processEvents(tickPosition, adjustmentEvents);
                 } catch (InterruptedException e) {
@@ -412,16 +467,34 @@ public class StepSequencer {
             System.out.println("Processing events " + events);
             for (MidiEvent event : events) {
                 if (event instanceof MidiTrackSpecificEvent) {
-                    int currentEventTrack = ((MidiTrackSpecificEvent) event).getTrackIndex();
-
                     // Allow to switch off muted sounds
                     if (((ShortMessage)event.getMessage()).getCommand() != ShortMessage.NOTE_OFF) {
-                        if (isMelodyMuted && QueueStepProducer.MidiTrack.MELODY.getIndex() == currentEventTrack) {
+                        if (isMelodyMuted && isMelody((MidiTrackSpecificEvent) event)) {
                             continue;
                         }
 
-                        if (isHarmonyMuted && QueueStepProducer.MidiTrack.HARMONY.getIndex() == currentEventTrack) {
+                        if (isHarmonyMuted && isHarmony((MidiTrackSpecificEvent) event)) {
                             continue;
+                        }
+                    }
+
+                    if (previousHarmonyVolume != harmonyVolume && isHarmony((MidiTrackSpecificEvent) event)) {
+                        previousHarmonyVolume = harmonyVolume;
+                        try {
+                            int channel = SF2Sequencer.getChannel(Instrument.FORTEPIANO);
+                            receiver.send(new ShortMessage(ShortMessage.CONTROL_CHANGE | channel, 7, previousHarmonyVolume), 0);
+                        } catch (InvalidMidiDataException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (previousAdjustmentVolume != adjustmentVolume && isAdjustment((MidiTrackSpecificEvent) event)) {
+                        previousAdjustmentVolume = adjustmentVolume;
+                        try {
+                            int channel = SF2Sequencer.getChannel(Instrument.FORTEPIANO);
+                            receiver.send(new ShortMessage(ShortMessage.CONTROL_CHANGE | channel, 7, previousAdjustmentVolume), 0);
+                        } catch (InvalidMidiDataException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -455,6 +528,21 @@ public class StepSequencer {
                 receiver.send(event.getMessage(), 0);
             }
             return tickPosition;
+        }
+
+        boolean isMelody(MidiTrackSpecificEvent event) {
+            int currentEventTrack = event.getTrackIndex();
+            return QueueStepProducer.MidiTrack.MELODY.getIndex() == currentEventTrack;
+        }
+
+        boolean isHarmony(MidiTrackSpecificEvent event) {
+            int currentEventTrack = event.getTrackIndex();
+            return QueueStepProducer.MidiTrack.HARMONY.getIndex() == currentEventTrack;
+        }
+
+        private boolean isAdjustment(MidiTrackSpecificEvent event) {
+            int currentEventTrack = event.getTrackIndex();
+            return QueueStepProducer.MidiTrack.ADJUSTMENT.getIndex() == currentEventTrack;
         }
 
         float getTicksPerMicrosecond() {
