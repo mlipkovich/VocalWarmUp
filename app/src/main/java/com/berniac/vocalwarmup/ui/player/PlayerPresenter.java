@@ -1,28 +1,20 @@
 package com.berniac.vocalwarmup.ui.player;
 
-import com.berniac.vocalwarmup.midi.SF2Sequencer;
 import com.berniac.vocalwarmup.model.Preset;
 import com.berniac.vocalwarmup.music.FixedStep;
 import com.berniac.vocalwarmup.music.NoteRegister;
 import com.berniac.vocalwarmup.sequence.Accompaniment;
+import com.berniac.vocalwarmup.sequence.Direction;
+import com.berniac.vocalwarmup.sequence.DirectionChangedListener;
 import com.berniac.vocalwarmup.sequence.Melody;
 import com.berniac.vocalwarmup.sequence.Player;
 import com.berniac.vocalwarmup.sequence.SequenceFinishedListener;
 import com.berniac.vocalwarmup.sequence.WarmUp;
 import com.berniac.vocalwarmup.sequence.WarmUpPlayer;
-import com.berniac.vocalwarmup.sequence.sequencer.QueueStepConsumer;
-import com.berniac.vocalwarmup.sequence.sequencer.QueueStepProducer;
-import com.berniac.vocalwarmup.sequence.sequencer.StepConsumer;
-import com.berniac.vocalwarmup.sequence.sequencer.StepProducer;
 import com.berniac.vocalwarmup.sequence.sequencer.StepSequencer;
-import com.berniac.vocalwarmup.sequence.sequencer.WarmUpStep;
 import com.berniac.vocalwarmup.ui.model.IWarmUpRepository;
 import com.berniac.vocalwarmup.ui.model.RepositoryFactory;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
-import jp.kshoji.javax.sound.midi.Receiver;
 
 /**
  * Created by Mikhail Lipkovich on 1/23/2018.
@@ -34,7 +26,9 @@ public class PlayerPresenter {
     private PlayerScreenFragment screenView;
     private PlayerConfigFragment configView;
 
-    private boolean isPlaying = false;
+    private volatile boolean isPlaying = false;
+    private volatile boolean isDirectionForward = true;
+
     private Player player;
 
     private boolean isHarmonySwitchedOff = false;
@@ -65,23 +59,36 @@ public class PlayerPresenter {
         warmUp.setPauseSize(presetToPlay.getPauseSize());
         warmUp.setDirections(presetToPlay.getDirections());
 
-        Receiver receiver = SF2Sequencer. getReceiver();
-
-        // TODO: Move to some kind of factory
-        BlockingQueue<WarmUpStep> queue = new ArrayBlockingQueue<>(10);
-        StepConsumer stepConsumer = new QueueStepConsumer(queue);
-        StepProducer stepProducer = new QueueStepProducer(queue, warmUp);
-        StepSequencer  stepSequencer = new StepSequencer(stepConsumer, stepProducer, receiver);
-
-        this.player = new WarmUpPlayer(stepSequencer, new SequenceFinishedListener() {
-            @Override
-            public void onSequenceFinished() {
-                if (isPlaying) {
-                    view.changePlayButtonToPlay();
-                    isPlaying = false;
-                }
-            }
-        });
+        StepSequencer stepSequencer = new StepSequencer(warmUp);
+        this.player = new WarmUpPlayer(stepSequencer,
+                new SequenceFinishedListener() {
+                    @Override
+                    public void onSequenceFinished() {
+                        if (isPlaying) {
+                            view.changePlayButtonToPlay();
+                            isPlaying = false;
+                        }
+                    }
+                },
+                new DirectionChangedListener() {
+                    @Override
+                    public void onDirectionChanged(Direction newDirection) {
+                        switch (newDirection) {
+                            case LOWER_TO_START:
+                            case LOWER_TO_UPPER:
+                            case START_TO_UPPER:
+                                view.changeDirectionButtonToRight();
+                                isDirectionForward = true;
+                                break;
+                            case UPPER_TO_START:
+                            case START_TO_LOWER:
+                            case UPPER_TO_LOWER:
+                                view.changeDirectionButtonToLeft();
+                                isDirectionForward = false;
+                                break;
+                        }
+                    }
+                });
     }
 
     public void onAttachScreenFragment(PlayerScreenFragment screenView) {
@@ -96,11 +103,12 @@ public class PlayerPresenter {
         if (isPlaying) {
             view.changePlayButtonToPlay();
             player.pause();
+            isPlaying = false;
         } else {
             view.changePlayButtonToPause();
             player.play();
+            isPlaying = true;
         }
-        isPlaying = !isPlaying;
     }
 
     public void onNextClicked() {
@@ -116,7 +124,13 @@ public class PlayerPresenter {
     }
 
     public void onRevertClicked() {
-        view.changeDirection();
+        if (isDirectionForward) {
+            isDirectionForward = false;
+            view.changeDirectionButtonToLeft();
+        } else {
+            isDirectionForward = true;
+            view.changeDirectionButtonToRight();
+        }
         player.changeDirection();
     }
 
@@ -130,7 +144,6 @@ public class PlayerPresenter {
         player.changeTempo(tempoBpm);
     }
 
-
     public void onMelodySwitcherClicked() {
         if (isMelodySwitchedOff) {
             configView.changeMelodyVolumeBar(melodyVolumeBeforeMute);
@@ -140,14 +153,12 @@ public class PlayerPresenter {
     }
 
     public void onMelodyVolumeChanged(int progress) {
+        player.changeMelodyVolume(progress);
         if (progress == 0) {
-            player.melodyOff();
             screenView.changeMelodyButtonToOff();
             configView.changeMelodyButtonToOff();
             isMelodySwitchedOff = true;
         } else {
-            player.changeMelodyVolume(progress);
-            player.melodyOn();
             screenView.changeMelodyButtonToOn();
             configView.changeMelodyButtonToOn();
             isMelodySwitchedOff = false;
@@ -163,14 +174,12 @@ public class PlayerPresenter {
     }
 
     public void onHarmonyVolumeChanged(int progress) {
+        player.changeHarmonyVolume(progress);
         if (progress == 0) {
-            player.harmonyOff();
             screenView.changeHarmonyButtonToOff();
             configView.changeHarmonyButtonToOff();
             isHarmonySwitchedOff = true;
         } else {
-            player.changeHarmonyVolume(progress);
-            player.harmonyOn();
             screenView.changeHarmonyButtonToOn();
             configView.changeHarmonyButtonToOn();
             isHarmonySwitchedOff = false;
@@ -186,14 +195,11 @@ public class PlayerPresenter {
     }
 
     public void onAdjustmentVolumeChanged(int progress) {
+        player.changeAdjustmentVolume(progress);
         if (progress == 0) {
-            // TODO: there is no mute method for adjustment. Should it be added?
-            player.changeAdjustmentVolume(progress);
             configView.changeAdjustmentButtonToOff();
             isAdjustmentSwitchedOff = true;
         } else {
-            // TODO: there is no unmute method for adjustment. Should it be added?
-            player.changeAdjustmentVolume(progress);
             configView.changeAdjustmentButtonToOn();
             isAdjustmentSwitchedOff = false;
         }
@@ -208,9 +214,7 @@ public class PlayerPresenter {
     }
 
     public void onNavigateUp() {
-        if (isPlaying) {
-            player.pause();
-        }
+        player.stop();
     }
 
     public void onDrawTitleInitialized() {

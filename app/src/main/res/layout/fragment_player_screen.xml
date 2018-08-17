@@ -29,7 +29,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/configure_player_image" />
 
-        <ImageButton
+        <com.berniac.vocalwarmup.ui.player.VibratingImageButton
             android:id="@+id/configure_player_image"
             android:layout_width="@dimen/player_small_buttons_size"
             android:layout_height="@dimen/player_small_buttons_size"
@@ -94,7 +94,7 @@
             app:layout_constraintEnd_toStartOf="@+id/melody_btn"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageButton
+        <com.berniac.vocalwarmup.ui.player.VibratingImageButton
             android:id="@+id/melody_btn"
             android:layout_width="@dimen/player_small_buttons_size"
             android:layout_height="@dimen/player_small_buttons_size"
@@ -105,7 +105,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/harmony_btn" />
 
-        <ImageButton
+        <com.berniac.vocalwarmup.ui.player.VibratingImageButton
             android:id="@+id/harmony_btn"
             android:layout_width="@dimen/player_small_buttons_size"
             android:layout_height="@dimen/player_small_buttons_size"

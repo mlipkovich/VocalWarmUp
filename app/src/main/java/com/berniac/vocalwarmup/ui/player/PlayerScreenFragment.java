@@ -42,7 +42,7 @@ public class PlayerScreenFragment extends MuteButtonsFragment {
             }
         });
 
-        configPanelButton = (ImageButton) view.findViewById(R.id.configure_player_image);
+        configPanelButton = (VibratingImageButton) view.findViewById(R.id.configure_player_image);
         configPanelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

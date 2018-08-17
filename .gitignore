@@ -30,3 +30,7 @@ proguard/
 # Log Files
 *.log
 .DS_Store
+
+# Proprietary files
+draw_presets.json
+VocalWarmUpBank.sf2
