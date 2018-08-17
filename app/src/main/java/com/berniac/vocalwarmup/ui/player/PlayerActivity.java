@@ -114,6 +114,26 @@ public class PlayerActivity extends PlayerView {
     }
 
     @Override
+    public void changeDirectionButtonToRight() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                revertButton.setImageResource(R.drawable.ic_player_straight);
+            }
+        });
+    }
+
+    @Override
+    public void changeDirectionButtonToLeft() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                revertButton.setImageResource(R.drawable.ic_player_backwards);
+            }
+        });
+    }
+
+    @Override
     public void switchToConfigPanel() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.hide(screenFragment);
@@ -127,10 +147,5 @@ public class PlayerActivity extends PlayerView {
         transaction.hide(configFragment);
         transaction.show(screenFragment);
         transaction.commit();
-    }
-
-    @Override
-    public void changeDirection() {
-        // TODO: Change image with direction
     }
 }

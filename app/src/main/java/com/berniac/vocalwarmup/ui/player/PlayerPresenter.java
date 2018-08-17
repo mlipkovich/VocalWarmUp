@@ -1,10 +1,11 @@
 package com.berniac.vocalwarmup.ui.player;
 
-import com.berniac.vocalwarmup.midi.SF2Sequencer;
 import com.berniac.vocalwarmup.model.Preset;
 import com.berniac.vocalwarmup.music.FixedStep;
 import com.berniac.vocalwarmup.music.NoteRegister;
 import com.berniac.vocalwarmup.sequence.Accompaniment;
+import com.berniac.vocalwarmup.sequence.Direction;
+import com.berniac.vocalwarmup.sequence.DirectionChangedListener;
 import com.berniac.vocalwarmup.sequence.Melody;
 import com.berniac.vocalwarmup.sequence.Player;
 import com.berniac.vocalwarmup.sequence.SequenceFinishedListener;
@@ -14,7 +15,6 @@ import com.berniac.vocalwarmup.sequence.sequencer.StepSequencer;
 import com.berniac.vocalwarmup.ui.model.IWarmUpRepository;
 import com.berniac.vocalwarmup.ui.model.RepositoryFactory;
 
-import jp.kshoji.javax.sound.midi.Receiver;
 
 /**
  * Created by Mikhail Lipkovich on 1/23/2018.
@@ -26,7 +26,9 @@ public class PlayerPresenter {
     private PlayerScreenFragment screenView;
     private PlayerConfigFragment configView;
 
-    private boolean isPlaying = false;
+    private volatile boolean isPlaying = false;
+    private volatile boolean isDirectionForward = true;
+
     private Player player;
 
     private boolean isHarmonySwitchedOff = false;
@@ -58,15 +60,35 @@ public class PlayerPresenter {
         warmUp.setDirections(presetToPlay.getDirections());
 
         StepSequencer stepSequencer = new StepSequencer(warmUp);
-        this.player = new WarmUpPlayer(stepSequencer, new SequenceFinishedListener() {
-            @Override
-            public void onSequenceFinished() {
-                if (isPlaying) {
-                    view.changePlayButtonToPlay();
-                    isPlaying = false;
-                }
-            }
-        });
+        this.player = new WarmUpPlayer(stepSequencer,
+                new SequenceFinishedListener() {
+                    @Override
+                    public void onSequenceFinished() {
+                        if (isPlaying) {
+                            view.changePlayButtonToPlay();
+                            isPlaying = false;
+                        }
+                    }
+                },
+                new DirectionChangedListener() {
+                    @Override
+                    public void onDirectionChanged(Direction newDirection) {
+                        switch (newDirection) {
+                            case LOWER_TO_START:
+                            case LOWER_TO_UPPER:
+                            case START_TO_UPPER:
+                                view.changeDirectionButtonToRight();
+                                isDirectionForward = true;
+                                break;
+                            case UPPER_TO_START:
+                            case START_TO_LOWER:
+                            case UPPER_TO_LOWER:
+                                view.changeDirectionButtonToLeft();
+                                isDirectionForward = false;
+                                break;
+                        }
+                    }
+                });
     }
 
     public void onAttachScreenFragment(PlayerScreenFragment screenView) {
@@ -81,11 +103,12 @@ public class PlayerPresenter {
         if (isPlaying) {
             view.changePlayButtonToPlay();
             player.pause();
+            isPlaying = false;
         } else {
             view.changePlayButtonToPause();
             player.play();
+            isPlaying = true;
         }
-        isPlaying = !isPlaying;
     }
 
     public void onNextClicked() {
@@ -101,7 +124,13 @@ public class PlayerPresenter {
     }
 
     public void onRevertClicked() {
-        view.changeDirection();
+        if (isDirectionForward) {
+            isDirectionForward = false;
+            view.changeDirectionButtonToLeft();
+        } else {
+            isDirectionForward = true;
+            view.changeDirectionButtonToRight();
+        }
         player.changeDirection();
     }
 
@@ -114,7 +143,6 @@ public class PlayerPresenter {
         int tempoBpm = configView.changeGlobalTempoProgress(progress);
         player.changeTempo(tempoBpm);
     }
-
 
     public void onMelodySwitcherClicked() {
         if (isMelodySwitchedOff) {

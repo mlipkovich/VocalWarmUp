@@ -1,6 +1,7 @@
 package com.berniac.vocalwarmup.sequence.sequencer;
 
 import com.berniac.vocalwarmup.sequence.Direction;
+import com.berniac.vocalwarmup.sequence.DirectionChangedListener;
 import com.berniac.vocalwarmup.sequence.SequenceFinishedListener;
 
 import java.util.Set;
@@ -29,6 +30,7 @@ public class StepConsumerThread extends Thread {
     private StepConsumer consumer;
     private MidiReceiver receiver;
     private volatile SequenceFinishedListener sequenceFinishedListener;
+    private volatile DirectionChangedListener directionChangedListener;
 
     private final Lock lock = new ReentrantLock();
     private final Condition unPaused = lock.newCondition();
@@ -46,6 +48,7 @@ public class StepConsumerThread extends Thread {
     @Override
     public void run() {
         WarmUpStep previousStep = null;
+        Direction previousDirection = null;
         while (isRunning) {
             WarmUpStep step;
             try {
@@ -63,7 +66,10 @@ public class StepConsumerThread extends Thread {
                 eventTonic = step.getTonic();
                 eventBackwardTonic = step.getBackwardTonic();
                 eventDirection = step.getDirection();
-
+                if (eventDirection != previousDirection) {
+                    previousDirection = eventDirection;
+                    directionChangedListener.onDirectionChanged(eventDirection);
+                }
 
                 Set<MidiEvent> baseEvents = step.getBaseEvents();
                 long tickPosition = processBaseEvents(0, baseEvents);
@@ -207,5 +213,9 @@ public class StepConsumerThread extends Thread {
 
     public void setSequenceFinishedListener(SequenceFinishedListener sequenceFinishedListener) {
         this.sequenceFinishedListener = sequenceFinishedListener;
+    }
+
+    public void setDirectionChangedListener(DirectionChangedListener directionChangedListener) {
+        this.directionChangedListener = directionChangedListener;
     }
 }

@@ -30,9 +30,11 @@ public abstract class PlayerView extends AppCompatActivity {
 
     public abstract void changePlayButtonToPlay();
 
+    public abstract void changeDirectionButtonToRight();
+
+    public abstract void changeDirectionButtonToLeft();
+
     public abstract void switchToConfigPanel();
 
     public abstract void switchToScreenPanel();
-
-    public abstract void changeDirection();
 }

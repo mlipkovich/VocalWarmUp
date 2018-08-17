@@ -9,9 +9,11 @@ public class WarmUpPlayer implements Player {
 
     private StepSequencer sequencer;
 
-    public WarmUpPlayer(StepSequencer sequencer, SequenceFinishedListener sequenceFinishedListener) {
+    public WarmUpPlayer(StepSequencer sequencer, SequenceFinishedListener sequenceFinishedListener,
+                        DirectionChangedListener directionChangedListener) {
         this.sequencer = sequencer;
         this.sequencer.setSequenceFinishedListener(sequenceFinishedListener);
+        this.sequencer.setDirectionChangedListener(directionChangedListener);
     }
 
     @Override

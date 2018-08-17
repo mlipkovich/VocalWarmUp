@@ -3,6 +3,7 @@ package com.berniac.vocalwarmup.sequence.sequencer;
 import com.berniac.vocalwarmup.midi.SF2Sequencer;
 import com.berniac.vocalwarmup.sequence.Accompaniment;
 import com.berniac.vocalwarmup.sequence.Direction;
+import com.berniac.vocalwarmup.sequence.DirectionChangedListener;
 import com.berniac.vocalwarmup.sequence.Instrument;
 import com.berniac.vocalwarmup.sequence.SequenceFinishedListener;
 import com.berniac.vocalwarmup.sequence.WarmUp;
@@ -31,6 +32,8 @@ public class StepSequencer {
     private StepProducerThread producerThread;
 
     private SequenceFinishedListener sequenceFinishedListener;
+    private DirectionChangedListener directionChangedListener;
+
     private volatile boolean isRunning;
 
     public StepSequencer(WarmUp warmUp) {
@@ -55,6 +58,10 @@ public class StepSequencer {
         this.sequenceFinishedListener = sequenceFinishedListener;
     }
 
+    public void setDirectionChangedListener(DirectionChangedListener directionChangedListener) {
+        this.directionChangedListener = directionChangedListener;
+    }
+
     public void run() {
         queue.clear();
         producerThread = new StepProducerThread(queue, warmUp);
@@ -68,6 +75,7 @@ public class StepSequencer {
                 isRunning = false;
             }
         });
+        consumerThread.setDirectionChangedListener(directionChangedListener);
 
         producerThread.start();
         consumerThread.start();
