@@ -33,7 +33,7 @@ public class MuteButtonsFragment extends Fragment {
     }
 
     public void initMelodySwitcher(View view, int buttonId) {
-        melodySwitcherButton = (ImageButton) view.findViewById(buttonId);
+        melodySwitcherButton = (VibratingImageButton) view.findViewById(buttonId);
         melodySwitcherButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,7 +43,7 @@ public class MuteButtonsFragment extends Fragment {
     }
 
     public void initHarmonySwitcher(View view, int buttonId) {
-        harmonySwitcherButton = (ImageButton) view.findViewById(buttonId);
+        harmonySwitcherButton = (VibratingImageButton) view.findViewById(buttonId);
         harmonySwitcherButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,7 +53,7 @@ public class MuteButtonsFragment extends Fragment {
     }
 
     public void initAdjustmentSwitcher(View view, int buttonId) {
-        adjustmentSwitcherButton = (ImageButton) view.findViewById(buttonId);
+        adjustmentSwitcherButton = (VibratingImageButton) view.findViewById(buttonId);
         adjustmentSwitcherButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

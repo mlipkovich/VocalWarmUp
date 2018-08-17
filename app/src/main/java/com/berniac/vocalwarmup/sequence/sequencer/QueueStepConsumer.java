@@ -1,8 +1,7 @@
 package com.berniac.vocalwarmup.sequence.sequencer;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -11,18 +10,15 @@ import java.util.concurrent.BlockingQueue;
 public class QueueStepConsumer implements StepConsumer {
 
     private BlockingQueue<WarmUpStep> forwardSteps;
-    private List<WarmUpStep> previousSteps;
+    private LinkedList<WarmUpStep> previousSteps;
     private int numberOfStepsBehind;
-    private static final int MAX_NUMBER_OF_PREVIOUS_STEPS = 100;
+    private static final int MAX_NUMBER_OF_PREVIOUS_STEPS = 20;
 
     public QueueStepConsumer(BlockingQueue<WarmUpStep> forwardSteps) {
         this.forwardSteps = forwardSteps;
-    }
 
-    @Override
-    public void restart() {
-        previousSteps = new ArrayList<>();
-        numberOfStepsBehind = 0;
+        this.previousSteps = new LinkedList<>();
+        this.numberOfStepsBehind = 0;
     }
 
     @Override
@@ -30,7 +26,10 @@ public class QueueStepConsumer implements StepConsumer {
         numberOfStepsBehind = Math.max(numberOfStepsBehind - 1, 0);
         if (numberOfStepsBehind == 0) {
             WarmUpStep step = forwardSteps.take();
-            previousSteps.add(step);    // TODO: Check max list size condition
+            previousSteps.addLast(step);
+            if (previousSteps.size() > MAX_NUMBER_OF_PREVIOUS_STEPS) {
+                previousSteps.removeFirst();
+            }
             return step;
         }
         return previousSteps.get(previousSteps.size() - numberOfStepsBehind);

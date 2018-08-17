@@ -13,7 +13,7 @@ import jp.kshoji.javax.sound.midi.MidiEvent;
  */
 public class WarmUpStep {
 
-    public static final WarmUpStep EMPTY_STEP =
+    public static final WarmUpStep FINAL_STEP =
             new WarmUpStep(-1, -1, -1, null);
 
     private Direction direction;

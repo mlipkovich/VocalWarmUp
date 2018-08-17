@@ -24,52 +24,45 @@ public class WarmUpPlayer implements Player {
 
     @Override
     public void pause() {
-        sequencer.pause();
+        if (sequencer.isRunning()) {
+            sequencer.pause();
+        }
     }
 
     @Override
     public void stop() {
-        sequencer.pause();
+        if (sequencer.isRunning()) {
+            sequencer.stop();
+        }
     }
 
     @Override
     public void repeatCurrentStep() {
-        sequencer.repeatCurrentStep();
+        // TODO: Perhaps make these actions forbidden on UI
+        if (sequencer.isRunning()) {
+            sequencer.repeatCurrentStep();
+        }
     }
 
     @Override
     public void changeDirection() {
-        sequencer.changeDirection();
+        if (sequencer.isRunning()) {
+            sequencer.changeDirection();
+        }
     }
 
     @Override
     public void previousStep() {
-        sequencer.previousStep();
+        if (sequencer.isRunning()) {
+            sequencer.previousStep();
+        }
     }
 
     @Override
     public void nextStep() {
-        sequencer.nextStep();
-    }
-
-    @Override
-    public void melodyOn() {
-        sequencer.unMuteMelody();
-    }
-
-    @Override
-    public void melodyOff() {
-        sequencer.muteMelody();
-    }
-
-    @Override
-    public void harmonyOn() {
-        sequencer.unMuteHarmony();
-    }
-
-    @Override
-    public void harmonyOff() {
-        sequencer.muteHarmony();
+        if (sequencer.isRunning()) {
+            sequencer.nextStep();
+        }
     }
 
     @Override

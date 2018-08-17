@@ -10,17 +10,9 @@ import com.berniac.vocalwarmup.sequence.Player;
 import com.berniac.vocalwarmup.sequence.SequenceFinishedListener;
 import com.berniac.vocalwarmup.sequence.WarmUp;
 import com.berniac.vocalwarmup.sequence.WarmUpPlayer;
-import com.berniac.vocalwarmup.sequence.sequencer.QueueStepConsumer;
-import com.berniac.vocalwarmup.sequence.sequencer.QueueStepProducer;
-import com.berniac.vocalwarmup.sequence.sequencer.StepConsumer;
-import com.berniac.vocalwarmup.sequence.sequencer.StepProducer;
 import com.berniac.vocalwarmup.sequence.sequencer.StepSequencer;
-import com.berniac.vocalwarmup.sequence.sequencer.WarmUpStep;
 import com.berniac.vocalwarmup.ui.model.IWarmUpRepository;
 import com.berniac.vocalwarmup.ui.model.RepositoryFactory;
-
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 import jp.kshoji.javax.sound.midi.Receiver;
 
@@ -65,14 +57,7 @@ public class PlayerPresenter {
         warmUp.setPauseSize(presetToPlay.getPauseSize());
         warmUp.setDirections(presetToPlay.getDirections());
 
-        Receiver receiver = SF2Sequencer. getReceiver();
-
-        // TODO: Move to some kind of factory
-        BlockingQueue<WarmUpStep> queue = new ArrayBlockingQueue<>(10);
-        StepConsumer stepConsumer = new QueueStepConsumer(queue);
-        StepProducer stepProducer = new QueueStepProducer(queue, warmUp);
-        StepSequencer  stepSequencer = new StepSequencer(stepConsumer, stepProducer, receiver);
-
+        StepSequencer stepSequencer = new StepSequencer(warmUp);
         this.player = new WarmUpPlayer(stepSequencer, new SequenceFinishedListener() {
             @Override
             public void onSequenceFinished() {
@@ -140,14 +125,12 @@ public class PlayerPresenter {
     }
 
     public void onMelodyVolumeChanged(int progress) {
+        player.changeMelodyVolume(progress);
         if (progress == 0) {
-            player.melodyOff();
             screenView.changeMelodyButtonToOff();
             configView.changeMelodyButtonToOff();
             isMelodySwitchedOff = true;
         } else {
-            player.changeMelodyVolume(progress);
-            player.melodyOn();
             screenView.changeMelodyButtonToOn();
             configView.changeMelodyButtonToOn();
             isMelodySwitchedOff = false;
@@ -163,14 +146,12 @@ public class PlayerPresenter {
     }
 
     public void onHarmonyVolumeChanged(int progress) {
+        player.changeHarmonyVolume(progress);
         if (progress == 0) {
-            player.harmonyOff();
             screenView.changeHarmonyButtonToOff();
             configView.changeHarmonyButtonToOff();
             isHarmonySwitchedOff = true;
         } else {
-            player.changeHarmonyVolume(progress);
-            player.harmonyOn();
             screenView.changeHarmonyButtonToOn();
             configView.changeHarmonyButtonToOn();
             isHarmonySwitchedOff = false;
@@ -186,14 +167,11 @@ public class PlayerPresenter {
     }
 
     public void onAdjustmentVolumeChanged(int progress) {
+        player.changeAdjustmentVolume(progress);
         if (progress == 0) {
-            // TODO: there is no mute method for adjustment. Should it be added?
-            player.changeAdjustmentVolume(progress);
             configView.changeAdjustmentButtonToOff();
             isAdjustmentSwitchedOff = true;
         } else {
-            // TODO: there is no unmute method for adjustment. Should it be added?
-            player.changeAdjustmentVolume(progress);
             configView.changeAdjustmentButtonToOn();
             isAdjustmentSwitchedOff = false;
         }
@@ -208,9 +186,7 @@ public class PlayerPresenter {
     }
 
     public void onNavigateUp() {
-        if (isPlaying) {
-            player.pause();
-        }
+        player.stop();
     }
 
     public void onDrawTitleInitialized() {

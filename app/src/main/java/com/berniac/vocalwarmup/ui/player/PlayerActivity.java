@@ -37,7 +37,7 @@ public class PlayerActivity extends PlayerView {
         transaction.add(R.id.player_fragment_container, screenFragment);
         transaction.commit();
 
-        playButton = (ImageButton) findViewById(R.id.play_btn);
+        playButton = (VibratingImageButton) findViewById(R.id.play_btn);
         playButton.setImageResource(R.drawable.ic_player_play);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +46,7 @@ public class PlayerActivity extends PlayerView {
             }
         });
 
-        nextStepButton = (ImageButton) findViewById(R.id.next_step_btn);
+        nextStepButton = (VibratingImageButton) findViewById(R.id.next_step_btn);
         nextStepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,7 +54,7 @@ public class PlayerActivity extends PlayerView {
             }
         });
 
-        previousStepButton = (ImageButton) findViewById(R.id.previous_step_btn);
+        previousStepButton = (VibratingImageButton) findViewById(R.id.previous_step_btn);
         previousStepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +62,7 @@ public class PlayerActivity extends PlayerView {
             }
         });
 
-        repeatButton = (ImageButton) findViewById(R.id.repeat_btn);
+        repeatButton = (VibratingImageButton) findViewById(R.id.repeat_btn);
         repeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +70,7 @@ public class PlayerActivity extends PlayerView {
             }
         });
 
-        revertButton = (ImageButton) findViewById(R.id.change_direction_btn);
+        revertButton = (VibratingImageButton) findViewById(R.id.change_direction_btn);
         revertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,7 +105,12 @@ public class PlayerActivity extends PlayerView {
 
     @Override
     public void changePlayButtonToPlay() {
-        playButton.setImageResource(R.drawable.ic_player_play);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playButton.setImageResource(R.drawable.ic_player_play);
+            }
+        });
     }
 
     @Override

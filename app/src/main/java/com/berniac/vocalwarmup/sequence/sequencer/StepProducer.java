@@ -1,18 +1,227 @@
 package com.berniac.vocalwarmup.sequence.sequencer;
 
+import com.berniac.vocalwarmup.midi.MidiUtils;
+import com.berniac.vocalwarmup.midi.SF2Sequencer;
+import com.berniac.vocalwarmup.music.MusicalSymbol;
+import com.berniac.vocalwarmup.music.Note;
+import com.berniac.vocalwarmup.music.NoteValue;
+import com.berniac.vocalwarmup.sequence.Accompaniment;
 import com.berniac.vocalwarmup.sequence.Direction;
+import com.berniac.vocalwarmup.sequence.Harmony;
+import com.berniac.vocalwarmup.sequence.OctaveShifts;
+import com.berniac.vocalwarmup.sequence.Playable;
 import com.berniac.vocalwarmup.sequence.WarmUp;
+import com.berniac.vocalwarmup.sequence.WarmUpVoice;
+import com.berniac.vocalwarmup.sequence.adjustment.Adjustment;
+import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;
+import com.berniac.vocalwarmup.sequence.adjustment.SilentAdjustmentRules;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import jp.kshoji.javax.sound.midi.InvalidMidiDataException;
+import jp.kshoji.javax.sound.midi.MidiEvent;
+import jp.kshoji.javax.sound.midi.MidiMessage;
+import jp.kshoji.javax.sound.midi.MidiTrackSpecificEvent;
+import jp.kshoji.javax.sound.midi.ShortMessage;
 
 /**
- * Created by Mikhail Lipkovich on 6/1/2018.
+ * Created by Mikhail Lipkovich on 6/01/2018.
  */
-public interface StepProducer {
+public class StepProducer {
 
-    void restart();
+    private static final int DEFAULT_VOLUME = 100;
+    private WarmUp warmUp;
+    private Map<Integer, Accompaniment.Voice> voices;
+    private Playable harmony;
+    private AdjustmentRules adjustmentRules;
+    private Adjustment adjustment;
+    private NoteValue lastMelodyNoteDuration;
 
-    void generateSteps() throws InterruptedException;
+    public StepProducer(WarmUp warmUp) {
+        this.warmUp = warmUp;
+        this.voices = warmUp.getAccompaniment().getVoices();
+        // TODO: Add adjustment index to warm up
+        this.adjustmentRules = warmUp.getAccompaniment().getAdjustments().get(0);
+        this.adjustment = new Adjustment(adjustmentRules, warmUp.getPauseSize());
 
-    void cleanGenerated();
+        WarmUpVoice melodyVoice = warmUp.getMelody().getVoices().get(0);
+        this.lastMelodyNoteDuration = getLastNoteDuration(melodyVoice);
 
-    void changeDirection(int startingTonic, Direction directionToChange);
+        Harmony harmony = warmUp.getAccompaniment().getHarmony();
+        if (harmony != null) {
+            this.harmony = alignHarmonyDueToAdjustment(harmony, adjustmentRules, lastMelodyNoteDuration);
+        }
+    }
+
+    public WarmUpStep generateStep(int currentTonicMidi, int nextTonicMidi, Direction direction) {
+
+        int forwardTonicMidi = nextTonicMidi;
+        int backwardTonicMidi = currentTonicMidi - (nextTonicMidi - currentTonicMidi);
+
+        WarmUpStep step = new WarmUpStep(currentTonicMidi, forwardTonicMidi, backwardTonicMidi, direction);
+
+        long melodyStartTick = 0;
+        long melodyEndTick = addStepPlayable(step.getBaseEvents(), currentTonicMidi, melodyStartTick,
+                warmUp.getMelody(), MidiTrack.MELODY);
+
+        if (harmony != null) {
+            addStepPlayable(step.getBaseEvents(), currentTonicMidi, melodyStartTick, harmony, MidiTrack.HARMONY);
+        }
+
+        long adjustmentStartTick = getAdjustmentStartTick(adjustmentRules, melodyEndTick, lastMelodyNoteDuration);
+
+        addAdjustment(step.getAdjustmentForwardEvents(), currentTonicMidi,
+                forwardTonicMidi, adjustmentStartTick, adjustment);
+        addAdjustment(step.getAdjustmentBackwardEvents(), currentTonicMidi,
+                backwardTonicMidi, adjustmentStartTick, adjustment);
+        addAdjustment(step.getAdjustmentRepeatEvents(), currentTonicMidi,
+                currentTonicMidi, adjustmentStartTick, adjustment);
+
+        MidiEvent lastMelodyNoteOffEvent = ((TreeSet<MidiEvent>) step.getBaseEvents()).pollLast();
+        step.getAdjustmentForwardEvents().add(lastMelodyNoteOffEvent);
+        step.getAdjustmentBackwardEvents().add(lastMelodyNoteOffEvent);
+        step.getAdjustmentRepeatEvents().add(lastMelodyNoteOffEvent);
+
+        return step;
+    }
+
+    private void addAdjustment(Set<MidiEvent> events, int fromTonic, int toTonic, long position, Adjustment adjustment) {
+        Playable adjustmentVoices = adjustment.getVoices(
+                MidiUtils.getNote(fromTonic),
+                MidiUtils.getNote(toTonic));
+//        System.out.println("Adjustment " + adjustmentVoices);
+        addStepPlayable(events, fromTonic, position, adjustmentVoices, MidiTrack.ADJUSTMENT);
+    }
+
+    private static Harmony alignHarmonyDueToAdjustment(Harmony harmony, AdjustmentRules adjustmentRules,
+                                                    NoteValue lastMelodyNoteDuration) {
+        if (adjustmentRules instanceof SilentAdjustmentRules) {
+            return harmony;
+        }
+
+        Harmony alignedHarmony = new Harmony(harmony);
+
+        float lastMelodyNoteQuartersCount = lastMelodyNoteDuration.getNumberOfQuarters();
+        for (WarmUpVoice harmonyVoice : alignedHarmony.getVoices()) {
+            List<MusicalSymbol> voiceSymbols = harmonyVoice.getMusicalSymbols();
+            int symbolIndex = voiceSymbols.size() - 1;
+            float erasedNotesQuartersCount = 0;
+            while (erasedNotesQuartersCount < lastMelodyNoteQuartersCount) {
+                erasedNotesQuartersCount +=
+                        voiceSymbols.get(symbolIndex).getNoteValue().getNumberOfQuarters();
+                voiceSymbols.remove(symbolIndex);
+                symbolIndex++; // TODO: --?
+            }
+        }
+
+        return alignedHarmony;
+    }
+
+    private static NoteValue getLastNoteDuration(WarmUpVoice voice) {
+        List<MusicalSymbol> melodySymbols = voice.getMusicalSymbols();
+        MusicalSymbol lastMelodyNote = melodySymbols.get(melodySymbols.size() - 1);
+        return lastMelodyNote.getNoteValue();
+    }
+
+    private static long getAdjustmentStartTick(AdjustmentRules adjustmentRules,
+                                       long melodyEndTick, NoteValue lastMelodyNoteDuration) {
+        long adjustmentStartTick = melodyEndTick;
+        if (adjustmentRules instanceof SilentAdjustmentRules) {
+            return adjustmentStartTick;
+        }
+
+        int lastNoteTicks = MidiUtils.getNoteValueInTicks(lastMelodyNoteDuration);
+        adjustmentStartTick -= lastNoteTicks;
+        return adjustmentStartTick;
+    }
+
+    private long addStepPlayable(Set<MidiEvent> events, int currentTonicMidi, long position,
+                              Playable playable, MidiTrack midiTrack) {
+        long voiceEndPosition = position;
+        for (int i = 0; i < playable.getVoices().size(); i++) {
+            WarmUpVoice warmUpVoice = playable.getVoices().get(i);
+//            System.out.println("Voice " + warmUpVoice + " for " + midiTrack);
+            Accompaniment.Voice voice = voices.get(warmUpVoice.getVoiceNumber());
+//            System.out.println(voice);
+            voiceEndPosition = addStepVoice(events, currentTonicMidi, position, warmUpVoice, voice, midiTrack);
+        }
+        return voiceEndPosition;
+    }
+
+    private long addStepVoice(Set<MidiEvent> events, int currentTonicMidi, long position,
+                              WarmUpVoice warmUpVoice, Accompaniment.Voice voice, MidiTrack midiTrack) {
+
+        int channel = SF2Sequencer.getChannel(voice.getInstrument());
+        int octaveShift = getOctaveShift(voice.getOctaveShifts(), currentTonicMidi);
+//        System.out.println("Octave shift " + octaveShift + " for " + midiTrack);
+
+        for (MusicalSymbol symbol : warmUpVoice.getMusicalSymbols()) {
+//            System.out.println("!!! " + symbol);
+            long duration = MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
+            if (symbol.isSounding()) {
+                int note = MidiUtils.transpose(((Note) symbol).getNoteRegister(), currentTonicMidi, octaveShift);
+                try {
+//                    System.out.println("Note " + note + " at position " + position + " " + channel + " " + duration);
+                    MidiMessage midiMessage = new ShortMessage(ShortMessage.NOTE_ON, channel, note, DEFAULT_VOLUME);
+                    MidiEvent midiEvent = new MidiEvent(midiMessage, position);
+                    MidiTrackSpecificEvent midiVoiceEvent = new MidiTrackSpecificEvent(midiEvent, midiTrack.index);
+                    events.add(midiVoiceEvent);
+
+                    midiMessage = new ShortMessage(ShortMessage.NOTE_OFF, channel, note, DEFAULT_VOLUME);
+                    midiEvent = new MidiEvent(midiMessage, position + duration);
+                    midiVoiceEvent = new MidiTrackSpecificEvent(midiEvent, midiTrack.index);
+                    events.add(midiVoiceEvent);
+                } catch (InvalidMidiDataException ignored) {
+                    throw new IllegalStateException("Failed to create midi event from tonic " + note +
+                            " with channel " + channel + " and volume " + DEFAULT_VOLUME);
+                }
+            }
+
+            position += duration;
+        }
+        return position;
+    }
+
+    private static int getOctaveShift(OctaveShifts shifts, int tonicMidi) {
+        List<OctaveShifts.BoundaryNote> lowerBoundaries = shifts.getLowerBoundaries();
+        for (int i = lowerBoundaries.size() - 1; i >= 0; i--) {
+            OctaveShifts.BoundaryNote boundaryNote = lowerBoundaries.get(i);
+            int boundaryMidi = MidiUtils.getMidiNote(boundaryNote.getBoundary());
+            if (tonicMidi <= boundaryMidi) {
+                return boundaryNote.getShift();
+            }
+        }
+
+        List<OctaveShifts.BoundaryNote> upperBoundaries = shifts.getUpperBoundaries();
+        for (int i = upperBoundaries.size() - 1; i >= 0; i--) {
+            OctaveShifts.BoundaryNote boundaryNote = upperBoundaries.get(i);
+            int boundaryMidi = MidiUtils.getMidiNote(boundaryNote.getBoundary());
+            if (tonicMidi >= boundaryMidi) {
+                return boundaryNote.getShift();
+            }
+        }
+
+        return 0;
+    }
+
+    enum MidiTrack {
+        MELODY(0),
+        ADJUSTMENT(1),
+        METRONOME(2),
+        HARMONY(3),
+        LYRICS(4);
+
+        private int index;
+        MidiTrack(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+    }
 }

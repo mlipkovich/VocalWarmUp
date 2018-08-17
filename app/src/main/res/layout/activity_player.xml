@@ -31,7 +31,7 @@
             android:layout_height="match_parent"
             android:padding="@dimen/card_padding">
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/play_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/previous_step_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
@@ -54,7 +54,7 @@
                 app:layout_constraintStart_toEndOf="@+id/play_btn"
                 app:layout_constraintTop_toTopOf="@+id/play_btn" />
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/next_step_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
@@ -65,7 +65,7 @@
                 app:layout_constraintStart_toEndOf="@+id/previous_step_btn"
                 app:layout_constraintTop_toTopOf="@+id/play_btn" />
 
-            <RelativeLayout
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/divider"
                 android:layout_width="1dp"
                 android:layout_height="0dp"
@@ -75,7 +75,7 @@
                 app:layout_constraintStart_toEndOf="@+id/next_step_btn"
                 app:layout_constraintTop_toTopOf="@+id/play_btn" />
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/repeat_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
@@ -86,7 +86,7 @@
                 app:layout_constraintStart_toEndOf="@+id/divider"
                 app:layout_constraintTop_toTopOf="@+id/play_btn" />
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/change_direction_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"

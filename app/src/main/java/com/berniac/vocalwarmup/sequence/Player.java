@@ -22,14 +22,6 @@ public interface Player {
 
     void nextStep();
 
-    void melodyOn();
-
-    void melodyOff();
-
-    void harmonyOn();
-
-    void harmonyOff();
-
     void recordOn();
 
     void recordOff();
