@@ -15,19 +15,25 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.training.TrainingActivity"
-            android:theme="@style/AppTheme.NoAppBar">
+            android:theme="@style/AppTheme.NoAppBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.training.ConstructorActivity" />
-        <activity android:name=".ui.training.library.LibraryCategoryActivity" />
-        <activity android:name=".ui.saved.SavedActivity" />
-        <activity android:name=".ui.settings.SettingsActivity" />
+        <activity android:name=".ui.training.ConstructorActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.training.library.LibraryCategoryActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.saved.SavedActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.settings.SettingsActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.player.PlayerActivity"
-            android:theme="@style/AppTheme.LightAppBar" />
+            android:theme="@style/AppTheme.LightAppBar"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
