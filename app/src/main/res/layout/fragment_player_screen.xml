@@ -33,7 +33,7 @@
             android:id="@+id/configure_player_image"
             android:layout_width="@dimen/player_small_buttons_size"
             android:layout_height="@dimen/player_small_buttons_size"
-            android:background="@android:color/transparent"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_player_settings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -100,7 +100,7 @@
             android:layout_height="@dimen/player_small_buttons_size"
             android:layout_marginEnd="@dimen/player_small_buttons_margin"
             android:layout_marginRight="@dimen/player_small_buttons_margin"
-            android:background="@android:color/transparent"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_player_melody_on"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/harmony_btn" />
@@ -109,7 +109,7 @@
             android:id="@+id/harmony_btn"
             android:layout_width="@dimen/player_small_buttons_size"
             android:layout_height="@dimen/player_small_buttons_size"
-            android:background="@android:color/transparent"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_player_harmony_on"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
