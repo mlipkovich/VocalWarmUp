@@ -10,12 +10,8 @@ import com.berniac.vocalwarmup.sequence.Accompaniment;
 import com.berniac.vocalwarmup.sequence.Direction;
 import com.berniac.vocalwarmup.sequence.Melody;
 import com.berniac.vocalwarmup.sequence.Player;
-import com.berniac.vocalwarmup.sequence.WarmUpPlayer;
 import com.berniac.vocalwarmup.sequence.sequencer.QueueStepConsumer;
-import com.berniac.vocalwarmup.sequence.sequencer.QueueStepProducer;
 import com.berniac.vocalwarmup.sequence.sequencer.StepConsumer;
-import com.berniac.vocalwarmup.sequence.sequencer.StepProducer;
-import com.berniac.vocalwarmup.sequence.sequencer.StepSequencer;
 import com.berniac.vocalwarmup.sequence.WarmUp;
 import com.berniac.vocalwarmup.sequence.sequencer.WarmUpStep;
 
@@ -185,8 +181,8 @@ public class StubPlayerProvider {
 
         BlockingQueue<WarmUpStep> queue = new ArrayBlockingQueue<>(10);
         StepConsumer stepConsumer = new QueueStepConsumer(queue);
-        StepProducer stepProducer = new QueueStepProducer(queue, warmUp);
-        StepSequencer stepSequencer = new StepSequencer(stepConsumer, stepProducer, sequencer.getReceiver());
+//        StepProducer stepProducer = new StepProducer(queue, warmUp);
+//        StepSequencer stepSequencer = new StepSequencer(stepConsumer, stepProducer, sequencer.getReceiver());
         return null;
 //        return new WarmUpPlayer(stepSequencer, new SequenceFinishedListener() {
 //            @Override

@@ -1,5 +1,7 @@
 package com.berniac.vocalwarmup.sequence;
 
+import com.berniac.vocalwarmup.music.MusicalSymbol;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +13,15 @@ import java.util.Scanner;
 public class Harmony implements Playable {
 
     private List<WarmUpVoice> harmony;
+
+    public Harmony(Harmony other) {
+        this.harmony = new ArrayList<>();
+        for (WarmUpVoice otherVoice : other.getVoices()) {
+            List<MusicalSymbol> musicalSymbols = new ArrayList<>(otherVoice.getMusicalSymbols());
+            WarmUpVoice voice = new WarmUpVoice(musicalSymbols, otherVoice.getVoiceNumber());
+            this.harmony.add(voice);
+        }
+    }
 
     public Harmony(List<WarmUpVoice> harmony) {
         this.harmony = harmony;

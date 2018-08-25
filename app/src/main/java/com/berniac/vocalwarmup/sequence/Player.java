@@ -22,14 +22,6 @@ public interface Player {
 
     void nextStep();
 
-    void melodyOn();
-
-    void melodyOff();
-
-    void harmonyOn();
-
-    void harmonyOff();
-
     void recordOn();
 
     void recordOff();
@@ -37,6 +29,12 @@ public interface Player {
     void changeTempoFactor(float tempoFactor);
 
     void changeTempo(int tempoBpm);
+
+    void changeMelodyVolume(int volume);
+
+    void changeHarmonyVolume(int volume);
+
+    void changeAdjustmentVolume(int volume);
 
     void showNoteVisualisation();
 

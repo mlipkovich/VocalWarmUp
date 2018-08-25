@@ -11,7 +11,7 @@ import com.berniac.vocalwarmup.music.NoteValue;
 public class MidiUtils {
 
     private static final int WHOLE_NOTE_VALUE_TICKS = 384;
-    private static final int SMALL_OCTAVE_C_MIDI = 36;
+    private static final int SMALL_OCTAVE_C_MIDI = 48;
     private static final int SEMITONES_IN_OCTAVE = 12;
 
     /**

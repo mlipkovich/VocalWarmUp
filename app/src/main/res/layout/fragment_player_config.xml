@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:padding="@dimen/card_padding">
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/back_player_image"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
@@ -100,7 +100,7 @@
                 android:layout_marginTop="@dimen/settings_title_bottom_margin"
                 app:layout_constraintTop_toBottomOf="@+id/divider"/>
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/melody_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
@@ -114,8 +114,8 @@
                 android:id="@+id/melody_seek_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:max="50"
-                android:progress="25"
+                android:max="127"
+                android:progress="100"
                 android:progressTint="@color/colorSeekbarProgressTint"
                 android:thumbTint="@color/colorPrimary"
                 app:layout_constraintStart_toEndOf="@+id/melody_btn"
@@ -123,7 +123,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/melody_btn"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/harmony_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
@@ -137,8 +137,8 @@
                 android:id="@+id/harmony_seek_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:max="50"
-                android:progress="25"
+                android:max="127"
+                android:progress="100"
                 android:progressTint="@color/colorSeekbarProgressTint"
                 android:thumbTint="@color/colorPrimary"
                 app:layout_constraintStart_toEndOf="@+id/harmony_btn"
@@ -146,7 +146,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/harmony_btn"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/adjustment_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
@@ -160,8 +160,8 @@
                 android:id="@+id/adjustment_seek_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:max="50"
-                android:progress="25"
+                android:max="127"
+                android:progress="100"
                 android:progressTint="@color/colorSeekbarProgressTint"
                 android:thumbTint="@color/colorPrimary"
                 app:layout_constraintStart_toEndOf="@+id/adjustment_btn"
@@ -187,7 +187,7 @@
                 android:layout_marginTop="@dimen/settings_title_bottom_margin"
                 app:layout_constraintTop_toBottomOf="@+id/divider2"/>
 
-            <ImageButton
+            <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/tempo_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
@@ -201,7 +201,7 @@
                 android:id="@+id/current_tempo_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0x"
+                android:text="120"
                 app:layout_constraintBottom_toTopOf="@+id/tempo_seek_bar"
                 app:layout_constraintEnd_toEndOf="@+id/tempo_seek_bar"
                 app:layout_constraintStart_toStartOf="@+id/tempo_seek_bar"/>
@@ -210,8 +210,8 @@
                 android:id="@+id/tempo_seek_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:max="50"
-                android:progress="25"
+                android:max="200"
+                android:progress="80"
                 android:progressTint="@color/colorSeekbarProgressTint"
                 android:thumbTint="@color/colorPrimary"
                 app:layout_constraintStart_toEndOf="@+id/tempo_btn"

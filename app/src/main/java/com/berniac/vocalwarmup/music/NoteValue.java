@@ -17,7 +17,7 @@ public class NoteValue {
     public static final NoteValue QUARTER_TRIOLE = new NoteValue(1, 6);
     public static final NoteValue EIGHTH = new NoteValue(1, 8);
     public static final NoteValue EIGHTH_DOTTED = new NoteValue(3, 16);
-    public static final NoteValue EIGHTH_TRIOLE = new NoteValue(1, 12);
+    public static final NoteValue EIGHTH_TRIOLE = new NoteValue( 1, 12);
     public static final NoteValue SIXTEETH = new NoteValue(1, 16);
     public static final NoteValue SIXTEETH_DOTTED = new NoteValue(3, 16);
     public static final NoteValue SIXTEETH_TRIOLE = new NoteValue(1, 24);
