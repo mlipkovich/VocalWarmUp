@@ -24,7 +24,7 @@
                 android:id="@+id/back_player_image"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_player_back"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -42,8 +42,9 @@
                 android:id="@+id/visualization_pattern_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_player_visualization_pattern"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="false"
+                android:src="@drawable/ic_player_visualization_pattern_disabled"
                 android:layout_marginTop="@dimen/card_margin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/visualization_text"/>
@@ -52,8 +53,9 @@
                 android:id="@+id/visualization_analyse_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_player_visualization_analyse"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="false"
+                android:src="@drawable/ic_player_visualization_analyse_disabled"
                 android:layout_marginLeft="@dimen/settings_button_margin"
                 android:layout_marginStart="@dimen/settings_button_margin"
                 app:layout_constraintStart_toEndOf="@+id/visualization_pattern_btn"
@@ -63,8 +65,9 @@
                 android:id="@+id/visualization_video_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_player_visualization_video"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="false"
+                android:src="@drawable/ic_player_visualization_video_disabled"
                 android:layout_marginLeft="@dimen/settings_button_margin"
                 android:layout_marginStart="@dimen/settings_button_margin"
                 app:layout_constraintStart_toEndOf="@+id/visualization_analyse_btn"
@@ -75,8 +78,9 @@
                 android:id="@+id/visualization_subs_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_player_visualization_subs"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="false"
+                android:src="@drawable/ic_player_visualization_subs_disabled"
                 android:layout_marginLeft="@dimen/settings_button_margin"
                 android:layout_marginStart="@dimen/settings_button_margin"
                 app:layout_constraintStart_toEndOf="@+id/visualization_video_btn"
@@ -96,7 +100,7 @@
                 android:id="@+id/melody_harmony_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/player_config_melody_harmony_level"
+                android:text="@string/player_config_volume_settings"
                 android:layout_marginTop="@dimen/settings_title_bottom_margin"
                 app:layout_constraintTop_toBottomOf="@+id/divider"/>
 
@@ -104,11 +108,23 @@
                 android:id="@+id/melody_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_player_melody_on"
                 app:layout_constraintTop_toBottomOf="@+id/melody_harmony_text"
                 app:layout_constraintStart_toEndOf="parent"
                 android:layout_marginTop="@dimen/player_image_margin_top"/>
+
+            <TextView
+                android:id="@+id/melody_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/player_config_melody_level"
+                app:layout_constraintTop_toTopOf="@+id/melody_btn"
+                app:layout_constraintStart_toEndOf="@+id/melody_btn"
+                app:layout_constraintBottom_toTopOf="@+id/melody_seek_bar"
+                app:layout_constraintEnd_toEndOf="@+id/melody_seek_bar"/>
 
             <SeekBar
                 android:id="@+id/melody_seek_bar"
@@ -123,15 +139,28 @@
                 app:layout_constraintBottom_toBottomOf="@+id/melody_btn"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
+
             <com.berniac.vocalwarmup.ui.player.VibratingImageButton
                 android:id="@+id/harmony_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_player_harmony_on"
                 android:layout_marginTop="@dimen/card_margin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/melody_btn"/>
+
+            <TextView
+                android:id="@+id/harmony_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/player_config_harmony_level"
+                app:layout_constraintTop_toTopOf="@+id/harmony_btn"
+                app:layout_constraintStart_toEndOf="@+id/harmony_btn"
+                app:layout_constraintBottom_toTopOf="@+id/harmony_seek_bar"
+                app:layout_constraintEnd_toEndOf="@+id/harmony_seek_bar"/>
 
             <SeekBar
                 android:id="@+id/harmony_seek_bar"
@@ -150,11 +179,23 @@
                 android:id="@+id/adjustment_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_player_key_on"
                 android:layout_marginTop="@dimen/card_margin"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/harmony_btn"/>
+
+            <TextView
+                android:id="@+id/modulation_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/player_config_modulation_level"
+                app:layout_constraintTop_toTopOf="@+id/adjustment_btn"
+                app:layout_constraintStart_toEndOf="@+id/adjustment_btn"
+                app:layout_constraintBottom_toTopOf="@+id/adjustment_seek_bar"
+                app:layout_constraintEnd_toEndOf="@+id/adjustment_seek_bar"/>
 
             <SeekBar
                 android:id="@+id/adjustment_seek_bar"
@@ -191,7 +232,7 @@
                 android:id="@+id/tempo_btn"
                 android:layout_width="@dimen/player_small_buttons_size"
                 android:layout_height="@dimen/player_small_buttons_size"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_player_metronome_on"
                 android:layout_marginTop="@dimen/player_image_margin_top"
                 app:layout_constraintStart_toStartOf="parent"
