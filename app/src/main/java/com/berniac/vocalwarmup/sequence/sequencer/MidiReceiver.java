@@ -15,8 +15,9 @@ import jp.kshoji.javax.sound.midi.ShortMessage;
  */
 public class MidiReceiver {
 
-    private static final int DEFAULT_BPM = 120;
-    private static final int DEFAULT_VOLUME = 100;
+    private static final int DEFAULT_BPM = 112;
+    private static final int DEFAULT_VOLUME = 90;
+    private static final int MELODY_DEFAULT_VOLUME = 100;
     private static final float DEFAULT_TEMPO_FACTOR = 1;
 
     private Receiver receiver;
@@ -47,7 +48,7 @@ public class MidiReceiver {
 
         updateHarmonyVolume(true);
         updateAdjustmentVolume(true);
-        updateMelodyVolume(DEFAULT_VOLUME);
+        updateMelodyVolume(MELODY_DEFAULT_VOLUME);
     }
 
     public void setTempoFactor(float tempoFactor) {

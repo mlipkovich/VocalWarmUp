@@ -14,7 +14,7 @@
     <string name="player_config_volume_settings">Настройки громкости</string>
     <string name="player_config_melody_level">Громкость мелодии</string>
     <string name="player_config_harmony_level">Громкость гармонии</string>
-    <string name="player_config_modulation_level">Громкость подстройки</string>
+    <string name="player_config_modulation_level">Громкость модуляции</string>
 
     <string name="player_config_tempo">Темп распевки, bpm</string>
 
