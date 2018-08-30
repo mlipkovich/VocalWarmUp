@@ -1,30 +1,5 @@
 package com.berniac.vocalwarmup.sequence;
 
-import com.berniac.vocalwarmup.midi.MidiUtils;
-import com.berniac.vocalwarmup.music.FixedStep;
-import com.berniac.vocalwarmup.music.MusicalSymbol;
-import com.berniac.vocalwarmup.music.Note;
-import com.berniac.vocalwarmup.music.NoteRegister;
-import com.berniac.vocalwarmup.music.NoteSymbol;
-import com.berniac.vocalwarmup.music.NoteValue;
-import com.berniac.vocalwarmup.music.Rest;
-import com.berniac.vocalwarmup.sequence.adjustment.SilentAdjustmentRules;
-import com.berniac.vocalwarmup.sequence.sequencer.SequenceConstructor;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import jp.kshoji.javax.sound.midi.InvalidMidiDataException;
-import jp.kshoji.javax.sound.midi.MidiEvent;
-import jp.kshoji.javax.sound.midi.MidiTrackSpecificEvent;
-import jp.kshoji.javax.sound.midi.ShortMessage;
-import jp.kshoji.javax.sound.midi.Track;
-
 /**
  * Created by Mikhail Lipkovich on 11/17/2017.
  */

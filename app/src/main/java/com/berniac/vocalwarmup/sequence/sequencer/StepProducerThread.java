@@ -1,11 +1,15 @@
 package com.berniac.vocalwarmup.sequence.sequencer;
 
 import com.berniac.vocalwarmup.midi.MidiUtils;
+import com.berniac.vocalwarmup.music.MusicalSymbol;
+import com.berniac.vocalwarmup.music.Note;
 import com.berniac.vocalwarmup.music.NoteRegister;
 import com.berniac.vocalwarmup.music.Step;
 import com.berniac.vocalwarmup.sequence.Direction;
 import com.berniac.vocalwarmup.sequence.WarmUp;
+import com.berniac.vocalwarmup.sequence.WarmUpVoice;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -123,9 +127,9 @@ public class StepProducerThread extends Thread{
 
     private void initStateMachine(NoteRegister lowerNote, NoteRegister upperNote,
                                               int startingTonicMidi, Direction[] directions) {
-        int lowestNoteInVoice = MidiUtils.getMidiNote(SequenceConstructor.getLowestNoteInVoice(
+        int lowestNoteInVoice = MidiUtils.getMidiNote(StepProducerThread.getLowestNoteInVoice(
                 warmUp.getMelody().getVoices().get(0)));
-        int highestNoteInVoice = MidiUtils.getMidiNote(SequenceConstructor.getHighestNoteInVoice(
+        int highestNoteInVoice = MidiUtils.getMidiNote(StepProducerThread.getHighestNoteInVoice(
                 warmUp.getMelody().getVoices().get(0)));
 
         int lowestTonicMidi = getLowestTonicInSequence(lowerNote,
@@ -202,6 +206,46 @@ public class StepProducerThread extends Thread{
         int maxDistFullStepsNumber = (int) Math.floor((float) maxDist / stepSize);
         int maxReachableDist = maxDistFullStepsNumber * stepSize;
         return startingTonicMidi + maxReachableDist;
+    }
+
+    private static NoteRegister getLowestNoteInVoice(WarmUpVoice voice) {
+        List<MusicalSymbol> symbols = voice.getMusicalSymbols();
+        int lowestNoteMidi = Integer.MAX_VALUE;
+        Note lowestSymbol = null;
+        for (MusicalSymbol symbol : symbols) {
+            if (symbol.isSounding()) {
+                Note note = (Note)symbol;
+                int noteMidi = MidiUtils.getMidiNote(note.getNoteRegister());
+                if (noteMidi <= lowestNoteMidi) {
+                    lowestNoteMidi = noteMidi;
+                    lowestSymbol = note;
+                }
+            }
+        }
+        if (lowestSymbol == null) {
+            throw new IllegalStateException("There is no notes in melody " + symbols);
+        }
+        return lowestSymbol.getNoteRegister();
+    }
+
+    private static NoteRegister getHighestNoteInVoice(WarmUpVoice voice) {
+        List<MusicalSymbol> symbols = voice.getMusicalSymbols();
+        int highestNoteMidi = 0;
+        Note highestSymbol = null;
+        for (MusicalSymbol symbol : symbols) {
+            if (symbol.isSounding()) {
+                Note note = (Note)symbol;
+                int noteMidi = MidiUtils.getMidiNote(note.getNoteRegister());
+                if (noteMidi >= highestNoteMidi) {
+                    highestNoteMidi = noteMidi;
+                    highestSymbol = note;
+                }
+            }
+        }
+        if (highestSymbol== null) {
+            throw new IllegalStateException("There is no notes in melody " + symbols);
+        }
+        return highestSymbol.getNoteRegister();
     }
 
     private static class TonicStateMachine {

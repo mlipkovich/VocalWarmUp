@@ -2,21 +2,23 @@ package com.berniac.vocalwarmup.midi;
 
 import com.berniac.vocalwarmup.sequence.Instrument;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
+import cn.sherlock.com.sun.media.sound.SF2Soundbank;
 
 /**
  * Created by Mikhail Lipkovich on 2/18/2018.
  */
 public class SF2Database {
 
-    private static volatile Map<Instrument, Program> instrumentToProgram;
-
     private SF2Database() {}
 
-    public static void configure(String str) {
-        Map<Instrument, Program> localInstrumentToProgram = new HashMap<>();
+    public static Map<Instrument, Program> parseDescription(String str) {
+        Map<Instrument, Program> instrumentToProgram = new HashMap<>();
         Scanner scanner = new Scanner(str);
         while (scanner.hasNext()) {
             String line = scanner.next();
@@ -29,19 +31,21 @@ public class SF2Database {
             } else {
                 program = new Program(Integer.valueOf(programArr[0]), Integer.valueOf(programArr[1]));
             }
-            localInstrumentToProgram.put(instrument, program);
+            instrumentToProgram.put(instrument, program);
         }
         scanner.close();
-        synchronized (SF2Database.class) {
-            instrumentToProgram = localInstrumentToProgram;
+        return instrumentToProgram;
+    }
+
+    public static SF2Soundbank readSoundbank(InputStream soundbankStream) {
+        try {
+            return new SF2Soundbank(soundbankStream);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to read soundbank", e);
         }
     }
 
-    public static Program getProgram(Instrument instrument) {
-        return instrumentToProgram.get(instrument);
-    }
-
-    static class Program {
+    public static class Program {
         private int bank;
         private int program;
 

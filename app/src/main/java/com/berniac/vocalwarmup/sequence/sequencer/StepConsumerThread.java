@@ -10,8 +10,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import jp.kshoji.javax.sound.midi.MidiEvent;
-
 /**
  * Created by Mikhail Lipkovich on 8/15/2018.
  */
@@ -71,10 +69,10 @@ public class StepConsumerThread extends Thread {
                     directionChangedListener.onDirectionChanged(eventDirection);
                 }
 
-                Set<MidiEvent> baseEvents = step.getBaseEvents();
+                Set<MidiEventShort> baseEvents = step.getBaseEvents();
                 long tickPosition = processBaseEvents(0, baseEvents);
 
-                Set<MidiEvent> adjustmentEvents = getAdjustmentEvents(step);
+                Set<MidiEventShort> adjustmentEvents = getAdjustmentEvents(step);
                 processAdjustmentEvents(tickPosition, adjustmentEvents);
 
                 isStepRevert = false;
@@ -148,7 +146,7 @@ public class StepConsumerThread extends Thread {
         return consumer.getNextStep();
     }
 
-    private Set<MidiEvent> getAdjustmentEvents(WarmUpStep step) {
+    private Set<MidiEventShort> getAdjustmentEvents(WarmUpStep step) {
         if (isStepRepeat) {
             return step.getAdjustmentRepeatEvents();
         }
@@ -160,32 +158,31 @@ public class StepConsumerThread extends Thread {
         return step.getAdjustmentForwardEvents();
     }
 
-    private long processBaseEvents(long tickPosition, Set<MidiEvent> events) throws InterruptedException {
+    private long processBaseEvents(long tickPosition, Set<MidiEventShort> events) throws InterruptedException {
         receiver.updateHarmonyVolume(true);
-        for (MidiEvent event : events) {
+        for (MidiEventShort event : events) {
             receiver.updateHarmonyVolume(false);
             tickPosition = processEvent(tickPosition, event);
         }
         return tickPosition;
     }
 
-    private long processAdjustmentEvents(long tickPosition, Set<MidiEvent> events) throws InterruptedException {
+    private long processAdjustmentEvents(long tickPosition, Set<MidiEventShort> events) throws InterruptedException {
         receiver.updateAdjustmentVolume(true);
-        for (MidiEvent event : events) {
+        for (MidiEventShort event : events) {
             receiver.updateAdjustmentVolume(false);
             tickPosition = processEvent(tickPosition, event);
         }
         return tickPosition;
     }
 
-    private long processEvent(long tickPosition, MidiEvent event) throws InterruptedException{
-        long sleepLength = receiver.timeRemainedBeforeEvent(event.getTick(), tickPosition);
+    private long processEvent(long tickPosition, MidiEventShort event) throws InterruptedException{
+        long sleepLength = receiver.timeRemainedBeforeEvent(event.getPosition(), tickPosition);
         if (sleepLength > 0) {
             try {
                 Thread.sleep(sleepLength);
             } catch (InterruptedException e) {
                 System.out.println("Sequencer sleep interrupted " + e);
-                // TODO: Make sure thread terminate works fine on pauses
                 if (isPaused) {
                     receiver.muteAll();
                     waitOnPause();
@@ -195,8 +192,8 @@ public class StepConsumerThread extends Thread {
                 }
             }
         }
-        receiver.playEvent(event.getMessage());
-        return event.getTick();
+        receiver.playEvent(event);
+        return event.getPosition();
     }
 
     private void waitOnPause() throws InterruptedException {

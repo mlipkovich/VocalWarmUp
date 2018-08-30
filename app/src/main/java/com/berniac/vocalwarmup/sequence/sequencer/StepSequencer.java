@@ -1,6 +1,6 @@
 package com.berniac.vocalwarmup.sequence.sequencer;
 
-import com.berniac.vocalwarmup.midi.SF2Sequencer;
+import com.berniac.vocalwarmup.midi.SF2Synthesizer;
 import com.berniac.vocalwarmup.sequence.Accompaniment;
 import com.berniac.vocalwarmup.sequence.Direction;
 import com.berniac.vocalwarmup.sequence.DirectionChangedListener;
@@ -13,8 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-
-import jp.kshoji.javax.sound.midi.Receiver;
 
 
 /**
@@ -37,21 +35,20 @@ public class StepSequencer {
     private volatile boolean isRunning;
 
     public StepSequencer(WarmUp warmUp) {
-        // TODO: Init channel volumes and deal with channel-voice mapping
         changePrograms(warmUp.getAccompaniment().getVoices().values());
 
-        Receiver receiver = SF2Sequencer.getReceiver();
-        this.midiReceiver = new MidiReceiver(receiver);
+        this.midiReceiver = SF2Synthesizer.getReceiver();
         this.warmUp = warmUp;
     }
 
     private static void changePrograms(Collection<Accompaniment.Voice> voices) {
         Set<Instrument> instruments = new HashSet<>();
         instruments.add(Instrument.MELODIC_VOICE);
+        instruments.add(Instrument.METRONOME);
         for (Accompaniment.Voice voice : voices) {
             instruments.add(voice.getInstrument());
         }
-        SF2Sequencer.changePrograms(instruments);
+        SF2Synthesizer.reassignChannels(instruments);
     }
 
     public void setSequenceFinishedListener(SequenceFinishedListener sequenceFinishedListener) {
