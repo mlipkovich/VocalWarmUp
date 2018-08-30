@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public enum Instrument {
     MELODIC_VOICE("Me"),
+    METRONOME("Mm"),
     VOCAL_VOICE("Vo"),
     FORTEPIANO("Fo"),
     ELECTROPIANO("El"),

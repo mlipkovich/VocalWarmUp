@@ -1,13 +1,15 @@
 package com.berniac.vocalwarmup.sequence.sequencer;
 
 import com.berniac.vocalwarmup.midi.MidiUtils;
-import com.berniac.vocalwarmup.midi.SF2Sequencer;
 import com.berniac.vocalwarmup.music.MusicalSymbol;
 import com.berniac.vocalwarmup.music.Note;
+import com.berniac.vocalwarmup.music.NoteRegister;
+import com.berniac.vocalwarmup.music.NoteSymbol;
 import com.berniac.vocalwarmup.music.NoteValue;
 import com.berniac.vocalwarmup.sequence.Accompaniment;
 import com.berniac.vocalwarmup.sequence.Direction;
 import com.berniac.vocalwarmup.sequence.Harmony;
+import com.berniac.vocalwarmup.sequence.Instrument;
 import com.berniac.vocalwarmup.sequence.OctaveShifts;
 import com.berniac.vocalwarmup.sequence.Playable;
 import com.berniac.vocalwarmup.sequence.WarmUp;
@@ -16,16 +18,11 @@ import com.berniac.vocalwarmup.sequence.adjustment.Adjustment;
 import com.berniac.vocalwarmup.sequence.adjustment.AdjustmentRules;
 import com.berniac.vocalwarmup.sequence.adjustment.SilentAdjustmentRules;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import jp.kshoji.javax.sound.midi.InvalidMidiDataException;
-import jp.kshoji.javax.sound.midi.MidiEvent;
-import jp.kshoji.javax.sound.midi.MidiMessage;
-import jp.kshoji.javax.sound.midi.MidiTrackSpecificEvent;
 import jp.kshoji.javax.sound.midi.ShortMessage;
 
 /**
@@ -33,7 +30,6 @@ import jp.kshoji.javax.sound.midi.ShortMessage;
  */
 public class StepProducer {
 
-    private static final int DEFAULT_VOLUME = 100;
     private WarmUp warmUp;
     private Map<Integer, Accompaniment.Voice> voices;
     private Playable harmony;
@@ -74,14 +70,14 @@ public class StepProducer {
 
         long adjustmentStartTick = getAdjustmentStartTick(adjustmentRules, melodyEndTick, lastMelodyNoteDuration);
 
-        addAdjustment(step.getAdjustmentForwardEvents(), currentTonicMidi,
+        long adjustmentEndTick = addAdjustment(step.getAdjustmentForwardEvents(), currentTonicMidi,
                 forwardTonicMidi, adjustmentStartTick, adjustment);
         addAdjustment(step.getAdjustmentBackwardEvents(), currentTonicMidi,
                 backwardTonicMidi, adjustmentStartTick, adjustment);
         addAdjustment(step.getAdjustmentRepeatEvents(), currentTonicMidi,
                 currentTonicMidi, adjustmentStartTick, adjustment);
 
-        MidiEvent lastMelodyNoteOffEvent = ((TreeSet<MidiEvent>) step.getBaseEvents()).pollLast();
+        MidiEventShort lastMelodyNoteOffEvent = ((TreeSet<MidiEventShort>) step.getBaseEvents()).pollLast();
         step.getAdjustmentForwardEvents().add(lastMelodyNoteOffEvent);
         step.getAdjustmentBackwardEvents().add(lastMelodyNoteOffEvent);
         step.getAdjustmentRepeatEvents().add(lastMelodyNoteOffEvent);
@@ -89,12 +85,12 @@ public class StepProducer {
         return step;
     }
 
-    private void addAdjustment(Set<MidiEvent> events, int fromTonic, int toTonic, long position, Adjustment adjustment) {
+    private long addAdjustment(Set<MidiEventShort> events, int fromTonic, int toTonic, long position, Adjustment adjustment) {
         Playable adjustmentVoices = adjustment.getVoices(
                 MidiUtils.getNote(fromTonic),
                 MidiUtils.getNote(toTonic));
 //        System.out.println("Adjustment " + adjustmentVoices);
-        addStepPlayable(events, fromTonic, position, adjustmentVoices, MidiTrack.ADJUSTMENT);
+        return addStepPlayable(events, fromTonic, position, adjustmentVoices, MidiTrack.ADJUSTMENT);
     }
 
     private static Harmony alignHarmonyDueToAdjustment(Harmony harmony, AdjustmentRules adjustmentRules,
@@ -139,7 +135,7 @@ public class StepProducer {
         return adjustmentStartTick;
     }
 
-    private long addStepPlayable(Set<MidiEvent> events, int currentTonicMidi, long position,
+    private long addStepPlayable(Set<MidiEventShort> events, int currentTonicMidi, long position,
                               Playable playable, MidiTrack midiTrack) {
         long voiceEndPosition = position;
         for (int i = 0; i < playable.getVoices().size(); i++) {
@@ -152,10 +148,9 @@ public class StepProducer {
         return voiceEndPosition;
     }
 
-    private long addStepVoice(Set<MidiEvent> events, int currentTonicMidi, long position,
+    private long addStepVoice(Set<MidiEventShort> events, int currentTonicMidi, long position,
                               WarmUpVoice warmUpVoice, Accompaniment.Voice voice, MidiTrack midiTrack) {
 
-        int channel = SF2Sequencer.getChannel(voice.getInstrument());
         int octaveShift = getOctaveShift(voice.getOctaveShifts(), currentTonicMidi);
 //        System.out.println("Octave shift " + octaveShift + " for " + midiTrack);
 
@@ -164,21 +159,12 @@ public class StepProducer {
             long duration = MidiUtils.getNoteValueInTicks(symbol.getNoteValue());
             if (symbol.isSounding()) {
                 int note = MidiUtils.transpose(((Note) symbol).getNoteRegister(), currentTonicMidi, octaveShift);
-                try {
 //                    System.out.println("Note " + note + " at position " + position + " " + channel + " " + duration);
-                    MidiMessage midiMessage = new ShortMessage(ShortMessage.NOTE_ON, channel, note, DEFAULT_VOLUME);
-                    MidiEvent midiEvent = new MidiEvent(midiMessage, position);
-                    MidiTrackSpecificEvent midiVoiceEvent = new MidiTrackSpecificEvent(midiEvent, midiTrack.index);
-                    events.add(midiVoiceEvent);
+                MidiEventShort midiEventStart = new MidiEventShort(ShortMessage.NOTE_ON, voice.getInstrument(), note, position);
+                events.add(midiEventStart);
 
-                    midiMessage = new ShortMessage(ShortMessage.NOTE_OFF, channel, note, DEFAULT_VOLUME);
-                    midiEvent = new MidiEvent(midiMessage, position + duration);
-                    midiVoiceEvent = new MidiTrackSpecificEvent(midiEvent, midiTrack.index);
-                    events.add(midiVoiceEvent);
-                } catch (InvalidMidiDataException ignored) {
-                    throw new IllegalStateException("Failed to create midi event from tonic " + note +
-                            " with channel " + channel + " and volume " + DEFAULT_VOLUME);
-                }
+                MidiEventShort midiEventEnd = new MidiEventShort(ShortMessage.NOTE_OFF, voice.getInstrument(), note, position + duration);
+                events.add(midiEventEnd);
             }
 
             position += duration;
@@ -208,6 +194,7 @@ public class StepProducer {
         return 0;
     }
 
+    // TODO: Probably this is not needed
     enum MidiTrack {
         MELODY(0),
         ADJUSTMENT(1),

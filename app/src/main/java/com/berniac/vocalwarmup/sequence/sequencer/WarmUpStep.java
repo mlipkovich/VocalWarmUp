@@ -6,8 +6,6 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import jp.kshoji.javax.sound.midi.MidiEvent;
-
 /**
  * Created by Mikhail Lipkovich on 6/01/2018.
  */
@@ -20,10 +18,10 @@ public class WarmUpStep {
     private int tonic;
     private int forwardTonic;
     private int backwardTonic;
-    private Set<MidiEvent> baseEvents;
-    private Set<MidiEvent> adjustmentForwardEvents;
-    private Set<MidiEvent> adjustmentBackwardEvents;
-    private Set<MidiEvent> adjustmentRepeatEvents;
+    private Set<MidiEventShort> baseEvents;
+    private Set<MidiEventShort> adjustmentForwardEvents;
+    private Set<MidiEventShort> adjustmentBackwardEvents;
+    private Set<MidiEventShort> adjustmentRepeatEvents;
 
     WarmUpStep(int tonic, int forwardTonic, int backwardTonic, Direction direction) {
         this.tonic = tonic;
@@ -52,19 +50,19 @@ public class WarmUpStep {
         return backwardTonic;
     }
 
-    public Set<MidiEvent> getBaseEvents() {
+    public Set<MidiEventShort> getBaseEvents() {
         return baseEvents;
     }
 
-    public Set<MidiEvent> getAdjustmentForwardEvents() {
+    public Set<MidiEventShort> getAdjustmentForwardEvents() {
         return adjustmentForwardEvents;
     }
 
-    public Set<MidiEvent> getAdjustmentBackwardEvents() {
+    public Set<MidiEventShort> getAdjustmentBackwardEvents() {
         return adjustmentBackwardEvents;
     }
 
-    public Set<MidiEvent> getAdjustmentRepeatEvents() {
+    public Set<MidiEventShort> getAdjustmentRepeatEvents() {
         return adjustmentRepeatEvents;
     }
 
@@ -72,29 +70,29 @@ public class WarmUpStep {
         this.tonic = tonic;
     }
 
-    void addBaseEvent(MidiEvent event) {
+    void addBaseEvent(MidiEventShort event) {
         baseEvents.add(event);
     }
 
-    void addAdjustmentForwardEvent(MidiEvent event) {
+    void addAdjustmentForwardEvent(MidiEventShort event) {
         adjustmentForwardEvents.add(event);
     }
 
-    void addAdjustmentBackwardEvent(MidiEvent event) {
+    void addAdjustmentBackwardEvent(MidiEventShort event) {
         adjustmentBackwardEvents.add(event);
     }
 
-    void addAdjustmentRepeatEvent(MidiEvent event) {
+    void addAdjustmentRepeatEvent(MidiEventShort event) {
         adjustmentRepeatEvents.add(event);
     }
 
-    private static class EventsComparator implements Comparator<MidiEvent> {
+    private static class EventsComparator implements Comparator<MidiEventShort> {
         @Override
-        public int compare(MidiEvent event1, MidiEvent event2) {
+        public int compare(MidiEventShort event1, MidiEventShort event2) {
             if (event1.equals(event2)) {
                 return 0;
             }
-            return (event1.getTick() < event2.getTick()) ? -1 : 1;
+            return (event1.getPosition() < event2.getPosition()) ? -1 : 1;
         }
     }
 

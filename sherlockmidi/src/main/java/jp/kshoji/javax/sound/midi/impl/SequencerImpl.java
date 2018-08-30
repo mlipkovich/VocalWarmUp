@@ -18,14 +18,12 @@ import java.util.Map;
 import java.util.Set;
 
 import jp.kshoji.javax.sound.midi.ControllerEventListener;
-import jp.kshoji.javax.sound.midi.EndSequenceEventListener;
 import jp.kshoji.javax.sound.midi.InvalidMidiDataException;
 import jp.kshoji.javax.sound.midi.MetaEventListener;
 import jp.kshoji.javax.sound.midi.MetaMessage;
 import jp.kshoji.javax.sound.midi.MidiEvent;
 import jp.kshoji.javax.sound.midi.MidiMessage;
 import jp.kshoji.javax.sound.midi.MidiSystem.MidiSystemUtils;
-import jp.kshoji.javax.sound.midi.MidiTrackSpecificEvent;
 import jp.kshoji.javax.sound.midi.MidiUnavailableException;
 import jp.kshoji.javax.sound.midi.Receiver;
 import jp.kshoji.javax.sound.midi.Sequence;
@@ -50,7 +48,6 @@ public class SequencerImpl implements Sequencer {
     private final List<Receiver> receivers = new ArrayList<Receiver>();
     private final Set<MetaEventListener> metaEventListeners = new HashSet<MetaEventListener>();
     private final SparseArray<Set<ControllerEventListener>> controllerEventListenerMap = new SparseArray<Set<ControllerEventListener>>();
-    private final Set<EndSequenceEventListener> endSequenceEventListeners = new HashSet<EndSequenceEventListener>();
     private final Map<Track, Set<Integer>> recordEnable = new HashMap<Track, Set<Integer>>();
     @Nullable
     private SequencerThread sequencerThread = null;
@@ -254,18 +251,6 @@ public class SequencerImpl implements Sequencer {
             }
         }
 
-        private void fireEndSequenceListeners() {
-            synchronized (endSequenceEventListeners) {
-                try {
-                    for (EndSequenceEventListener endSequenceEventListener : endSequenceEventListeners) {
-                        endSequenceEventListener.sequenceEnd();
-                    }
-                } catch (final ConcurrentModificationException ignored) {
-                    // ignored
-                }
-            }
-        }
-
         @Override
         public void run() {
             super.run();
@@ -327,13 +312,6 @@ public class SequencerImpl implements Sequencer {
 
                     for (int i = 0; i < playingTrack.size(); i++) {
                         final MidiEvent midiEvent = playingTrack.get(i);
-                        if (midiEvent instanceof MidiTrackSpecificEvent) {
-                            int currentEventTrack = ((MidiTrackSpecificEvent) midiEvent).getTrackIndex();
-                            if (trackMute.get(currentEventTrack)) {
-                                // skip muted track
-                                continue;
-                            }
-                        }
                         final MidiMessage midiMessage = midiEvent.getMessage();
 
                         if (needRefreshPlayingTrack) {
@@ -432,7 +410,6 @@ public class SequencerImpl implements Sequencer {
                 // loop end
                 isRunning = false;
                 runningStoppedTime = System.currentTimeMillis();
-                fireEndSequenceListeners();
             }
         }
 
@@ -487,7 +464,7 @@ public class SequencerImpl implements Sequencer {
             if (recordEnableChannels == null) {
                 return false;
             }
-            
+
             if (recordEnableChannels.contains(-1)) {
                 return true;
             }
@@ -524,23 +501,17 @@ public class SequencerImpl implements Sequencer {
     }
 
     @Override
-    public void setReceiver(@NonNull Receiver receiver) {
-        receivers.clear();
-        receivers.add(receiver);
-    }
-
-    @Override
     public void open() throws MidiUnavailableException {
         // open devices
-//        synchronized (receivers) {
-//            receivers.clear();
-//            receivers.addAll(MidiSystemUtils.getReceivers());
-//        }
+        synchronized (receivers) {
+            receivers.clear();
+            receivers.addAll(MidiSystemUtils.getReceivers());
+        }
 
-//        synchronized (transmitters) {
-//            transmitters.clear();
-//            transmitters.addAll(MidiSystemUtils.getTransmitters());
-//        }
+        synchronized (transmitters) {
+            transmitters.clear();
+            transmitters.addAll(MidiSystemUtils.getTransmitters());
+        }
 
         if (sequencerThread == null) {
             sequencerThread = new SequencerThread();
@@ -705,22 +676,6 @@ public class SequencerImpl implements Sequencer {
             metaEventListeners.remove(listener);
         }
     }
-
-    @Override
-    public boolean addEndSequenceEventListener(@NonNull final EndSequenceEventListener listener) {
-        // return true if registered successfully
-        synchronized (endSequenceEventListeners) {
-            return endSequenceEventListeners.add(listener);
-        }
-    }
-
-    @Override
-    public void removeEndSequenceEventListener(@NonNull final EndSequenceEventListener listener) {
-        synchronized (endSequenceEventListeners) {
-            endSequenceEventListeners.remove(listener);
-        }
-    }
-
 
     @Override
     public int getLoopCount() {
