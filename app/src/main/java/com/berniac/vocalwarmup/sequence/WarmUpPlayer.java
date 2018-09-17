@@ -93,6 +93,11 @@ public class WarmUpPlayer implements Player {
     }
 
     @Override
+    public void changeMetronomeVolume(int volume) {
+        sequencer.setMetronomeVolume(volume);
+    }
+
+    @Override
     public void openSettings() {
 
     }

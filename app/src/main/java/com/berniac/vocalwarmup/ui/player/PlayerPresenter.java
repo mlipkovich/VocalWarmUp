@@ -34,9 +34,11 @@ public class PlayerPresenter {
     private boolean isHarmonySwitchedOff = false;
     private boolean isMelodySwitchedOff = false;
     private boolean isAdjustmentSwitchedOff = false;
+    private boolean isMetronomeSwitchedOff = true;
     private int melodyVolumeBeforeMute = 100;
     private int harmonyVolumeBeforeMute = 100;
     private int adjustmentVolumeBeforeMute = 100;
+    private int metronomeVolumeUnMute = 127;
 
     public PlayerPresenter() {
     }
@@ -203,6 +205,17 @@ public class PlayerPresenter {
             configView.changeAdjustmentButtonToOn();
             isAdjustmentSwitchedOff = false;
         }
+    }
+
+    public void onMetronomeSwitcherClicked() {
+        if (isMetronomeSwitchedOff) {
+            player.changeMetronomeVolume(metronomeVolumeUnMute);
+            configView.changeMetronomeButtonToOn();
+        } else {
+            player.changeMetronomeVolume(0);
+            configView.changeMetronomeButtonToOff();
+        }
+        isMetronomeSwitchedOff = !isMetronomeSwitchedOff;
     }
 
     public void onConfigPanelClicked() {

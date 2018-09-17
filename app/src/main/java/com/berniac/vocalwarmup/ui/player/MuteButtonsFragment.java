@@ -16,7 +16,7 @@ public class MuteButtonsFragment extends Fragment {
     protected ImageButton harmonySwitcherButton;
     protected ImageButton melodySwitcherButton;
     protected ImageButton adjustmentSwitcherButton;
-
+    protected ImageButton metronomeSwitcherButton;
 
     protected static abstract class ProgressSeekBarListener implements SeekBar.OnSeekBarChangeListener {
         @Override
@@ -62,6 +62,16 @@ public class MuteButtonsFragment extends Fragment {
         });
     }
 
+    public void initMetronomeSwitcher(View view, int buttonId) {
+        metronomeSwitcherButton = (VibratingImageButton) view.findViewById(buttonId);
+        metronomeSwitcherButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onMetronomeSwitcherClicked();
+            }
+        });
+    }
+
     public void changeHarmonyButtonToOn() {
         harmonySwitcherButton.setImageResource(R.drawable.ic_player_harmony_on);
     }
@@ -84,5 +94,13 @@ public class MuteButtonsFragment extends Fragment {
 
     public void changeAdjustmentButtonToOff() {
         adjustmentSwitcherButton.setImageResource(R.drawable.ic_player_key_off);
+    }
+
+    public void changeMetronomeButtonToOn() {
+        metronomeSwitcherButton.setImageResource(R.drawable.ic_player_metronome_on);
+    }
+
+    public void changeMetronomeButtonToOff() {
+        metronomeSwitcherButton.setImageResource(R.drawable.ic_player_metronome_off);
     }
 }

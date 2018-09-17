@@ -138,4 +138,8 @@ public class StepSequencer {
     public void setAdjustmentVolume(int volume) {
         midiReceiver.setAdjustmentVolume(volume);
     }
+
+    public void setMetronomeVolume(int volume) {
+        midiReceiver.updateMetronomeVolume(volume);
+    }
 }

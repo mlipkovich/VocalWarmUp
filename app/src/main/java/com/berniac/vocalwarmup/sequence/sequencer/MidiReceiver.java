@@ -22,7 +22,7 @@ public class MidiReceiver {
     // TODO: Instrument -> Volume mapping
     private static final int DEFAULT_VOLUME = 90;
     private static final int MELODY_DEFAULT_VOLUME = 100;
-    private static final int METRONOME_DEFAULT_VOLUME = 127;
+    private static final int METRONOME_DEFAULT_VOLUME = 0;
 
     private static final int MIDI_CHANNEL_VOLUME = 0x7;
     private static final int MIDI_ALL_NOTE_OFF = 0x7b;
@@ -105,7 +105,7 @@ public class MidiReceiver {
         changeChannelVolume(channel, volume);
     }
 
-    private void updateMetronomeVolume(int volume) {
+    public void updateMetronomeVolume(int volume) {
         int channel = instrumentToChannel.get(Instrument.METRONOME);
         changeChannelVolume(channel, volume);
     }

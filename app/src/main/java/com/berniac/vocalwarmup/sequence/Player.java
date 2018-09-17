@@ -36,6 +36,8 @@ public interface Player {
 
     void changeAdjustmentVolume(int volume);
 
+    void changeMetronomeVolume(int volume);
+
     void showNoteVisualisation();
 
     void showLyrics();
