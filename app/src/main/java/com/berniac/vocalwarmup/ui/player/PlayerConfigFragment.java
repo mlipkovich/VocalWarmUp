@@ -74,6 +74,7 @@ public class PlayerConfigFragment extends MuteButtonsFragment {
         initMelodySwitcher(view, R.id.melody_btn);
         initHarmonySwitcher(view, R.id.harmony_btn);
         initAdjustmentSwitcher(view, R.id.adjustment_btn);
+        initMetronomeSwitcher(view, R.id.tempo_btn);
 
         return view;
     }

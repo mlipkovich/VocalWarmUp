@@ -77,6 +77,10 @@ public class StepProducer {
         addAdjustment(step.getAdjustmentRepeatEvents(), currentTonicMidi,
                 currentTonicMidi, adjustmentStartTick, adjustment);
 
+        long metronomeBaseEndTick = addMetronome(0, adjustmentStartTick, step.getBaseEvents());
+        addMetronome(metronomeBaseEndTick, adjustmentEndTick, step.getAdjustmentForwardEvents(),
+                step.getAdjustmentBackwardEvents(), step.getAdjustmentRepeatEvents());
+        
         MidiEventShort lastMelodyNoteOffEvent = ((TreeSet<MidiEventShort>) step.getBaseEvents()).pollLast();
         step.getAdjustmentForwardEvents().add(lastMelodyNoteOffEvent);
         step.getAdjustmentBackwardEvents().add(lastMelodyNoteOffEvent);
@@ -91,6 +95,26 @@ public class StepProducer {
                 MidiUtils.getNote(toTonic));
 //        System.out.println("Adjustment " + adjustmentVoices);
         return addStepPlayable(events, fromTonic, position, adjustmentVoices, MidiTrack.ADJUSTMENT);
+    }
+
+    @SafeVarargs
+    private final long addMetronome(long metronomeStartTick, long metronomeEndTick, Set<MidiEventShort>... steps) {
+        long metronomeTick = metronomeStartTick;
+        long metronomeDuration = MidiUtils.getNoteValueInTicks(NoteValue.QUARTER);
+        long metronomeStep = MidiUtils.getNoteValueInTicks(NoteValue.QUARTER);
+        int metronomeNote = MidiUtils.getMidiNote(new NoteRegister(NoteSymbol.H, 0));
+        while (metronomeTick + metronomeDuration <= metronomeEndTick) {
+            MidiEventShort metronomeOn = new MidiEventShort(ShortMessage.NOTE_ON,
+                    Instrument.METRONOME, metronomeNote, metronomeTick);
+            MidiEventShort metronomeOff = new MidiEventShort(ShortMessage.NOTE_OFF,
+                    Instrument.METRONOME, metronomeNote, metronomeTick + metronomeDuration);
+            for (Set<MidiEventShort> stepEvents : steps) {
+                stepEvents.add(metronomeOn);
+                stepEvents.add(metronomeOff);
+            }
+            metronomeTick += metronomeStep;
+        }
+        return metronomeTick;
     }
 
     private static Harmony alignHarmonyDueToAdjustment(Harmony harmony, AdjustmentRules adjustmentRules,
