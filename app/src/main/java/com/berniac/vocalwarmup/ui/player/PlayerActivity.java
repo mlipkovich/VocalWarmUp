@@ -1,7 +1,7 @@
 package com.berniac.vocalwarmup.ui.player;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.View;
@@ -32,9 +32,11 @@ public class PlayerActivity extends PlayerView {
         topBar.setHomeAsUpIndicator(R.drawable.ic_player_close);
         topBar.setElevation(0);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.player_fragment_container, configFragment);
         transaction.add(R.id.player_fragment_container, screenFragment);
+        transaction.hide(configFragment);
+        transaction.show(screenFragment);
         transaction.commit();
 
         playButton = (VibratingImageButton) findViewById(R.id.play_btn);
@@ -88,8 +90,11 @@ public class PlayerActivity extends PlayerView {
 
     @Override
     public void onBackPressed() {
-        // TODO: Perhaps different behaviour
-        onSupportNavigateUp();
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            super.onBackPressed();
+        } else {
+            onSupportNavigateUp();
+        }
     }
 
     @Override
@@ -135,17 +140,35 @@ public class PlayerActivity extends PlayerView {
 
     @Override
     public void switchToConfigPanel() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        addAnimation(transaction);
         transaction.hide(screenFragment);
         transaction.show(configFragment);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
     @Override
     public void switchToScreenPanel() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        addAnimation(transaction);
         transaction.hide(configFragment);
         transaction.show(screenFragment);
+        getFragmentManager().popBackStack();
         transaction.commit();
+    }
+
+    private void addAnimation(FragmentTransaction transaction) {
+        View fragmentPlayerScreen = screenFragment.getView();
+        View fragmentPlayerConfig = configFragment.getView();
+        float scale = this.getResources().getDisplayMetrics().density * 8000;
+        fragmentPlayerScreen.setCameraDistance(scale);
+        fragmentPlayerConfig.setCameraDistance(scale);
+
+        transaction.setCustomAnimations(
+                R.animator.card_flip_right_in,
+                R.animator.card_flip_right_out,
+                R.animator.card_flip_left_in,
+                R.animator.card_flip_left_out);
     }
 }
