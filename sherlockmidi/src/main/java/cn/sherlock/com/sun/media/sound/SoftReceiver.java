@@ -24,7 +24,13 @@
  */
 package cn.sherlock.com.sun.media.sound;
 
-import java.util.TreeMap;
+import android.util.Pair;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 import jp.kshoji.javax.sound.midi.MidiDevice;
 import jp.kshoji.javax.sound.midi.MidiMessage;
@@ -37,10 +43,17 @@ import jp.kshoji.javax.sound.midi.ShortMessage;
  */
 public class SoftReceiver implements MidiDeviceReceiver {
 
+    protected final int CACHE_SIZE = 200;
     protected boolean open = true;
     private Object control_mutex;
     private SoftSynthesizer synth;
-    protected TreeMap<Long, Object> midimessages;
+    protected Queue<Pair<Long, Object>> midimessages;
+    protected Set<Long> cache = Collections.newSetFromMap(new LinkedHashMap<Long, Boolean>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Long, Boolean> eldest) {
+            return size() > CACHE_SIZE;
+        }
+    });
     protected SoftMainMixer mainmixer;
 
     public SoftReceiver(SoftSynthesizer synth) {
@@ -65,13 +78,15 @@ public class SoftReceiver implements MidiDeviceReceiver {
         if (timeStamp != -1) {
             synchronized (control_mutex) {
                 mainmixer.activity();
-                while (midimessages.get(timeStamp) != null)
+                while (cache.contains(timeStamp))
                     timeStamp++;
                 if (message instanceof ShortMessage
                         && (((ShortMessage)message).getChannel() > 0xF)) {
-                    midimessages.put(timeStamp, message.clone());
+                    midimessages.offer(Pair.create(timeStamp, message.clone()));
+                    cache.add(timeStamp);
                 } else {
-                    midimessages.put(timeStamp, message.getMessage());
+                    midimessages.offer(Pair.create(timeStamp, message.getMessage()));
+                    cache.add(timeStamp);
                 }
             }
         } else {

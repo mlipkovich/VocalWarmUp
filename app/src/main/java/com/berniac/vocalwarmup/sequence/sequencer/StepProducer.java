@@ -58,6 +58,7 @@ public class StepProducer {
         int forwardTonicMidi = nextTonicMidi;
         int backwardTonicMidi = currentTonicMidi - (nextTonicMidi - currentTonicMidi);
 
+        // TODO: Take step here from steps poll
         WarmUpStep step = new WarmUpStep(currentTonicMidi, forwardTonicMidi, backwardTonicMidi, direction);
 
         long melodyStartTick = 0;

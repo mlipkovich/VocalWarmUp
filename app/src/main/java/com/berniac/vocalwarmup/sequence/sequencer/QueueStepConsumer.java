@@ -28,6 +28,7 @@ public class QueueStepConsumer implements StepConsumer {
             WarmUpStep step = forwardSteps.take();
             previousSteps.addLast(step);
             if (previousSteps.size() > MAX_NUMBER_OF_PREVIOUS_STEPS) {
+                // TODO: Put step back to poll here together with MidiEventShort
                 previousSteps.removeFirst();
             }
             return step;

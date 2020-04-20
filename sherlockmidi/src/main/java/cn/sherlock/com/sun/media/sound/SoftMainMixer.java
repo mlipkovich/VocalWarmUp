@@ -24,13 +24,14 @@
  */
 package cn.sherlock.com.sun.media.sound;
 
+import android.util.Pair;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Queue;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.Map.Entry;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import jp.kshoji.javax.sound.midi.MidiMessage;
 import jp.kshoji.javax.sound.midi.Patch;
@@ -67,6 +68,9 @@ public class SoftMainMixer {
     public final static int CHANNEL_RIGHT_DRY = 11;
     public final static int CHANNEL_SCRATCH1 = 12;
     public final static int CHANNEL_SCRATCH2 = 13;
+
+    private final static int QUEUE_SIZE = 200;
+
     protected boolean active_sensing_on = false;
     private long msec_last_activity = -1;
     private boolean pusher_silent = false;
@@ -84,7 +88,7 @@ public class SoftMainMixer {
     private SoftAudioProcessor agc;
     private long msec_buffer_len = 0;
     private int buffer_len = 0;
-    protected TreeMap<Long, Object> midimessages = new TreeMap<Long, Object>();
+    protected Queue<Pair<Long, Object>> midimessages = new ArrayBlockingQueue<>(QUEUE_SIZE);
     private int delay_midievent = 0;
     private int max_delay_midievent = 0;
     double last_volume_left = 1.0;
@@ -421,19 +425,18 @@ public class SoftMainMixer {
     }
 
     private void processMessages(long timeStamp) {
-        Iterator<Entry<Long, Object>> iter = midimessages.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry<Long, Object> entry = iter.next();
-            if (entry.getKey() >= (timeStamp + msec_buffer_len))
+        while (!midimessages.isEmpty()) {
+            Pair<Long, Object> entry = midimessages.peek();
+            if (entry.first >= (timeStamp + msec_buffer_len))
                 return;
-            long msec_delay = entry.getKey() - timeStamp;            
+            long msec_delay = entry.first - timeStamp;
             delay_midievent = (int)(msec_delay * (samplerate / 1000000.0) + 0.5);
             if(delay_midievent > max_delay_midievent)
                 delay_midievent = max_delay_midievent;
             if(delay_midievent < 0)
                 delay_midievent = 0;
-            processMessage(entry.getValue());
-            iter.remove();
+            processMessage(entry.second);
+            midimessages.poll();
         }
         delay_midievent = 0;
     }

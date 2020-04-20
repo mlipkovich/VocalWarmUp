@@ -63,8 +63,7 @@ public class SoftVoice extends VoiceStatus {
     private SoftFilter filter_right;
     private SoftProcess eg = new SoftEnvelopeGenerator();
     private SoftProcess lfo = new SoftLowFrequencyOscillator();
-    protected Map<String, SoftControl> objects =
-            new HashMap<String, SoftControl>();
+    protected SoftControlProperties objects = new SoftControlProperties();
     protected SoftSynthesizer synthesizer;
     protected SoftInstrument instrument;
     protected SoftPerformer performer;
@@ -188,6 +187,43 @@ public class SoftVoice extends VoiceStatus {
         filter_left = new SoftFilter(synth.getFormat().getSampleRate());
         filter_right = new SoftFilter(synth.getFormat().getSampleRate());
         nrofchannels = synth.getFormat().getChannels();
+    }
+
+    // Optimization for storing soft control properties in arrays rather than maps with huge overhead
+    public class SoftControlProperties {
+        private final Map<String, Integer> propertiesIndices;
+        private final SoftControl[] properties;
+
+        public SoftControlProperties() {
+            propertiesIndices = new HashMap<>();
+            propertiesIndices.put("midi", 0);
+            propertiesIndices.put("midi_cc", 1);
+            propertiesIndices.put("midi_rpn", 2);
+            propertiesIndices.put("midi_nrpn", 3);
+            propertiesIndices.put("master", 4);
+            propertiesIndices.put("eg", 5);
+            propertiesIndices.put("lfo", 6);
+            propertiesIndices.put("noteon", 7);
+            propertiesIndices.put("osc", 8);
+            propertiesIndices.put("mixer", 9);
+            propertiesIndices.put("filter", 10);
+
+            properties = new SoftControl[propertiesIndices.keySet().size()];
+        }
+
+        public void put(String property, SoftControl object) {
+            properties[propertiesIndices.get(property)] = object;
+        }
+
+        public SoftControl get(String property) {
+            return properties[propertiesIndices.get(property)];
+        }
+
+        public void clear() {
+            for (int i = 0; i < properties.length; i++) {
+                properties[i] = null;
+            }
+        }
     }
 
     private int getValueKC(ModelIdentifier id) {
